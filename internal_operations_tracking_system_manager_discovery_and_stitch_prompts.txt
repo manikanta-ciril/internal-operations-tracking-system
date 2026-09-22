@@ -1,0 +1,2175 @@
+INTERNAL OPERATIONS TRACKING SYSTEM
+ROLE, KPI, LEAD, ROYALTY & UI-DESIGN DISCOVERY DOCUMENT
+============================================================
+
+PURPOSE
+-------
+This document consolidates the current system direction and converts the known
+requirements into a practical discovery questionnaire for the Manager.
+
+The immediate objective is NOT to invent final KPIs, lead rules, royalty
+calculations, or approval policies. The purpose is to identify exactly what
+the real business does so the Internal Operations Tracking System can be
+designed around the firm's actual workflow.
+
+The system should ultimately answer:
+
+1. Who is the user?
+2. What is the user's designation and operational responsibility?
+3. What information may the user see?
+4. What actions may the user perform?
+5. What work is assigned?
+6. How is that work measured?
+7. How does a lead move through the business?
+8. How does a lead generate royalty for the firm?
+9. What decisions are made by each management level?
+10. What information should management and the Chairman see?
+11. What events must be recorded for audit and accountability?
+12. What analytical information should the system derive from operational data?
+
+============================================================
+A. CURRENT SYSTEM MODEL
+============================================================
+
+SYSTEM NAME
+------------
+Internal Operations Tracking System
+
+ARCHITECTURAL LAYERS
+--------------------
+Layer 1: Authentication & Authorization Layer
+
+Layer 2: Management Layer
+
+Layer 3: Intelligence & Analytical Layer
+
+
+1. AUTHENTICATION & AUTHORIZATION LAYER
+--------------------------------------
+The login page is common to every user.
+
+There is NO public registration page.
+
+User accounts are manually created inside the system by an authorized
+administrative user.
+
+Typical provisioning sequence:
+
+Authorized administrator
+    -> create internal user account
+    -> assign designation
+    -> assign organizational information
+    -> assign system role
+    -> assign access level
+    -> configure permitted scope/actions
+    -> activate account
+    -> record administrative action in audit history
+
+Login sequence:
+
+User opens system
+    -> enters credentials
+    -> validate credentials
+    -> validate location/session context
+    -> record login/session event
+    -> resolve effective role and permissions
+    -> route to appropriate dashboard
+
+The user should not select "Chairman / Manager / Employee" on the login page.
+
+If a person has more than one authorized role, the system may provide a
+controlled role/workspace context switch after authentication.
+
+
+2. MANAGEMENT LAYER
+-------------------
+The Management Layer contains the user-facing operational workspaces.
+
+Current system roles:
+
+1. Chairman
+2. Senior Manager
+3. General Manager
+4. Lead Manager
+5. Executive
+6. IT System Analyst
+7. Business Development Executive (BDE)
+8. Social Media Manager
+9. Graphic Designer
+10. Admin
+11. Super Admin
+
+IMPORTANT ORGANIZATIONAL INTERPRETATION
+---------------------------------------
+For the current business model, treat the following as the main operational
+employee categories unless the Manager confirms otherwise:
+
+- Business Development Executive
+- Social Media Manager
+- Graphic Designer
+- IT System Analyst, where applicable as an operational employee/technical
+  specialist
+
+The management structure is being represented more granularly in the system:
+
+General Manager (main management role)
+    -> Senior Manager
+    -> Lead Manager
+    -> Executive
+    -> General Manager
+
+These should be treated as distinct system roles for access and responsibility
+purposes, while the General Manager remains the primary higher-level
+management role in the current conceptual model.
+
+Chairman is the highest business oversight role.
+
+Admin and Super Admin are administrative system roles, not ordinary
+operational employee roles.
+
+The IT System Analyst may require elevated technical privileges but should
+not automatically receive unrestricted business authority merely because the
+role is technically privileged.
+
+
+3. INTELLIGENCE & ANALYTICAL LAYER
+---------------------------------
+This layer receives operational data from the Management Layer and converts
+it into:
+
+- performance analytics
+- task analytics
+- workload analytics
+- attendance/workforce analytics
+- lead/pipeline analytics
+- royalty/revenue-related analytics
+- trend and pattern analysis
+- exception/risk analysis
+- predictive insights where actually supported
+- automated reporting
+- management insights
+
+IMPORTANT:
+Charts must not be decorative. Every analytical widget should answer a
+business question.
+
+============================================================
+B. CURRENT CORE WORK MODEL
+============================================================
+
+TASK MANAGEMENT
+---------------
+The current manager-side task workflow is conceptually:
+
+Create task
+    -> define deliverables
+    -> set priority
+    -> set due date / SLA
+    -> assess employee bandwidth
+    -> assign employee
+    -> notify employee
+    -> monitor execution
+    -> handle blockers / overdue conditions
+    -> receive submission
+    -> review / QA
+    -> approve OR request changes
+    -> complete and close
+    -> record audit history
+
+Task reporting states:
+
+- Assigned
+- Pending
+- Overdue
+- Reassigned
+- Completed
+
+Operational execution states may include:
+
+- In Progress
+- Blocked
+- Waiting for Review
+- Approval / Review
+- Issue Resolved
+- Done / Closed
+
+REASSIGNED is a transition/event, not a terminal state.
+
+OVERDUE is an exception condition. It should lead to manager review/intervention
+rather than simply meaning "continue working."
+
+
+EMPLOYEE TASK EXECUTION
+-----------------------
+Employee task execution includes:
+
+- acknowledge task
+- start work
+- update progress
+- record work activity
+- upload evidence
+- raise blocker/issue
+- receive manager intervention
+- continue work
+- submit completed work
+- receive review result
+- correct work if changes are requested
+- resubmit
+- reach final approval and closure
+
+
+RECORD WORK ACTIVITY
+--------------------
+Record Work Activity is the history of what the employee did while executing
+the task. It is not another task status.
+
+It contains:
+
+1. Progressive Update
+   - current progress
+   - work completed since the previous update
+   - work remaining
+   - timestamp
+
+2. Work Notes
+   - explanation of actions taken
+   - observations
+   - dependencies
+   - problems encountered
+   - decisions/context
+   - resolution notes
+
+3. Time-Spent / Effort Entry
+   - task-level effort
+   - duration or hours
+   - activity category where required
+   - timestamp
+   - correction/change history
+
+4. Supporting Documents / Evidence
+   - work artifacts
+   - reports
+   - screenshots
+   - test results
+   - drafts
+   - deliverables
+   - other supporting files
+
+Audit should distinguish:
+- state changes
+- work-activity records
+- administrative changes
+- review/approval events
+- file/version changes
+- reassignment events
+
+============================================================
+C. LEAD-CENTRIC BUSINESS MODEL
+============================================================
+
+The firm works on LEADS and the firm's ROYALTY is connected to leads.
+
+This makes Lead Management and Royalty Tracking important additions to the
+system.
+
+DO NOT assume the royalty formula until the Manager confirms it.
+
+The system should be capable of representing:
+
+Lead acquisition
+    -> lead qualification
+    -> lead ownership/assignment
+    -> lead follow-up/activity
+    -> lead status progression
+    -> conversion / business event
+    -> royalty-eligible event
+    -> royalty calculation/record
+    -> management reporting
+    -> Chairman-level royalty visibility
+
+The exact meaning of "converted", "successful lead", "royalty-eligible lead",
+"royalty earned", timing of recognition, and ownership attribution must be
+confirmed with the Manager.
+
+============================================================
+D. DETAILED QUESTIONS TO ASK THE MANAGER
+============================================================
+
+Ask these questions in the following order. The aim is to discover the real
+business process before finalizing screens, KPIs, permissions, or automation.
+
+------------------------------------------------------------
+D1. ORGANIZATIONAL STRUCTURE
+------------------------------------------------------------
+
+1. What is the actual reporting hierarchy among Chairman, General Manager,
+   Senior Manager, Lead Manager and Executive?
+
+2. Does every employee report to exactly one manager, or can an employee
+   report to multiple managers?
+
+3. Can a person hold multiple designations/roles at the same time?
+
+4. What is the exact difference between General Manager, Senior Manager,
+   Lead Manager and Executive in day-to-day work?
+
+5. Which roles are directly involved in lead handling?
+
+6. Which roles are directly involved in converting leads into royalty?
+
+7. Which roles only provide supporting work and do not own leads?
+
+8. Who is allowed to create a new employee account?
+
+9. Who is allowed to change an employee's role or designation?
+
+10. Who approves role/access changes?
+
+
+------------------------------------------------------------
+D2. LEAD SOURCES
+------------------------------------------------------------
+
+1. From where do leads normally arrive?
+
+2. Are leads entered manually, imported, received from forms, APIs,
+   phone calls, campaigns, referrals, advertisements, social media,
+   websites, or other sources?
+
+3. Can the same lead arrive more than once?
+
+4. How does the firm detect duplicate leads?
+
+5. What information is required before a lead can be accepted?
+
+6. What fields are mandatory for a new lead?
+
+7. Who owns a newly received lead before assignment?
+
+8. Does every lead belong to a location/branch?
+
+9. Does every lead belong to a department or campaign?
+
+10. Should the source of every lead be permanently retained for analytics?
+
+
+------------------------------------------------------------
+D3. LEAD QUALIFICATION
+------------------------------------------------------------
+
+1. What makes a lead "qualified"?
+
+2. Who qualifies the lead?
+
+3. What stages does a lead pass through before it becomes a meaningful
+   business opportunity?
+
+4. What reasons cause a lead to be rejected, ignored, delayed or lost?
+
+5. Do you use lead priority such as Hot / Warm / Cold or another method?
+
+6. What information is required to move a lead from one stage to another?
+
+7. Are stage changes approved by a Manager?
+
+8. Can an employee move a lead to every stage, or only selected stages?
+
+9. Which stage represents a lead that can potentially generate royalty?
+
+10. What is the exact business definition of a "converted lead"?
+
+
+------------------------------------------------------------
+D4. LEAD OWNERSHIP & ASSIGNMENT
+------------------------------------------------------------
+
+1. Who assigns a lead to a BDE?
+
+2. Is assignment manual, automatic, round-robin, location-based,
+   workload-based, skill-based, or a combination?
+
+3. Can a lead be reassigned?
+
+4. Who can reassign a lead?
+
+5. What reasons justify reassignment?
+
+6. Should reassignment require approval?
+
+7. Must the original owner remain visible in the lead history?
+
+8. Can two employees work on the same lead?
+
+9. How is shared/co-owned work handled?
+
+10. What happens when the assigned BDE is absent or on leave?
+
+
+------------------------------------------------------------
+D5. BDE DAILY WORK
+------------------------------------------------------------
+
+1. What exactly does a BDE do with a lead?
+
+2. How many leads is a BDE normally expected to handle?
+
+3. What activities must be logged?
+
+4. Must calls be logged?
+
+5. Must follow-ups be logged?
+
+6. Must meetings be logged?
+
+7. Are there mandatory follow-up intervals?
+
+8. What is the expected daily workload?
+
+9. What is the expected weekly/monthly workload?
+
+10. Which actions are considered productive activity?
+
+11. Which actions count toward the BDE's KPI?
+
+12. What is the expected response time for a new lead?
+
+13. What happens when a lead is not contacted?
+
+14. What happens when the lead stops responding?
+
+15. How is a lost lead recorded?
+
+16. How is a successful lead recorded?
+
+
+------------------------------------------------------------
+D6. LEAD KPI QUESTIONS
+------------------------------------------------------------
+
+Ask the Manager to provide the ACTUAL KPI targets rather than accepting
+generic industry values.
+
+For each KPI, ask:
+
+- KPI name
+- formula
+- unit
+- target
+- minimum acceptable level
+- time period
+- data source
+- responsible role
+- who reviews it
+- whether it affects appraisal
+- whether it affects royalty
+- whether the target changes by employee/team
+
+Candidate KPI categories to confirm:
+
+A. Lead volume
+   - leads received
+   - leads assigned
+   - leads contacted
+   - leads followed up
+
+B. Responsiveness
+   - first-response time
+   - follow-up response time
+   - missed follow-up count
+
+C. Pipeline movement
+   - qualification rate
+   - stage progression
+   - conversion rate
+   - lost-lead rate
+
+D. Activity
+   - calls
+   - follow-ups
+   - meetings
+   - interactions
+   - completed lead actions
+
+E. Outcome
+   - converted leads
+   - successful outcomes
+   - royalty-generating outcomes
+
+F. Quality
+   - data completeness
+   - duplicate rate
+   - invalid lead rate
+   - lead handling quality
+
+
+------------------------------------------------------------
+D7. ROYALTY QUESTIONS — CRITICAL
+------------------------------------------------------------
+
+The Manager must define the exact royalty business rules.
+
+Ask:
+
+1. What exactly triggers royalty for the firm?
+
+2. Is royalty generated by:
+   - every lead,
+   - every qualified lead,
+   - every converted lead,
+   - a completed business transaction,
+   - a customer conversion,
+   - a revenue-generating event,
+   - or another event?
+
+3. Is royalty a fixed amount or percentage?
+
+4. Is it based on:
+   - lead value,
+   - deal value,
+   - transaction value,
+   - commission,
+   - periodic contract value,
+   - or another base?
+
+5. Is royalty recognized immediately or only after some later business event?
+
+6. When should the system consider royalty "earned"?
+
+7. Can royalty be adjusted later?
+
+8. Can a royalty record be cancelled or reversed?
+
+9. If a lead is reassigned, who gets attribution for the royalty?
+
+10. If multiple BDEs work on one lead, how is attribution handled?
+
+11. Does the person who first received the lead get credit?
+
+12. Does the person who converted the lead get credit?
+
+13. Can a Manager modify royalty attribution?
+
+14. Does approval exist before royalty becomes final?
+
+15. What happens when a lead is duplicated?
+
+16. What happens if a lead is transferred between employees?
+
+17. Can royalty be associated with a team as well as an employee?
+
+18. Should historical royalty records be immutable after approval?
+
+19. Who can view individual royalty amounts?
+
+20. Who can view total organizational royalty?
+
+21. What should the Chairman see?
+
+22. What should the General Manager see?
+
+23. What should the BDE see about their own royalty contribution?
+
+24. Should royalty appear in employee performance analytics?
+
+25. Does royalty affect targets/KPIs, or is it only a reporting metric?
+
+
+------------------------------------------------------------
+D8. CHAIRMAN ROYALTY VISIBILITY
+------------------------------------------------------------
+
+Ask the Manager what the Chairman actually wants to see.
+
+Candidate information:
+
+- total royalty earned
+- royalty by month
+- royalty trend
+- royalty by branch/location
+- royalty by team
+- royalty by BDE
+- leads contributing to royalty
+- conversion-to-royalty rate
+- outstanding/pending royalty
+- royalty adjustments
+- royalty from different lead sources
+
+Ask:
+
+1. What is the most important royalty number on the Chairman dashboard?
+
+2. Which time periods matter most?
+
+3. Does the Chairman need to see the lead-level evidence behind the royalty total?
+
+4. Should the Chairman be able to drill from:
+
+Total Royalty
+    -> Team
+    -> BDE
+    -> Lead
+    -> Activity / evidence?
+
+5. Which royalty data should be read-only?
+
+6. What business events require Chairman-level intervention?
+
+
+------------------------------------------------------------
+D9. MANAGER WORKLOAD & TARGET QUESTIONS
+------------------------------------------------------------
+
+1. How does the Manager know whether an employee has enough capacity?
+
+2. What indicates that an employee is overloaded?
+
+3. Does task assignment consider existing workload?
+
+4. Does lead assignment consider existing lead volume?
+
+5. Should the system recommend another employee when someone is overloaded?
+
+6. What is the Manager expected to monitor every morning?
+
+7. What is the Manager expected to monitor during the day?
+
+8. What is reviewed at the end of the day?
+
+9. What targets are set daily?
+
+10. What targets are set weekly?
+
+11. What targets are set monthly?
+
+12. Which targets are employee-level and which are team-level?
+
+
+------------------------------------------------------------
+D10. MANAGER PERFORMANCE METRICS
+------------------------------------------------------------
+
+Ask which of these actually apply:
+
+- team target achievement
+- task completion rate
+- on-time completion rate
+- overdue rate
+- task reassignment rate
+- blocker resolution time
+- approval turnaround time
+- leave/attendance exceptions
+- team workload balance
+- lead conversion rate
+- royalty generated by team
+- royalty growth
+- response to escalations
+- pending approval count
+
+Ask for actual formulas and thresholds.
+
+
+------------------------------------------------------------
+D11. SOCIAL MEDIA MANAGER
+------------------------------------------------------------
+
+Ask:
+
+1. What work does the Social Media Manager actually perform?
+
+2. Does the role manage content only, or campaigns as well?
+
+3. Which platforms are handled?
+
+4. What is the workflow from idea/brief to publication?
+
+5. Who creates the content?
+
+6. Who reviews the content?
+
+7. Who approves publication?
+
+8. How many revisions are normal?
+
+9. Are deadlines attached to every item?
+
+10. What KPIs matter?
+
+Candidate KPI categories to confirm:
+
+- content delivered
+- on-time delivery
+- campaigns completed
+- first-draft turnaround
+- revision count
+- approval turnaround
+- publishing consistency
+- engagement-related measures if the firm actually uses them
+- campaign outcomes if relevant
+
+
+------------------------------------------------------------
+D12. GRAPHIC DESIGNER
+------------------------------------------------------------
+
+Ask:
+
+1. How does the design brief reach the designer?
+
+2. What information must a brief contain?
+
+3. How many versions/revisions are normally created?
+
+4. Who gives feedback?
+
+5. Who approves the final design?
+
+6. What counts as completed work?
+
+7. Which files must be stored?
+
+8. Does every version need to remain accessible?
+
+9. What KPIs matter?
+
+Candidate KPI categories:
+
+- first-draft turnaround time
+- delivery time
+- on-time completion
+- revision count
+- approval rate
+- number of completed deliverables
+- rework frequency
+- workload
+
+
+------------------------------------------------------------
+D13. IT SYSTEM ANALYST
+------------------------------------------------------------
+
+Ask:
+
+1. What systems/services does the IT analyst actually maintain?
+
+2. What types of incidents are handled?
+
+3. Which APIs/integrations are relevant?
+
+4. What technical monitoring is required?
+
+5. What work should be tracked as a task?
+
+6. What should be treated as an incident instead of a normal task?
+
+7. What is the escalation process?
+
+8. What technical KPIs are actually used?
+
+Candidate KPI categories:
+
+- incident response time
+- incident resolution time
+- deployment completion
+- issue backlog
+- system availability
+- integration health
+- change success rate
+- recurring incident count
+
+
+------------------------------------------------------------
+D14. ATTENDANCE & AVAILABILITY
+------------------------------------------------------------
+
+Ask:
+
+1. What is the difference between attendance and availability in the real
+   business process?
+
+2. Which availability states are actually needed?
+
+Candidate availability options:
+
+- Available
+- Busy
+- On Break
+- In Meeting
+- In Training
+- Do Not Disturb
+- Working Remotely
+- On Leave
+- Absent
+- Offline
+
+Ask which are legitimate and which should be removed.
+
+3. Is attendance location-aware?
+
+4. Are field logins allowed?
+
+5. Who reviews unusual location events?
+
+6. What happens when attendance information conflicts with availability?
+
+7. What attendance metrics are reported to management?
+
+
+------------------------------------------------------------
+D15. EMPLOYEE WORK ACTIVITY
+------------------------------------------------------------
+
+Ask:
+
+1. Which activity records are mandatory?
+
+2. Should every task require progress updates?
+
+3. When should work notes be required?
+
+4. Must blocked tasks include a reason?
+
+5. Must effort be recorded for every task?
+
+6. Which file types are acceptable as supporting evidence?
+
+7. Can employees edit previous work activity?
+
+8. If they edit it, should the original version remain in history?
+
+9. Should managers see the complete chronological activity trail?
+
+10. What information must remain immutable after submission?
+
+
+------------------------------------------------------------
+D16. APPROVAL & ESCALATION RULES
+------------------------------------------------------------
+
+Ask:
+
+1. What work requires Manager approval?
+
+2. What requires Senior Manager approval?
+
+3. What requires General Manager approval?
+
+4. What requires Chairman approval?
+
+5. What happens when the Manager is unavailable?
+
+6. When does an overdue task become an escalation?
+
+7. Can a Manager extend the deadline?
+
+8. Can a Manager reassign the task?
+
+9. What reasons justify reassignment?
+
+10. When does an unresolved issue move to a higher authority?
+
+11. What information must accompany an escalation?
+
+
+------------------------------------------------------------
+D17. REPORTS REQUIRED
+------------------------------------------------------------
+
+Ask the Manager to identify which reports are actually used.
+
+Candidate reports:
+
+DAILY
+- task status summary
+- overdue tasks
+- blockers
+- attendance exceptions
+- lead activity
+- lead conversion activity
+- royalty activity
+
+WEEKLY
+- employee performance
+- team performance
+- lead funnel
+- workload
+- task bottlenecks
+- royalty trend
+
+MONTHLY
+- organization performance
+- royalty summary
+- conversion summary
+- employee/team KPI performance
+- operational exceptions
+- management summary
+
+Ask:
+1. Who receives each report?
+2. When is it generated?
+3. Is it emailed?
+4. Is it downloadable?
+5. Is it PDF/Excel/CSV?
+6. Who is allowed to regenerate it?
+7. Which figures need approval before distribution?
+
+
+------------------------------------------------------------
+D18. DATA & AUDIT
+------------------------------------------------------------
+
+Ask which actions must create audit records.
+
+Candidate audit events:
+
+- login
+- logout
+- failed login
+- location exception
+- account creation
+- account activation/deactivation
+- role change
+- permission change
+- task creation
+- task edit
+- task reassignment
+- deadline change
+- priority change
+- status change
+- progress change
+- work note creation/edit
+- effort entry creation/edit
+- document upload/version change
+- blocker creation
+- blocker resolution
+- escalation
+- submission
+- manager feedback
+- approval
+- rejection/change request
+- task closure
+- lead assignment
+- lead reassignment
+- lead stage change
+- lead conversion
+- royalty creation
+- royalty adjustment
+- report generation
+- privileged administrative action
+
+For every auditable event, ask:
+
+WHO did it?
+WHAT changed?
+WHEN?
+WHY?
+WHAT WAS THE OLD VALUE?
+WHAT IS THE NEW VALUE?
+WAS IT USER-INITIATED OR SYSTEM-GENERATED?
+
+
+============================================================
+E. ROLE-SPECIFIC SYSTEM RESPONSIBILITY MODEL
+============================================================
+
+CHAIRMAN
+--------
+Primary purpose:
+Executive oversight and business decision support.
+
+Expected visibility:
+- organization-wide performance
+- global operational work
+- major escalations
+- business targets
+- lead pipeline summary
+- royalty earned
+- royalty trends
+- high-level employee/team performance
+- critical audit summaries
+
+Primary actions:
+- inspect
+- review
+- make authorized high-level decisions
+- intervene in exceptional/high-impact matters
+
+Should not become the routine operator of the entire system.
+
+
+GENERAL MANAGER
+---------------
+Primary purpose:
+Main business/operational management role.
+
+Expected visibility:
+- broad operational performance
+- teams
+- leads
+- tasks
+- targets
+- workload
+- escalations
+- royalty performance
+- management reports
+
+Primary actions:
+- monitor
+- coordinate
+- approve where authorized
+- resolve cross-team issues
+- review management KPIs
+
+
+SENIOR MANAGER
+--------------
+Primary purpose:
+Higher operational oversight.
+
+Possible scope:
+- multiple teams/functions
+- operational performance
+- escalations
+- approvals
+- workload
+- lead performance
+- royalty performance relevant to assigned scope
+
+
+LEAD MANAGER
+------------
+Primary purpose:
+Direct team management.
+
+Core areas:
+- task creation and assignment
+- employee bandwidth
+- task monitoring
+- overdue intervention
+- task reassignment
+- QA/review
+- blockers
+- team targets
+- employee workload
+- leave/availability
+- lead allocation where applicable
+- team lead/conversion performance
+- team royalty contribution where authorized
+
+
+EXECUTIVE
+---------
+Primary purpose:
+Assigned operational work.
+
+Core areas:
+- assigned tasks
+- personal work queue
+- work execution
+- progress
+- work activity
+- evidence
+- blockers
+- submissions
+- personal attendance
+- personal requests
+- personal performance
+
+
+BUSINESS DEVELOPMENT EXECUTIVE
+------------------------------
+Primary purpose:
+Lead handling and business-development activity.
+
+Core areas:
+- assigned leads
+- lead qualification
+- communication/follow-up
+- lead stage updates
+- activity logging
+- task execution
+- lead notes
+- evidence
+- conversion activity
+- personal target/KPI visibility
+- personal royalty-attribution visibility where business policy allows
+
+
+SOCIAL MEDIA MANAGER
+--------------------
+Primary purpose:
+Content and social-media operations.
+
+Core areas:
+- assigned campaigns/tasks
+- content pipeline
+- content calendar
+- drafts
+- revisions
+- approvals
+- publishing/completion
+- work activity
+- supporting files
+- content KPIs
+
+
+GRAPHIC DESIGNER
+----------------
+Primary purpose:
+Creative production and deliverables.
+
+Core areas:
+- design briefs
+- assigned work
+- creative queue
+- drafts/version history
+- revision workflow
+- submission/review
+- supporting files
+- work activity
+- personal performance indicators
+
+
+IT SYSTEM ANALYST
+-----------------
+Primary purpose:
+Technical operations and system support.
+
+Core areas:
+- system health
+- incidents
+- APIs/integrations
+- technical tasks
+- authentication/session issues
+- technical audit
+- deployments/changes
+- diagnostics
+- technical reports
+
+Important:
+Technical privilege does not automatically grant business-management authority.
+
+
+ADMIN
+-----
+Primary purpose:
+Routine administration within limited administrative authority.
+
+Core areas:
+- user provisioning
+- user updates
+- account activation/deactivation
+- location/attendance administration
+- authorized global operational oversight
+- announcements
+- approved settings
+- security/audit viewing
+
+Admin should not have unrestricted platform-governance power.
+
+
+SUPER ADMIN
+-----------
+Primary purpose:
+Platform-wide technical and authorization governance.
+
+Core areas:
+- roles
+- permissions
+- privileged access
+- system configuration
+- security controls
+- platform-wide administration
+- audit/compliance
+- critical override actions
+- platform-wide technical governance
+
+Every privileged action must remain auditable.
+
+
+============================================================
+F. LEAD + ROYALTY ANALYTICS MODEL
+============================================================
+
+The following is a DESIGN MODEL to validate with the Manager, not a final
+business rule.
+
+Potential information chain:
+
+LEAD SOURCE
+    ->
+LEAD CAPTURE
+    ->
+DUPLICATE CHECK
+    ->
+QUALIFICATION
+    ->
+ASSIGNMENT
+    ->
+BDE ACTIVITY
+    ->
+FOLLOW-UP
+    ->
+LEAD STAGE
+    ->
+CONVERSION / BUSINESS EVENT
+    ->
+ROYALTY ELIGIBILITY
+    ->
+ROYALTY CALCULATION
+    ->
+ROYALTY APPROVAL / CONFIRMATION
+    ->
+ROYALTY RECORD
+    ->
+ANALYTICS
+    ->
+REPORTING
+    ->
+CHAIRMAN VIEW
+
+Useful derived measures to discuss:
+
+Lead volume
+Qualified lead volume
+Contact rate
+Response time
+Follow-up completion
+Stage progression
+Conversion rate
+Lost lead rate
+Reassignment rate
+Lead age
+Conversion time
+Royalty-eligible leads
+Royalty generated
+Royalty by employee
+Royalty by team
+Royalty by source
+Royalty by period
+Royalty per converted lead
+Royalty trend
+Pending royalty
+Adjusted/reversed royalty
+
+
+============================================================
+G. UPDATED INTELLIGENCE & ANALYTICAL LAYER
+============================================================
+
+1. PERFORMANCE ANALYTICS
+------------------------
+Task performance
+Lead performance
+Employee KPIs
+Team KPIs
+Target achievement
+Royalty contribution
+
+
+2. TASK & WORKLOAD ANALYTICS
+----------------------------
+Active work
+Pending work
+Overdue work
+Reassignment
+Completion time
+Employee workload
+Team workload
+Effort variance
+
+
+3. LEAD & PIPELINE ANALYTICS
+----------------------------
+Lead volume
+Lead source
+Qualification
+Stage distribution
+Response time
+Follow-up activity
+Conversion
+Lost leads
+Lead aging
+Assignment/reassignment
+
+
+4. ROYALTY ANALYTICS
+--------------------
+Royalty earned
+Royalty trend
+Royalty by period
+Royalty by team
+Royalty by BDE
+Royalty by lead source
+Royalty per conversion
+Pending/adjusted royalty
+
+
+5. ATTENDANCE & WORKFORCE ANALYTICS
+-----------------------------------
+Attendance
+Availability
+Work hours
+Absence
+Leave
+Availability patterns
+Workforce capacity
+
+
+6. TREND & PATTERN ANALYSIS
+---------------------------
+Task delays
+Conversion trends
+Royalty trends
+Workload changes
+Repeated blockers
+Repeated reassignment
+Attendance patterns
+Performance changes
+
+
+7. EXCEPTION & RISK ANALYSIS
+----------------------------
+Overdue tasks
+Stagnant leads
+Repeated reassignment
+Unresolved blockers
+Abnormal activity
+Attendance exceptions
+Royalty anomalies
+Unusual permission activity
+
+
+8. PREDICTIVE INSIGHTS
+----------------------
+Only where the actual implementation supports it.
+
+Potential examples:
+- deadline risk
+- workload overload
+- lead follow-up risk
+- potential conversion risk
+- projected royalty
+
+Predictions should be presented as analytical signals, not guaranteed outcomes.
+
+
+============================================================
+H. UPDATED STITCH MASTER PROMPT
+============================================================
+
+Use the following as the master project prompt for Google's Stitch.
+
+------------------------------------------------------------
+BEGIN STITCH MASTER PROMPT
+------------------------------------------------------------
+
+Design a complete enterprise-grade internal web application called:
+
+INTERNAL OPERATIONS TRACKING SYSTEM
+
+This is an internal operational management and tracking platform for a
+lead-driven organization. It is NOT a public SaaS product and NOT a marketing
+website.
+
+The system has three conceptual layers:
+
+1. AUTHENTICATION & AUTHORIZATION LAYER
+2. MANAGEMENT LAYER
+3. INTELLIGENCE & ANALYTICAL LAYER
+
+The organization works heavily with LEADS, and the firm earns ROYALTY from
+business generated through qualifying lead outcomes. The exact royalty
+formula is intentionally configurable and must not be invented by the UI.
+
+The product must visually represent the relationship:
+
+Lead
+-> work activity
+-> business outcome
+-> royalty
+-> analytics
+-> management insight
+
+COMMON LOGIN
+------------
+Use one login screen for every role.
+
+There is NO registration page.
+
+Accounts are created manually inside the system by authorized administrators.
+
+Login:
+Credentials
+-> validation
+-> session/location validation
+-> audit event
+-> role/permission resolution
+-> role-specific dashboard
+
+Do NOT ask the user to select a role on login.
+
+USER / ROLE MODEL
+-----------------
+Roles:
+
+Chairman
+Senior Manager
+General Manager
+Lead Manager
+Executive
+IT System Analyst
+Business Development Executive
+Social Media Manager
+Graphic Designer
+Admin
+Super Admin
+
+Use role-based authorization.
+
+Use two broad access bands:
+
+HIGHER-LEVEL ACCESS
+LIMITED ACCESS
+
+But determine actual authority through:
+- role
+- scope
+- permitted actions
+- organizational context
+
+MANAGEMENT MODEL
+----------------
+General Manager is the main management role in the current organizational
+concept, with the management structure represented through:
+General Manager
+Senior Manager
+Lead Manager
+Executive
+
+Operational employee roles include:
+BDE
+Social Media Manager
+Graphic Designer
+and technical operational staff such as IT System Analyst where applicable.
+
+Do not make all roles look identical.
+
+LEAD MANAGEMENT
+---------------
+Design lead-centric operational workflows.
+
+Support:
+- lead capture
+- lead source
+- qualification
+- assignment
+- ownership
+- follow-up
+- stage changes
+- reassignment
+- conversion
+- outcome
+- royalty attribution
+- royalty record
+
+Never assume the royalty formula. Show configurable/business-defined fields.
+
+Provide a clear chain of accountability:
+lead owner
+assigned manager
+source
+activity
+conversion
+royalty eligibility
+royalty record
+
+ROYALTY
+-------
+Royalty is a business outcome linked to qualifying lead/business events.
+
+The UI must support:
+- royalty-eligible state
+- royalty amount/value
+- source/outcome
+- attribution
+- status
+- approval/confirmation where configured
+- adjustment/reversal history
+- audit history
+
+The exact royalty trigger, formula, timing and attribution are configurable
+because they must be confirmed by management.
+
+TASK MANAGEMENT
+---------------
+Tasks use:
+
+Assigned
+Pending
+Overdue
+Reassigned
+Completed
+
+Operational task execution may use:
+
+In Progress
+Blocked
+Waiting for Review
+Approval
+Issue Resolved
+Done / Closed
+
+Reassigned is a transition/event, not an ending state.
+
+Overdue is an exception state that should produce manager attention.
+
+EMPLOYEE WORK EXECUTION
+-----------------------
+Employees can:
+- acknowledge work
+- start work
+- update progress
+- record work activity
+- add notes
+- record effort
+- upload supporting evidence
+- report blockers
+- create issue tickets
+- receive manager intervention
+- continue work
+- submit work
+- receive changes
+- correct and resubmit
+- complete work
+
+RECORD WORK ACTIVITY
+--------------------
+Support:
+
+Progress Updates
+Work Notes
+Time-Spent / Effort
+Supporting Documents / Evidence
+
+Represent these as historical work records rather than task statuses.
+
+AUDIT
+-----
+Show traceable history for:
+- task changes
+- lead changes
+- lead ownership
+- royalty changes
+- approval
+- reassignment
+- work activity
+- uploads/version changes
+- user/access changes
+- attendance
+- configuration changes
+
+Each audit event should show:
+actor
+role
+timestamp
+action
+object/resource
+previous value
+new value
+reason when applicable
+user-generated/system-generated source
+
+INTELLIGENCE & ANALYTICAL LAYER
+-------------------------------
+Include:
+
+Performance Analytics
+Task & Workload Analytics
+Lead & Pipeline Analytics
+Royalty Analytics
+Attendance & Workforce Analytics
+Trend & Pattern Analysis
+Exception & Risk Analysis
+Predictive Insights where supported
+Automated Reporting
+
+Every visualization must answer a business question.
+
+CHAIRMAN
+--------
+Design an executive cockpit emphasizing:
+
+- total operational health
+- active work
+- overdue work
+- major escalations
+- lead pipeline
+- conversion
+- royalty earned
+- royalty trend
+- team contribution
+- operational risks
+
+Allow drill-down:
+
+Royalty
+-> team
+-> BDE
+-> lead
+-> outcome/evidence
+
+Keep executive actions controlled and high-impact.
+
+GENERAL MANAGER
+---------------
+Emphasize:
+- organization/branch operations
+- lead pipeline
+- royalty
+- targets
+- performance
+- workload
+- escalations
+- cross-team coordination
+
+SENIOR MANAGER
+--------------
+Emphasize:
+- multi-team oversight
+- performance
+- workload
+- lead outcomes
+- escalation handling
+- approvals
+- royalty metrics within scope
+
+LEAD MANAGER
+------------
+Make this the main team-operations workspace.
+
+Show:
+- team availability
+- task workload
+- lead allocation
+- target achievement
+- overdue tasks
+- blockers
+- approvals
+- team performance
+- lead conversion
+- team royalty contribution
+
+BDE
+---
+Design a lead-execution workspace.
+
+Show:
+- assigned leads
+- response actions
+- follow-ups
+- lead stages
+- tasks
+- today's target
+- conversion progress
+- work activity
+- personal performance
+- authorized royalty contribution view
+
+SOCIAL MEDIA MANAGER
+--------------------
+Focus on:
+- campaigns
+- content pipeline
+- deadlines
+- revisions
+- approvals
+- content work
+- analytics
+
+GRAPHIC DESIGNER
+----------------
+Focus on:
+- briefs
+- creative queue
+- versions
+- revisions
+- approvals
+- files
+- workload
+- work activity
+
+IT SYSTEM ANALYST
+-----------------
+Focus on:
+- system health
+- incidents
+- APIs
+- authentication/session events
+- technical tasks
+- audit
+- deployments
+- diagnostics
+
+ADMIN
+-----
+Focus on:
+- user provisioning
+- account lifecycle
+- location/attendance administration
+- announcements
+- authorized global operations
+- approved system settings
+- security/audit visibility
+
+SUPER ADMIN
+-----------
+Focus on:
+- roles
+- permissions
+- platform configuration
+- privileged access
+- security
+- technical governance
+- global audit
+- controlled overrides
+
+Do not automatically grant business-management authority to technical roles.
+
+VISUAL DESIGN
+-------------
+Create a high-quality enterprise product.
+
+Desktop-first around 1440px.
+
+Use:
+- consistent left navigation
+- compact global header
+- breadcrumbs
+- global search
+- notification center
+- user/role indicator
+- location/availability indicator
+- dense but readable data tables
+- drawers
+- modal confirmation
+- contextual side panels
+- progressive disclosure
+
+Style:
+professional
+calm
+modern
+data-oriented
+enterprise
+trustworthy
+clear
+
+Avoid:
+- marketing hero sections
+- unnecessary gradients
+- excessive glassmorphism
+- decorative illustrations
+- childish cards
+- excessive rounded containers
+- meaningless charts
+- excessive visual noise
+
+Make the system feel complex underneath but simple on top.
+
+The Chairman should understand it immediately.
+
+Managers should be able to act quickly.
+
+Employees should immediately see what they need to do.
+
+The product should feel like a coherent operational platform rather than
+eleven disconnected dashboards.
+
+------------------------------------------------------------
+END STITCH MASTER PROMPT
+------------------------------------------------------------
+
+
+============================================================
+I. STITCH ROLE-SPECIFIC PROMPT ADDITIONS
+============================================================
+
+Use the Master Prompt first. Then provide the appropriate role-specific
+prompt.
+
+------------------------------------------------------------
+CHAIRMAN PROMPT ADDITION
+------------------------------------------------------------
+
+Create the Chairman workspace as an executive operations cockpit.
+
+Primary sections:
+
+Overview
+Operational Health
+Lead Pipeline
+Royalty
+Performance
+Escalations
+Analytics
+Reports
+Audit Summary
+
+Top KPI cards:
+
+- Active Operations
+- Tasks at Risk
+- Lead Pipeline
+- Conversion Rate
+- Royalty Earned
+- Royalty Trend
+- Major Escalations
+
+Create a Royalty Intelligence section.
+
+Display:
+period
+royalty earned
+royalty pending
+royalty adjustments
+royalty trend
+royalty by team
+royalty by lead source
+
+Add a drill-down path:
+
+Royalty Total
+-> Team
+-> BDE
+-> Lead
+-> Business Outcome
+
+Create an Operational Attention panel.
+
+Keep the interface executive-level and avoid routine administrative operations.
+
+
+------------------------------------------------------------
+GENERAL MANAGER PROMPT ADDITION
+------------------------------------------------------------
+
+Create a General Manager dashboard as the main broad operational management
+workspace.
+
+Emphasize:
+
+Operations
+Teams
+Leads
+Targets
+Tasks
+Workload
+Performance
+Royalty
+Escalations
+Reports
+
+Create:
+
+Lead Pipeline Summary
+Team Target Summary
+Operational Task Status
+Workload Distribution
+Overdue/At-Risk Work
+Royalty Summary
+Management Action Center
+
+Allow drill-down from business metrics to operational records.
+
+
+------------------------------------------------------------
+LEAD MANAGER PROMPT ADDITION
+------------------------------------------------------------
+
+Create a Lead Manager workspace focused on direct team management.
+
+Show:
+
+Team Live Status
+Employee Availability
+Task Queue
+Lead Allocation
+Lead Follow-ups
+Today's Targets
+Overdue Work
+Blocked Work
+Approval Queue
+Team Performance
+Team Royalty Contribution
+
+Include a manager action center:
+
+- assign task
+- reassign task
+- review submitted work
+- resolve blocker
+- review overdue work
+- approve/request changes
+- review lead assignment
+- monitor conversion
+- inspect team royalty contribution
+
+Use contextual confirmation for high-impact actions.
+
+
+------------------------------------------------------------
+BDE PROMPT ADDITION
+------------------------------------------------------------
+
+Create a professional Business Development Executive workspace.
+
+Primary navigation:
+
+Dashboard
+My Leads
+Lead Pipeline
+Follow-ups
+My Tasks
+Work Activity
+Targets
+Performance
+Notifications
+Profile
+
+Main metrics:
+
+- assigned leads
+- new leads
+- pending follow-ups
+- overdue follow-ups
+- qualified leads
+- converted leads
+- today's target
+- target progress
+- authorized royalty contribution
+
+Lead detail should contain:
+
+Lead identity
+Source
+Current stage
+Priority
+Owner
+Manager
+Next follow-up
+Activity history
+Notes
+Tasks
+Conversion/outcome
+Royalty eligibility/status where the business policy permits visibility
+
+The employee should be able to record lead activity without gaining manager
+permissions.
+
+
+------------------------------------------------------------
+SOCIAL MEDIA MANAGER PROMPT ADDITION
+------------------------------------------------------------
+
+Create a social-media operations workspace.
+
+Show:
+
+Campaigns
+Content Queue
+Content Calendar
+Assigned Tasks
+Review Queue
+Revisions
+Work Activity
+Performance Analytics
+
+Track:
+brief
+deadline
+draft
+revision count
+review
+approval
+completion/publication
+
+Use version/history interactions for content work.
+
+
+------------------------------------------------------------
+GRAPHIC DESIGNER PROMPT ADDITION
+------------------------------------------------------------
+
+Create a creative-production workspace.
+
+Show:
+
+Creative Queue
+Design Brief
+Assigned Tasks
+Drafts
+Versions
+Review
+Revisions
+Approved Deliverables
+Work Activity
+
+Make version history visible.
+
+Submission flow:
+
+Create
+-> Draft
+-> Submit for Review
+-> Feedback
+-> Revision
+-> Resubmit
+-> Approved
+-> Completed
+
+
+============================================================
+J. DATA MODEL QUESTIONS TO FINALIZE WITH MANAGER
+============================================================
+
+Do not finalize database fields until these questions are answered.
+
+USER
+----
+Employee ID
+Name
+Email
+Phone
+Designation
+System Role
+Access Level
+Department/Team
+Manager
+Location
+Account Status
+
+LEAD
+----
+Lead ID
+Source
+Date Received
+Customer/Prospect details
+Owner
+Manager
+Status
+Priority
+Next Follow-up
+Activity History
+Conversion
+Outcome
+Royalty eligibility
+Royalty reference
+Audit history
+
+TASK
+----
+Task ID
+Title
+Description
+Priority
+Due Date/SLA
+Assigned employee
+Assigned manager
+Status
+Execution state
+Progress
+Work activity
+Evidence
+Blocker
+Submission
+Review
+Approval
+Reassignment history
+Audit history
+
+ROYALTY
+-------
+Royalty ID
+Related Lead
+Related Business Outcome
+Attribution
+Amount/value
+Currency if applicable
+Eligibility state
+Approval state
+Recognition date
+Adjustment/reversal history
+Audit history
+
+The exact field names, formulas, statuses and relationships must be confirmed
+with the Manager before implementation.
+
+
+============================================================
+K. FINAL DISCOVERY CHECKLIST FOR THE MANAGER MEETING
+============================================================
+
+At minimum, leave the meeting with exact answers to these 20 items:
+
+1. Lead sources
+2. Lead lifecycle stages
+3. Lead qualification rule
+4. Lead ownership rule
+5. Lead reassignment rule
+6. BDE daily/weekly/monthly targets
+7. BDE KPI formulas
+8. Definition of conversion
+9. Exact royalty trigger
+10. Exact royalty calculation
+11. Royalty attribution rule
+12. Royalty approval/adjustment rule
+13. Chairman royalty information requirements
+14. Manager approval authority
+15. Overdue escalation thresholds
+16. Actual task micro-states
+17. Required employee work-activity records
+18. Required reports and schedules
+19. Required audit events
+20. Role-by-role access restrictions
+
+============================================================
+L. DESIGN PRINCIPLE TO KEEP THROUGHOUT THE PROJECT
+============================================================
+
+The system should connect BUSINESS ACTIVITY to MANAGEMENT INSIGHT.
+
+For lead-driven operations, the central chain is:
+
+Lead
+    -> Assigned Employee
+    -> Activity
+    -> Qualification
+    -> Follow-up
+    -> Conversion
+    -> Royalty
+    -> Analytics
+    -> Management Insight
+    -> Decision / Action
+    -> Audit
+
+For task-driven operations:
+
+Task
+    -> Assignment
+    -> Execution
+    -> Work Activity
+    -> Blocker / Overdue
+    -> Manager Intervention
+    -> Submission
+    -> Review
+    -> Correction / Approval
+    -> Completion
+    -> Analytics
+    -> Audit
+
+The system should therefore be designed as an operational tracking and
+decision-support platform, not merely as a collection of CRUD screens.
+
+============================================================
+END OF DOCUMENT
+============================================================
