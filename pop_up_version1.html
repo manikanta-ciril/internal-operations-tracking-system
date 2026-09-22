@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIRIL - Internal Operations Tracking System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff', 100: '#e0effe', 200: '#b9ddfe',
+                            500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af',
+                            800: '#172554', 900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'pan-grid': 'pan-grid 35s linear infinite',
+                        'shimmer': 'shimmer 2.2s infinite linear',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        'pan-grid': { '0%': { backgroundPosition: '0 0' }, '100%': { backgroundPosition: '36px 36px' } },
+                        'shimmer': { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(250%)' } },
+                        'slideUp': { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        'fadeIn': { '0%': { opacity: '0' }, '100%': { opacity: '1' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            margin: 0; padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .bg-grid-bright {
+            background-image:
+                linear-gradient(to right, rgba(37, 99, 235, 0.09) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(37, 99, 235, 0.09) 1px, transparent 1px);
+            background-size: 36px 36px;
+        }
+        .dark .bg-grid-bright {
+            background-image:
+                linear-gradient(to right, rgba(56, 189, 248, 0.09) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.09) 1px, transparent 1px);
+            background-size: 36px 36px;
+        }
+        .grid-mask {
+            mask-image: radial-gradient(circle at center, black 65%, rgba(0, 0, 0, 0.3) 95%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 65%, rgba(0, 0, 0, 0.3) 95%, transparent 100%);
+        }
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.09), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        .glass-panel-dark {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .spinner-modern {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(37, 99, 235, 0.2);
+            border-top-color: #2563eb; border-radius: 50%;
+            animation: spin 0.75s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+        }
+        .dark .spinner-modern {
+            border-color: rgba(56, 189, 248, 0.2);
+            border-top-color: #38bdf8;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const SunIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>;
+        const MoonIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>;
+        const LockIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>;
+        const EyeIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>;
+        const EyeOffIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /></svg>;
+        const ShieldIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>;
+        const TerminalIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 17 10 11 4 5" /><line x1="12" x2="20" y1="19" y2="19" /></svg>;
+        const MapPinIcon = ({ className = "w-3.5 h-3.5" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>;
+        const CheckCircleIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>;
+        const AlertCircleIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>;
+        const ArrowRightIcon = ({ className = "w-4 h-4" }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>;
+
+        const DecodedText = ({ text, delay = 0, speed = 32, className = "" }) => {
+            const [displayText, setDisplayText] = useState(() => text.replace(/[^\s]/g, ' '));
+            useEffect(() => {
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                let timeout = setTimeout(() => {
+                    let iteration = 0;
+                    let interval = setInterval(() => {
+                        setDisplayText(text.split("").map((letter, index) => {
+                            if (letter === ' ') return ' ';
+                            if (index < iteration) return text[index];
+                            return chars[Math.floor(Math.random() * chars.length)];
+                        }).join(""));
+                        if (iteration >= text.length) clearInterval(interval);
+                        iteration += 1 / 3;
+                    }, speed);
+                    return () => clearInterval(interval);
+                }, delay);
+                return () => clearTimeout(timeout);
+            }, [text, delay, speed]);
+            return <span className={`inline-block whitespace-pre tabular-nums tracking-tight ${className}`} style={{ fontVariantNumeric: 'tabular-nums' }}>{displayText}</span>;
+        };
+
+        const AuthorizeButton = ({ children, type = "submit", onClick }) => {
+            return (
+                <button type={type} onClick={onClick} className="group relative w-full h-[52px] rounded-xl overflow-hidden cursor-pointer select-none transition-all duration-300 active:scale-[0.985] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-slate-900 shadow-[0_4px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_8px_30px_rgba(37,99,235,0.42)]">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 transition-all duration-300 group-hover:opacity-95" />
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                    <div className="relative z-10 w-full h-full px-5 flex items-center justify-between text-white">
+                        <div className="flex items-center space-x-2.5 font-semibold text-[15px] tracking-wide">
+                            <span className="p-1 rounded-md bg-white/10 backdrop-blur-sm"><LockIcon className="w-4 h-4 text-blue-100" /></span>
+                            <span>{children}</span>
+                        </div>
+                        <div className="w-8 h-8 rounded-lg bg-white/15 dark:bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 transition-all duration-300 group-hover:bg-white/25 group-hover:translate-x-1 shadow-sm">
+                            <ArrowRightIcon className="w-4 h-4 text-white transition-transform duration-300" />
+                        </div>
+                    </div>
+                </button>
+            );
+        };
+
+        const SimpleThemeToggle = ({ isDarkMode, setIsDarkMode, className = "" }) => (
+            <button type="button" onClick={() => setIsDarkMode(!isDarkMode)} aria-label="Toggle display theme" className={`flex items-center justify-center w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-sm transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/40 ${className}`}>
+                {isDarkMode ? <MoonIcon className="w-4 h-4 text-blue-400" /> : <SunIcon className="w-4 h-4 text-amber-500" />}
+            </button>
+        );
+
+        const App = () => {
+            const [empId, setEmpId] = useState('');
+            const [password, setPassword] = useState('');
+            const [showPassword, setShowPassword] = useState(false);
+            
+            // Modals
+            const [helpModalOpen, setHelpModalOpen] = useState(false);
+            const [validationModalOpen, setValidationModalOpen] = useState(false);
+            const [isDarkMode, setIsDarkMode] = useState(false);
+
+            const [phase, setPhase] = useState('idle');
+            const [processStep, setProcessStep] = useState(0);
+            const [errorMessage, setErrorMessage] = useState('');
+            const [txHash, setTxHash] = useState('');
+
+            const currentDate = "September 22, 2026";
+            const currentLocation = "Hyderabad, TS";
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                
+                // Custom Validation Interceptor
+                if (!empId || !password) {
+                    setValidationModalOpen(true);
+                    return;
+                }
+
+                setPhase('processing');
+                setProcessStep(1);
+                setTxHash('AUTH-' + Math.random().toString(36).substring(2, 10).toUpperCase());
+
+                try {
+                    await new Promise(r => setTimeout(r, 1600));
+                    setProcessStep(2);
+                    await new Promise(r => setTimeout(r, 1400));
+                    setProcessStep(2.5);
+                    setProcessStep(4);
+                    await new Promise(r => setTimeout(r, 1100));
+                    setPhase('success');
+                } catch (error) {
+                    setPhase('error');
+                    setProcessStep(0);
+                    setErrorMessage(error.message || 'Authentication sequence failed.');
+                }
+            };
+
+            const resetForm = () => {
+                setPhase('idle');
+                setProcessStep(0);
+                setErrorMessage('');
+            };
+
+            return (
+                <div className={`min-h-screen w-full relative flex flex-col selection:bg-blue-600 selection:text-white transition-colors duration-500 overflow-x-hidden ${isDarkMode ? 'dark bg-[#090d16]' : 'bg-[#f4f7fb]'}`}>
+                    
+                    <div className="fixed inset-0 bg-grid-bright animate-pan-grid pointer-events-none z-0 grid-mask opacity-90"></div>
+                    <div className="fixed top-1/4 left-1/12 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="fixed bottom-1/4 right-1/12 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <SimpleThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} className="hidden lg:flex fixed top-7 right-8 z-50" />
+
+                    <main className="relative z-10 w-full max-w-[1300px] mx-auto flex-1 flex flex-col lg:flex-row items-center justify-center px-5 sm:px-8 lg:px-12 py-6 lg:py-16 gap-4 lg:gap-16">
+                        
+                        <div className="w-full flex items-center justify-between lg:hidden mb-4 sm:mb-8 animate-fade-in">
+                            <div className="flex items-center space-x-2.5">
+                                <img src="./img/logo.png" alt="CIRIL" className="h-8 sm:h-10 w-auto object-contain" />
+                                <span className="font-bold text-lg text-slate-900 dark:text-white tracking-wide">CIRIL</span>
+                            </div>
+                            <SimpleThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+                        </div>
+
+                        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left select-none">
+                            <div className="hidden lg:flex p-3.5 rounded-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-lg shadow-blue-950/5 dark:shadow-black/50 mb-10 items-center justify-center">
+                                <img src="./img/logo.png" alt="CIRIL Logo" className="h-11 xl:h-12 w-auto object-contain block shrink-0" />
+                            </div>
+
+                            {/* TYPOGRAPHY FIX: Added pb-2 and adjusted line-height to prevent gradient clipping of descenders */}
+                            <h1 className="text-[26px] sm:text-4xl lg:text-[44px] xl:text-[48px] font-bold tracking-tight text-slate-900 dark:text-white leading-normal lg:mb-3 w-full">
+                                <div className="min-h-[36px] sm:min-h-[48px] lg:min-h-[4rem] flex items-end justify-center lg:justify-start pb-1">
+                                    <DecodedText text="Internal Operations" delay={200} />
+                                </div>
+                                <div className="min-h-[36px] sm:min-h-[48px] lg:min-h-[4rem] flex items-end justify-center lg:justify-start text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 dark:from-blue-400 dark:via-indigo-300 dark:to-cyan-400 pb-2">
+                                    <DecodedText text="Tracking System" delay={600} />
+                                </div>
+                            </h1>
+
+                            <div className="hidden lg:block w-full mt-4">
+                                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-50/80 dark:bg-blue-950/50 border border-blue-200/80 dark:border-blue-800/60 backdrop-blur-md text-blue-700 dark:text-blue-300 text-xs font-mono mb-4">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                    </span>
+                                    <span>ENTERPRISE NETWORK</span>
+                                </div>
+
+                                <p className="text-slate-600 dark:text-slate-400 text-base max-w-[460px] leading-relaxed border-l-2 border-blue-500 pl-4 mb-10">
+                                    Centralized enterprise platform for secure identity authentication, telemetry tracking, and operational intelligence.
+                                </p>
+                                
+                                <div className="text-xs font-mono text-slate-500 dark:text-slate-400 space-y-1.5 pt-2">
+                                    <p className="flex items-center text-slate-600 dark:text-slate-300 font-medium">
+                                        <MapPinIcon className="w-3.5 h-3.5 text-blue-500 mr-2 shrink-0" />
+                                        <span>Node: {currentLocation} (Primary Core)</span>
+                                    </p>
+                                    <p className="text-slate-400 dark:text-slate-500">VERSION: 4.14.2 // PROTOCOL: TLS 1.3 // BUILD: 2609-HYD</p>
+                                    <p className="text-slate-400 dark:text-slate-500">ACTIVE_CYCLE: {currentDate}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-1/2 flex justify-center lg:justify-end mt-4 sm:mt-8 lg:mt-0 animate-slide-up delay-200">
+                            <div className={`w-full max-w-[440px] rounded-3xl p-6 sm:p-9 relative transition-all duration-300 ${isDarkMode ? 'glass-panel-dark' : 'glass-panel-light'}`}>
+                                <div className="absolute inset-x-8 top-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent"></div>
+
+                                {(phase === 'idle' || phase === 'error') && (
+                                    <div>
+                                        <div className="mb-6 lg:mb-8">
+                                            <div className="hidden sm:inline-flex items-center space-x-2 px-3 py-1 bg-slate-100/90 dark:bg-slate-800/80 rounded-full text-[11px] font-mono text-slate-600 dark:text-slate-300 mb-3 border border-slate-200/80 dark:border-slate-700/80">
+                                                <TerminalIcon className="w-3.5 h-3.5 text-blue-500" />
+                                                <span>Secure Authorization Gateway</span>
+                                            </div>
+                                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">System Access</h2>
+                                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Enter corporate identity credentials.</p>
+                                        </div>
+
+                                        {phase === 'error' && (
+                                            <div className="mb-6 p-3 sm:p-4 bg-rose-50/90 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl text-sm text-rose-800 dark:text-rose-300 flex items-start space-x-3 backdrop-blur-sm animate-fade-in">
+                                                <div className="mt-0.5 shrink-0 text-rose-600 dark:text-rose-400"><AlertCircleIcon className="w-4 h-4" /></div>
+                                                <div className="flex-1">
+                                                    <span className="font-semibold block text-[11px] sm:text-xs uppercase tracking-wider mb-0.5">Authorization Exception</span>
+                                                    <p className="text-xs font-mono">{errorMessage}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* HTML5 Generic Validation Disabled with noValidate */}
+                                        <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5" noValidate>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">Employee Identity</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={empId}
+                                                        onChange={(e) => setEmpId(e.target.value)}
+                                                        className="w-full px-4 py-3 sm:py-3.5 bg-white/70 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all font-mono shadow-sm"
+                                                        placeholder="EMP-9382"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <div className="flex justify-between items-center">
+                                                    <label className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">Security Credential</label>
+                                                    <button type="button" onClick={() => setHelpModalOpen(true)} className="text-[11px] sm:text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">Recovery Protocol</button>
+                                                </div>
+                                                <div className="relative">
+                                                    <input
+                                                        type={showPassword ? "text" : "password"}
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        className="w-full px-4 py-3 sm:py-3.5 bg-white/70 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all font-mono shadow-sm tracking-widest"
+                                                        placeholder="••••••••"
+                                                    />
+                                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors p-1.5 rounded-lg focus:outline-none">
+                                                        {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="pt-2 sm:pt-3">
+                                                <AuthorizeButton type="submit">Authorize Access</AuthorizeButton>
+                                            </div>
+                                        </form>
+                                    </div>
+                                )}
+
+                                {(phase === 'processing' || phase === 'success') && (
+                                    <div className="space-y-5 sm:space-y-6 animate-fade-in relative">
+                                        <div className="absolute -top-6 -left-6 -right-6 sm:-top-9 sm:-left-9 sm:-right-9 h-1 bg-slate-200/60 dark:bg-slate-700/60 rounded-t-3xl overflow-hidden">
+                                            <div className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-600 w-2/5 animate-[shimmer_1.8s_infinite_linear]"></div>
+                                        </div>
+                                        <div className="border-b border-slate-200/80 dark:border-slate-700/80 pb-4 pt-1">
+                                            <h3 className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white flex items-center">
+                                                <TerminalIcon className="w-4 h-4 text-blue-500 mr-2" />
+                                                <span>Authentication Pipeline</span>
+                                            </h3>
+                                        </div>
+                                        <div className="space-y-4 sm:space-y-5">
+                                            <div className="flex items-start space-x-3 sm:space-x-3.5">
+                                                <div className="mt-0.5 shrink-0">
+                                                    {processStep === 1 ? <div className="spinner-modern"></div> : <span className="text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 p-1 rounded-full block border border-emerald-200 dark:border-emerald-800"><CheckCircleIcon className="w-3.5 h-3.5" /></span>}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`text-xs sm:text-sm font-medium ${processStep >= 1 ? 'text-slate-900 dark:text-slate-100' : 'text-slate-400'}`}>Validating Directory Token</p>
+                                                    {processStep === 1 && <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full mt-2 overflow-hidden"><div className="h-full bg-blue-600 rounded-full animate-[shimmer_1s_infinite]"></div></div>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="relative z-10 w-full text-center py-4 lg:py-6 pointer-events-none mt-auto">
+                        <p className="text-[9px] lg:text-[11px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-mono px-4">
+                            Unauthorized access is strictly prohibited. <br className="sm:hidden" /> All actions are cryptographically signed.
+                        </p>
+                    </footer>
+
+                    {/* NEW Custom Validation Dialog Box */}
+                    {validationModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md p-4 px-6 animate-fade-in">
+                            <div className="w-full max-w-md rounded-2xl p-6 lg:p-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl animate-slide-up">
+                                <div className="flex items-center space-x-2.5 mb-4 text-slate-900 dark:text-white">
+                                    <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-500">
+                                        <AlertCircleIcon className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="text-base sm:text-lg font-bold tracking-tight">Validation Error</h3>
+                                </div>
+                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 mb-6 font-mono text-[11px] sm:text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                    <p className="mb-2">
+                                        The authorization gateway requires complete credentials.
+                                    </p>
+                                    <p className="text-amber-600 dark:text-amber-500 font-semibold">
+                                        Please populate both the Employee Identity and Security Credential fields to proceed.
+                                    </p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={() => setValidationModalOpen(false)}
+                                        className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[13px] sm:text-sm font-semibold transition-all shadow-md hover:bg-slate-800 dark:hover:bg-slate-200"
+                                    >
+                                        Return to Form
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Recovery Modal */}
+                    {helpModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md p-4 px-6 animate-fade-in">
+                            <div className="w-full max-w-md rounded-2xl p-6 lg:p-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl animate-slide-up">
+                                <div className="flex items-center space-x-2.5 mb-4 text-slate-900 dark:text-white">
+                                    <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
+                                        <ShieldIcon className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="text-base sm:text-lg font-bold tracking-tight">Identity Recovery Protocol</h3>
+                                </div>
+                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 mb-6 font-mono text-[11px] sm:text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                                    <p className="text-rose-600 dark:text-rose-400 font-semibold mb-2">>_ ERR_AUTH: SELF_SERVICE_DISABLED</p>
+                                    <p className="mb-2">Automated self-service password resets are disabled pursuant to Organizational Security Standard ISO-27001 §4.2.</p>
+                                    <p className="text-slate-500 dark:text-slate-400">Contact your designated Department Identity Administrator or open an IT Service Desk ticket to request physical token replenishment.</p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button onClick={() => setHelpModalOpen(false)} className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] sm:text-sm font-semibold transition-all shadow-md shadow-blue-500/20">
+                                        Acknowledge & Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
