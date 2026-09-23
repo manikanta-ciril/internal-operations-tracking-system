@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIRIL - Magic Link Minimalist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'DM Sans', sans-serif; background-color: #fafafa; }</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-sm text-center animate-fade-in">
+        
+        <!-- Logo -->
+        <div class="w-14 h-14 bg-black text-white rounded-[14px] flex items-center justify-center mx-auto mb-8 text-2xl font-bold shadow-[0_8px_16px_rgba(0,0,0,0.15)] hover:scale-105 transition-transform cursor-pointer">C</div>
+        
+        <!-- Headers -->
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Sign in to CIRIL</h1>
+        <p class="text-gray-500 mb-8 text-sm">We'll send a magic link to your company email.</p>
+        
+        <!-- Magic Link Form -->
+        <form class="space-y-4">
+            <div class="relative group">
+                <input 
+                    type="email" 
+                    placeholder="name@ciril.com" 
+                    class="w-full pl-5 pr-14 py-3.5 rounded-2xl border border-gray-200 shadow-sm focus:border-black focus:ring-1 focus:ring-black outline-none transition-all text-center text-base bg-white"
+                >
+                <button 
+                    type="button" 
+                    class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 transition-colors shadow-md active:scale-95"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </form>
+        
+        <!-- Footer info -->
+        <div class="mt-10 flex items-center justify-center space-x-2 text-xs text-gray-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            <span>Secure single sign-on powered by CIRIL Identity</span>
+        </div>
+    </div>
+</body>
+</html>
