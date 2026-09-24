@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>CIRIL - Work Management Portal</title>
+
+    <!-- Tailwind CSS, Three.js (r160), Anime.js, React 18 & Babel Standalone -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- High-Resolution Solar System Scope Earth Textures (Zero-latency data URLs for local/offline) -->
+    <script src="./textures/earth_textures_data.js"></script>
+
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                screens: {
+                    'xs': '375px',
+                    'sm': '640px',
+                    'md': '768px',
+                    'lg': '1024px',
+                    'xl': '1280px',
+                    '2xl': '1536px',
+                },
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ciril: {
+                            base: '#020408',
+                            dark: '#060a10',
+                            slate: '#121820',
+                            cyan: '#4db2ff',
+                            twilight: '#bc490b',
+                            redArc: '#ff3344',
+                            emerald: '#4cd964'
+                        }
+                    },
+                    animation: {
+                        'beam': 'borderBeam 7s linear infinite',
+                        'shimmer': 'shimmerSweep 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'shake': 'shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
+                        'blink': 'blinkCursor 1s infinite',
+                    },
+                    keyframes: {
+                        borderBeam: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' },
+                        },
+                        shimmerSweep: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(250%)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-12px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' },
+                        },
+                        blinkCursor: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            min-height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #020408;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Safe area support for mobile devices */
+        .safe-area-top { padding-top: env(safe-area-inset-top, 0px); }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+        /* Full Screen Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: auto;
+        }
+
+        /* Floating Modern Glassmorphic Login Card */
+        .border-beam-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+        }
+        .border-beam-card::after {
+            content: '';
+            position: absolute;
+            inset: -150%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                transparent 75deg,
+                rgba(77, 178, 255, 0.85) 115deg,
+                rgba(192, 152, 96, 0.95) 130deg,
+                rgba(255, 51, 68, 0.85) 145deg,
+                transparent 190deg,
+                transparent 360deg
+            );
+            animation: borderBeam 8s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Glass Surface Inner Layer */
+        .glass-card-surface {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.45);
+        }
+        .dark .glass-card-surface {
+            background: rgba(8, 13, 20, 0.82);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(77, 178, 255, 0.18);
+            box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(77, 178, 255, 0.03);
+        }
+
+        /* Modernized Authorize Button with Anime.js */
+        .btn-authorize-saas {
+            position: relative;
+            background: linear-gradient(135deg, #1b2430 0%, #111720 50%, #1e2938 100%);
+            box-shadow: 
+                0 4px 15px -2px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(77, 178, 255, 0.35),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            transform-origin: center center;
+            will-change: transform;
+        }
+        .btn-authorize-saas:hover {
+            box-shadow: 
+                0 8px 25px -4px rgba(77, 178, 255, 0.5),
+                0 0 0 1px rgba(77, 178, 255, 0.8),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Apple-Inspired Toggle Checkbox */
+        .checkbox-apple-container {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .checkbox-apple-toggle {
+            position: relative;
+            width: 38px;
+            height: 22px;
+            border-radius: 9999px;
+            background: linear-gradient(to bottom, #707070, #949494);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
+        }
+        .dark .checkbox-apple-toggle {
+            background: linear-gradient(to bottom, #303742, #1b212a);
+        }
+        .checkbox-apple-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        input[type="checkbox"]:checked + .checkbox-apple-toggle {
+            background: linear-gradient(to bottom, #4db2ff, #0088ff);
+        }
+        input[type="checkbox"]:checked + .checkbox-apple-toggle::after {
+            transform: translateX(16px);
+        }
+
+        /* Tooltip on Theme Toggle at Bottom-Left */
+        .theme-tooltip {
+            position: absolute;
+            left: 58px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .theme-button-wrap:hover .theme-tooltip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(4px);
+        }
+
+        /* 3D Telemetry HUD Tooltip attached to hovered node */
+        .node-telemetry-hud {
+            position: fixed;
+            pointer-events: none;
+            z-index: 30;
+            transform: translate(-50%, -125%);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* Real-Time Bleep Rhythm Keyframes for UI Buttons & Beacons */
+        @keyframes bleepRhythmSonar {
+            0% { transform: scale(0.8); opacity: 0.95; }
+            50% { transform: scale(1.6); opacity: 0.35; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes bleepRhythmQuantum {
+            0%, 24%, 48% { opacity: 1; transform: scale(1.4); }
+            12%, 36% { opacity: 0.2; transform: scale(0.9); }
+            55%, 100% { opacity: 0.25; transform: scale(1.0); }
+        }
+        @keyframes bleepRhythmCascade {
+            0% { transform: translateY(-3px) scale(0.85); opacity: 0.35; }
+            50% { transform: translateY(0px) scale(1.35); opacity: 1; }
+            100% { transform: translateY(3px) scale(0.85); opacity: 0.35; }
+        }
+        @keyframes bleepRhythmHeartbeat {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            14% { transform: scale(1.3); opacity: 1; }
+            26% { transform: scale(1.06); opacity: 0.75; }
+            40% { transform: scale(1.6); opacity: 1; }
+            58% { transform: scale(1); opacity: 0.65; }
+        }
+        @keyframes bleepRhythmStrobe {
+            0%, 7% { opacity: 1; transform: scale(1.55); filter: drop-shadow(0 0 6px #ffffff); }
+            8%, 14% { opacity: 0.15; transform: scale(1); filter: none; }
+            15%, 22% { opacity: 1; transform: scale(1.45); filter: drop-shadow(0 0 6px #ffffff); }
+            23%, 100% { opacity: 0.15; transform: scale(1); filter: none; }
+        }
+        @keyframes bleepRhythmPlasma {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.25); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .anim-bleep-sonar { animation: bleepRhythmSonar 1.25s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+        .anim-bleep-quantum { animation: bleepRhythmQuantum 1.5s cubic-bezier(0.2, 0, 0.4, 1) infinite; }
+        .anim-bleep-cascade { animation: bleepRhythmCascade 1.4s ease-in-out infinite; }
+        .anim-bleep-heartbeat { animation: bleepRhythmHeartbeat 1.3s cubic-bezier(0.25, 1, 0.5, 1) infinite; }
+        .anim-bleep-strobe { animation: bleepRhythmStrobe 1.0s step-end infinite; }
+        .anim-bleep-plasma { animation: bleepRhythmPlasma 2.2s linear infinite; }
+
+        /* Respect prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .border-beam-card::after { display: none; }
+        }
+    </style>
+</head>
+
+<body class="selection:bg-cyan-500/20 selection:text-cyan-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+        // =========================================================================
+        // PURE CLIENT-SIDE SYNTHETIC AUDIO (Success Login Chime Only - No UI toggle)
+        // =========================================================================
+        const playSuccessChime = () => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                // Uplifting harmonic major triad chord: C5 (523Hz), E5 (659Hz), G5 (784Hz), C6 (1046Hz)
+                const frequencies = [523.25, 659.25, 783.99, 1046.50];
+                frequencies.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.07);
+
+                    gain.gain.setValueAtTime(0, ctx.currentTime + idx * 0.07);
+                    gain.gain.linearRampToValueAtTime(0.065, ctx.currentTime + idx * 0.07 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.07 + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.07);
+                    osc.stop(ctx.currentTime + idx * 0.07 + 0.38);
+                });
+            } catch (err) {
+                // Audio autoplay handled silently
+            }
+        };
+
+        const playNodePing = (freq = 920) => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.13);
+            } catch (err) {
+                // Audio autoplay handled silently
+            }
+        };
+
+        const playBleepModeAudio = (modeId) => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                if (modeId === 'sonar') {
+                    // Sonar ping frequency sweep 980Hz down to 490Hz with acoustic decay
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(980, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(490, ctx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.045, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.20);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.21);
+                } else if (modeId === 'quantum') {
+                    // Rapid 3-pip staccato burst (1200Hz, 1400Hz, 1600Hz)
+                    [0, 0.045, 0.09].forEach((t, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(1200 + i * 200, ctx.currentTime + t);
+                        gain.gain.setValueAtTime(0.035, ctx.currentTime + t);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.038);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(ctx.currentTime + t);
+                        osc.stop(ctx.currentTime + t + 0.042);
+                    });
+                } else if (modeId === 'cascade') {
+                    // Arpeggio rolling triad (520Hz, 650Hz, 780Hz)
+                    [0, 0.055, 0.11].forEach((t, i) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(520 + i * 130, ctx.currentTime + t);
+                        gain.gain.setValueAtTime(0.04, ctx.currentTime + t);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.08);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(ctx.currentTime + t);
+                        osc.stop(ctx.currentTime + t + 0.09);
+                    });
+                } else if (modeId === 'heartbeat') {
+                    // Double-thump low-frequency cardiac pulse (130Hz -> 75Hz, 155Hz -> 65Hz)
+                    const osc1 = ctx.createOscillator();
+                    const gain1 = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc1.frequency.setValueAtTime(130, ctx.currentTime);
+                    osc1.frequency.exponentialRampToValueAtTime(75, ctx.currentTime + 0.08);
+                    gain1.gain.setValueAtTime(0.065, ctx.currentTime);
+                    gain1.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
+                    osc1.connect(gain1);
+                    gain1.connect(ctx.destination);
+                    osc1.start(ctx.currentTime);
+                    osc1.stop(ctx.currentTime + 0.095);
+
+                    const osc2 = ctx.createOscillator();
+                    const gain2 = ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(155, ctx.currentTime + 0.12);
+                    osc2.frequency.exponentialRampToValueAtTime(65, ctx.currentTime + 0.22);
+                    gain2.gain.setValueAtTime(0.08, ctx.currentTime + 0.12);
+                    gain2.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.24);
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.start(ctx.currentTime + 0.12);
+                    osc2.stop(ctx.currentTime + 0.25);
+                } else if (modeId === 'strobe') {
+                    // Twin aerospace strobe clicks
+                    [0, 0.10].forEach((t) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(1850, ctx.currentTime + t);
+                        gain.gain.setValueAtTime(0.025, ctx.currentTime + t);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.025);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(ctx.currentTime + t);
+                        osc.stop(ctx.currentTime + t + 0.03);
+                    });
+                } else if (modeId === 'plasma') {
+                    // Orbital radar frequency sweep warble
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(720, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(840, ctx.currentTime + 0.09);
+                    osc.frequency.linearRampToValueAtTime(680, ctx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.20);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.21);
+                }
+            } catch (err) {}
+        };
+
+        // =========================================================================
+        // CRISP VECTOR ICONS
+        // =========================================================================
+        const UserIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+        );
+
+        const LockIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        );
+
+        const EyeIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+        );
+
+        const EyeOffIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>
+            </svg>
+        );
+
+        const ArrowRightIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+            </svg>
+        );
+
+        const SunIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+            </svg>
+        );
+
+        const MoonIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        );
+
+        const ShieldIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+        );
+
+        const CheckCircleIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+        );
+
+        const AlertCircleIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+        );
+
+        const XIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        );
+
+        // =========================================================================
+        // 17 STATES FROM states.txt (Geographic Lat/Lon on Earth Sphere)
+        // No skyscrapers: Only sleek pulsing data beacon points & red photon pathways
+        // =========================================================================
+        const STATE_HUBS = [
+            { id: "delhi", name: "Delhi", hub: "National Operations HQ", lat: 28.61, lon: 77.20, traffic: "3.2 Gbps" },
+            { id: "punjab", name: "Punjab", hub: "Northern Logistics Link", lat: 31.14, lon: 75.34, traffic: "950 Mbps" },
+            { id: "haryana", name: "Haryana", hub: "Industrial Corridor Link", lat: 29.05, lon: 76.08, traffic: "1.4 Gbps" },
+            { id: "rajasthan", name: "Rajasthan", hub: "Regional Distribution Grid", lat: 27.02, lon: 74.21, traffic: "1.1 Gbps" },
+            { id: "gujarat", name: "Gujarat", hub: "Commercial Gateway (Ahmedabad)", lat: 22.25, lon: 71.19, traffic: "2.4 Gbps" },
+            { id: "maharashtra", name: "Maharashtra", hub: "Western Financial Gateway (Mumbai)", lat: 19.75, lon: 75.71, traffic: "4.8 Gbps" },
+            { id: "goa", name: "Goa", hub: "Coastal Data Terminal", lat: 15.29, lon: 74.12, traffic: "780 Mbps" },
+            { id: "karnataka", name: "Karnataka", hub: "Tech Operations Core (Bengaluru)", lat: 15.31, lon: 75.71, traffic: "4.1 Gbps" },
+            { id: "kerala", name: "Kerala", hub: "South-West Hub (Kochi)", lat: 10.85, lon: 76.27, traffic: "910 Mbps" },
+            { id: "tamilnadu", name: "Tamil Nadu", hub: "Southern Maritime Hub (Chennai)", lat: 11.12, lon: 78.65, traffic: "2.6 Gbps" },
+            { id: "telangana", name: "Telangana", hub: "Operations Logistics (Hyderabad)", lat: 18.11, lon: 79.01, traffic: "2.9 Gbps" },
+            { id: "madhyapradesh", name: "Madhya Pradesh", hub: "Central Logistics Center (Bhopal)", lat: 22.97, lon: 78.65, traffic: "1.2 Gbps" },
+            { id: "chhattisgarh", name: "Chhattisgarh", hub: "Energy & Resource Grid", lat: 21.27, lon: 81.86, traffic: "870 Mbps" },
+            { id: "odisha", name: "Odisha", hub: "Eastern Port Corridor", lat: 20.95, lon: 85.09, traffic: "940 Mbps" },
+            { id: "jharkhand", name: "Jharkhand", hub: "Operations Logistics Node", lat: 23.61, lon: 85.27, traffic: "860 Mbps" },
+            { id: "westbengal", name: "West Bengal", hub: "Eastern Operations Terminal (Kolkata)", lat: 22.98, lon: 87.85, traffic: "2.2 Gbps" },
+            { id: "assam", name: "Assam", hub: "North-Eastern Terminal (Guwahati)", lat: 26.20, lon: 92.93, traffic: "840 Mbps" },
+        ];
+
+        // Many-to-many communication lines between state hubs across India
+        const NETWORK_CONNECTIONS = [
+            ["delhi", "maharashtra"],
+            ["maharashtra", "karnataka"],
+            ["karnataka", "telangana"],
+            ["telangana", "tamilnadu"],
+            ["delhi", "haryana"],
+            ["haryana", "punjab"],
+            ["delhi", "rajasthan"],
+            ["rajasthan", "gujarat"],
+            ["gujarat", "maharashtra"],
+            ["maharashtra", "goa"],
+            ["goa", "karnataka"],
+            ["karnataka", "kerala"],
+            ["kerala", "tamilnadu"],
+            ["delhi", "madhyapradesh"],
+            ["madhyapradesh", "chhattisgarh"],
+            ["chhattisgarh", "odisha"],
+            ["odisha", "westbengal"],
+            ["westbengal", "jharkhand"],
+            ["westbengal", "assam"],
+            ["delhi", "westbengal"],
+            ["telangana", "maharashtra"],
+            ["madhyapradesh", "maharashtra"]
+        ];
+
+        // Convert Lat/Lon to 3D Cartesian coordinates on sphere of radius R
+        const latLonToVector3 = (lat, lon, radius) => {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        };
+
+        // =========================================================================
+        // THREE.JS JOURNEY EARTH SHADERS (WebGL Implementation)
+        // Photorealistic Earth directly in space as background
+        // Atmosphere Day Color: #4db2ff | Twilight Rim: #bc490b | Directional Sun
+        // Stationary: NO revolving, India prominently centered & facing camera
+        // =========================================================================
+        const NaturalEarthSpaceExperience = ({ bleepMode = 'sonar', bleepSpeed = 1.0, isDark, onSelectState }) => {
+            const mountRef = useRef(null);
+            const [hoveredNode, setHoveredNode] = useState(null);
+            const [hudPos, setHudPos] = useState({ x: 0, y: 0 });
+            const bleepModeRef = useRef(bleepMode);
+            const bleepSpeedRef = useRef(bleepSpeed);
+
+            useEffect(() => {
+                bleepModeRef.current = bleepMode;
+            }, [bleepMode]);
+
+            useEffect(() => {
+                bleepSpeedRef.current = bleepSpeed;
+            }, [bleepSpeed]);
+
+            useEffect(() => {
+                const container = mountRef.current;
+                if (!container || typeof THREE === 'undefined') return;
+
+                let width = window.innerWidth;
+                let height = window.innerHeight;
+
+                // 1. Scene & Camera
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x020408); // Deep Starry Space Black
+
+                const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
+                camera.position.set(0, 0, 8.6);
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+                renderer.setSize(width, height);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                container.appendChild(renderer.domElement);
+
+                // Deep Space Starfield Particles
+                const starGeo = new THREE.BufferGeometry();
+                const starCount = 1200;
+                const starPositions = new Float32Array(starCount * 3);
+                for (let i = 0; i < starCount * 3; i += 3) {
+                    starPositions[i] = (Math.random() - 0.5) * 70;
+                    starPositions[i + 1] = (Math.random() - 0.5) * 70;
+                    starPositions[i + 2] = -12 - Math.random() * 45;
+                }
+                starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+                const starMat = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 0.11,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const starField = new THREE.Points(starGeo, starMat);
+                scene.add(starField);
+
+                // Earth World Group positioned in center/center-right (matching sample_page.png & reference_ui.png)
+                const worldGroup = new THREE.Group();
+                const isDesktop = width >= 1024;
+                worldGroup.position.set(isDesktop ? 1.4 : 0, isDesktop ? -0.1 : -0.35, 0);
+                scene.add(worldGroup);
+
+                // Sun Direction
+                const sunPosition = new THREE.Vector3(6.0, 3.5, 5.0);
+
+                // 2. Texture Loading (Solar System Scope Earth Textures)
+                const textureLoader = new THREE.TextureLoader();
+
+                const getTexture = (key, fallbackPath) => {
+                    if (window.EARTH_TEXTURE_DATA && window.EARTH_TEXTURE_DATA[key]) {
+                        const tex = textureLoader.load(window.EARTH_TEXTURE_DATA[key]);
+                        tex.colorSpace = THREE.SRGBColorSpace;
+                        return tex;
+                    }
+                    const tex = textureLoader.load(fallbackPath);
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    return tex;
+                };
+
+                const dayTexture = getTexture('earthDay', './textures/planets/earth_day_4096.jpg');
+                const nightTexture = getTexture('earthNight', './textures/planets/earth_night_4096.jpg');
+                const bumpRoughnessCloudsTexture = getTexture('earthClouds', './textures/planets/earth_bump_roughness_clouds_4096.jpg');
+
+                // 3. Globe Sphere Mesh & Three.js Journey Shaders
+                const GLOBE_RADIUS = 3.25;
+                const sphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
+
+                const globeShaderMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        uSunPosition: { value: sunPosition },
+                        uAtmosphereDayColor: { value: new THREE.Color('#4db2ff') },      // Three.js Journey Day Color
+                        uAtmosphereTwilightColor: { value: new THREE.Color('#bc490b') }, // Three.js Journey Twilight Color
+                        uDayTexture: { value: dayTexture },
+                        uNightTexture: { value: nightTexture },
+                        uBumpRoughnessCloudsTexture: { value: bumpRoughnessCloudsTexture }
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vUv = uv;
+                            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                            vPosition = worldPos.xyz;
+                            vNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+                            gl_Position = projectionMatrix * viewMatrix * worldPos;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 uSunPosition;
+                        uniform vec3 uAtmosphereDayColor;
+                        uniform vec3 uAtmosphereTwilightColor;
+                        uniform sampler2D uDayTexture;
+                        uniform sampler2D uNightTexture;
+                        uniform sampler2D uBumpRoughnessCloudsTexture;
+
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vec3 normal = normalize(vNormal);
+                            vec3 viewDir = normalize(vPosition - cameraPosition);
+                            vec3 sunDir = normalize(uSunPosition);
+
+                            // Fresnel calculation
+                            float fresnel = 1.0 - abs(dot(viewDir, normal));
+                            fresnel = pow(fresnel, 2.0);
+
+                            // Sun orientation (day vs night side)
+                            float sunOrientation = dot(normal, sunDir);
+
+                            // Atmosphere color mix: twilight orange to day cyan
+                            float sunStep = smoothstep(-0.25, 0.75, sunOrientation);
+                            vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, sunStep);
+
+                            // Sample textures
+                            vec4 dayColor = texture2D(uDayTexture, vUv);
+                            vec4 nightColor = texture2D(uNightTexture, vUv);
+                            vec4 bumpRoughClouds = texture2D(uBumpRoughnessCloudsTexture, vUv);
+
+                            // Clouds strength from .b channel
+                            float cloudsStrength = smoothstep(0.2, 1.0, bumpRoughClouds.b);
+                            vec3 colorWithClouds = mix(dayColor.rgb, vec3(1.0), cloudsStrength * 1.5);
+
+                            // Day / Night transition
+                            float dayStrength = smoothstep(-0.25, 0.5, sunOrientation);
+                            vec3 finalOutput = mix(nightColor.rgb * 1.4, colorWithClouds, dayStrength);
+
+                            // Atmosphere Fresnel rim glow
+                            float atmosphereDayStrength = smoothstep(-0.5, 1.0, sunOrientation);
+                            float atmosphereMix = clamp(atmosphereDayStrength * fresnel, 0.0, 1.0);
+                            finalOutput = mix(finalOutput, atmosphereColor, atmosphereMix * 0.9);
+
+                            gl_FragColor = vec4(finalOutput, 1.0);
+                        }
+                    `
+                });
+
+                const globeMesh = new THREE.Mesh(sphereGeometry, globeShaderMaterial);
+                worldGroup.add(globeMesh);
+
+                // 4. Outer Atmosphere Shell (side: THREE.BackSide, scale 1.04)
+                const atmosphereMaterial = new THREE.ShaderMaterial({
+                    side: THREE.BackSide,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    uniforms: {
+                        uSunPosition: { value: sunPosition },
+                        uAtmosphereDayColor: { value: new THREE.Color('#4db2ff') },
+                        uAtmosphereTwilightColor: { value: new THREE.Color('#bc490b') }
+                    },
+                    vertexShader: `
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                            vPosition = worldPos.xyz;
+                            vNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+                            gl_Position = projectionMatrix * viewMatrix * worldPos;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 uSunPosition;
+                        uniform vec3 uAtmosphereDayColor;
+                        uniform vec3 uAtmosphereTwilightColor;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vec3 normal = normalize(vNormal);
+                            vec3 viewDir = normalize(vPosition - cameraPosition);
+                            vec3 sunDir = normalize(uSunPosition);
+
+                            float fresnel = 1.0 - abs(dot(viewDir, normal));
+                            // remap( 0.73, 1, 1, 0 ).pow( 3 )
+                            float alpha = clamp((1.0 - fresnel) / (1.0 - 0.73), 0.0, 1.0);
+                            alpha = pow(alpha, 3.0);
+
+                            float sunOrientation = dot(normal, sunDir);
+                            alpha *= smoothstep(-0.5, 1.0, sunOrientation);
+
+                            float sunStep = smoothstep(-0.25, 0.75, sunOrientation);
+                            vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, sunStep);
+
+                            gl_FragColor = vec4(atmosphereColor, alpha * 0.95);
+                        }
+                    `
+                });
+
+                const atmosphereMesh = new THREE.Mesh(sphereGeometry, atmosphereMaterial);
+                atmosphereMesh.scale.setScalar(1.04);
+                worldGroup.add(atmosphereMesh);
+
+                // 5. Stationary Orientation (Calibrated for India - NO AUTO REVOLUTION)
+                const DEFAULT_ROTATION = { x: 0.192, y: 3.07 };
+                worldGroup.rotation.x = DEFAULT_ROTATION.x;
+                worldGroup.rotation.y = DEFAULT_ROTATION.y;
+
+                // 6. India Telemetry Network Directly on Earth Surface (17 States)
+                const telemetryGroup = new THREE.Group();
+                worldGroup.add(telemetryGroup);
+
+                const stateVectors = {};
+                const interactiveSpheres = [];
+                const nodePulseList = [];
+                const lineMeshList = [];
+
+                STATE_HUBS.forEach((hub, hubIdx) => {
+                    const vec = latLonToVector3(hub.lat, hub.lon, GLOBE_RADIUS);
+                    stateVectors[hub.id] = vec;
+
+                    // Normal vector pointing outwards from sphere center
+                    const normal = vec.clone().normalize();
+
+                    // Marker Root situated slightly above surface
+                    const markerRoot = new THREE.Group();
+                    markerRoot.position.copy(vec.clone().multiplyScalar(1.002));
+                    markerRoot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+
+                    // 1. Center Core Mesh (flashes and scales on bleep)
+                    const coreGeo = new THREE.CircleGeometry(0.024, 24);
+                    const coreMat = new THREE.MeshBasicMaterial({ color: 0xff3344, side: THREE.DoubleSide });
+                    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+                    markerRoot.add(coreMesh);
+
+                    // 2. White Center Pupil Light
+                    const pupilGeo = new THREE.CircleGeometry(0.010, 16);
+                    const pupilMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+                    const pupilMesh = new THREE.Mesh(pupilGeo, pupilMat);
+                    pupilMesh.position.z = 0.001;
+                    markerRoot.add(pupilMesh);
+
+                    // 3. Primary Sonar Shockwave Ring
+                    const ring1Geo = new THREE.RingGeometry(0.026, 0.046, 32);
+                    const ring1Mat = new THREE.MeshBasicMaterial({
+                        color: 0xff3344,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.85
+                    });
+                    const ring1Mesh = new THREE.Mesh(ring1Geo, ring1Mat);
+                    ring1Mesh.position.z = 0.001;
+                    markerRoot.add(ring1Mesh);
+
+                    // 4. Secondary Echo Harmonic Ring
+                    const ring2Geo = new THREE.RingGeometry(0.024, 0.038, 32);
+                    const ring2Mat = new THREE.MeshBasicMaterial({
+                        color: 0xff5566,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.6
+                    });
+                    const ring2Mesh = new THREE.Mesh(ring2Geo, ring2Mat);
+                    ring2Mesh.position.z = 0.001;
+                    markerRoot.add(ring2Mesh);
+
+                    // 5. Elevated Sky Corona / Halo Ring
+                    const haloGeo = new THREE.RingGeometry(0.018, 0.065, 32);
+                    const haloMat = new THREE.MeshBasicMaterial({
+                        color: 0x4db2ff,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.35
+                    });
+                    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+                    haloMesh.position.z = 0.002;
+                    markerRoot.add(haloMesh);
+
+                    // 6. Tertiary Cyan Harmonic Dispersion Ring (Earth Atmosphere Rim Tint)
+                    const ring3Geo = new THREE.RingGeometry(0.034, 0.048, 32);
+                    const ring3Mat = new THREE.MeshBasicMaterial({
+                        color: 0x4db2ff,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.45,
+                        blending: THREE.AdditiveBlending
+                    });
+                    const ring3Mesh = new THREE.Mesh(ring3Geo, ring3Mat);
+                    ring3Mesh.position.z = 0.0015;
+                    markerRoot.add(ring3Mesh);
+
+                    // 7. Rotating Precision Radar Crosshair / Reticle Marks
+                    const reticleGeo = new THREE.BufferGeometry();
+                    const rInner = 0.052;
+                    const rOuter = 0.076;
+                    const reticleVertices = new Float32Array([
+                        rInner, 0, 0.002,   rOuter, 0, 0.002,
+                        -rInner, 0, 0.002, -rOuter, 0, 0.002,
+                        0, rInner, 0.002,   0, rOuter, 0.002,
+                        0, -rInner, 0.002,  0, -rOuter, 0.002
+                    ]);
+                    reticleGeo.setAttribute('position', new THREE.BufferAttribute(reticleVertices, 3));
+                    const reticleMat = new THREE.LineBasicMaterial({
+                        color: 0x4db2ff,
+                        transparent: true,
+                        opacity: 0.55,
+                        blending: THREE.AdditiveBlending
+                    });
+                    const reticleMesh = new THREE.LineSegments(reticleGeo, reticleMat);
+                    markerRoot.add(reticleMesh);
+
+                    // 8. 3D Vertical Atmospheric Uplink Laser Beam (Beacon Light Spike projecting straight up into space)
+                    const beamGeo = new THREE.CylinderGeometry(0.0012, 0.005, 0.15, 8);
+                    beamGeo.rotateX(Math.PI / 2); // Orient along local Z (surface normal)
+                    beamGeo.translate(0, 0, 0.075); // Anchor at surface level
+                    const beamMat = new THREE.MeshBasicMaterial({
+                        color: 0xff3344,
+                        transparent: true,
+                        opacity: 0.75,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false
+                    });
+                    const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+                    markerRoot.add(beamMesh);
+
+                    // Invisible Hit-Test Sphere for Raycasting
+                    const hitGeo = new THREE.SphereGeometry(0.10, 12, 12);
+                    const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+                    const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+                    hitMesh.position.copy(vec);
+                    hitMesh.userData = { hub, markerRoot, coreMesh, pupilMesh, ring1Mesh, ring2Mesh, ring3Mesh, reticleMesh, beamMesh, haloMesh };
+                    telemetryGroup.add(hitMesh);
+                    interactiveSpheres.push(hitMesh);
+
+                    telemetryGroup.add(markerRoot);
+
+                    nodePulseList.push({
+                        hub,
+                        hubIdx,
+                        markerRoot,
+                        coreMesh,
+                        pupilMesh,
+                        ring1Mesh,
+                        ring2Mesh,
+                        ring3Mesh,
+                        reticleMesh,
+                        beamMesh,
+                        haloMesh,
+                        randomOffset: (hubIdx * 0.37) % (Math.PI * 2)
+                    });
+                });
+
+                // 7. Red Elevated Curved Communication Pathways & Animated Photons
+                const arcCurves = [];
+                const photonMeshes = [];
+
+                NETWORK_CONNECTIONS.forEach(([fromId, toId], idx) => {
+                    const v1 = stateVectors[fromId];
+                    const v2 = stateVectors[toId];
+                    if (!v1 || !v2) return;
+
+                    const dist = v1.distanceTo(v2);
+                    const mid = v1.clone().add(v2).multiplyScalar(0.5);
+                    const elevation = dist * 0.16 + 0.035;
+                    const controlPoint = mid.clone().normalize().multiplyScalar(GLOBE_RADIUS + elevation);
+
+                    const curve = new THREE.QuadraticBezierCurve3(v1, controlPoint, v2);
+                    arcCurves.push({ fromId, toId, curve });
+
+                    const points = curve.getPoints(36);
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                    const lineMat = new THREE.LineBasicMaterial({
+                        color: 0xff3344,
+                        transparent: true,
+                        opacity: 0.55,
+                        linewidth: 1.5
+                    });
+                    const lineMesh = new THREE.Line(lineGeo, lineMat);
+                    lineMesh.userData = { fromId, toId };
+                    telemetryGroup.add(lineMesh);
+                    lineMeshList.push(lineMesh);
+
+                    // Flowing Glowing Data Photon Packet
+                    const photonGeo = new THREE.SphereGeometry(0.016, 12, 12);
+                    const photonMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    const photon = new THREE.Mesh(photonGeo, photonMat);
+                    photon.position.copy(v1);
+                    telemetryGroup.add(photon);
+                    photonMeshes.push({ mesh: photon, curve, t: (idx * 0.08) % 1.0, speed: 0.0035 + (idx % 3) * 0.001 });
+                });
+
+                // 8. Raycasting & Interactive Mouse Hover
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2(-999, -999);
+                let currentHoveredHit = null;
+
+                const onPointerMove = (e) => {
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+                    // Check raycasting
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(interactiveSpheres);
+
+                    if (intersects.length > 0) {
+                        const hit = intersects[0].object;
+                        if (currentHoveredHit !== hit) {
+                            if (currentHoveredHit) {
+                                currentHoveredHit.userData.markerRoot.scale.set(1, 1, 1);
+                            }
+                            currentHoveredHit = hit;
+                            currentHoveredHit.userData.markerRoot.scale.set(1.4, 1.4, 1.4);
+                            setHoveredNode(hit.userData.hub);
+
+                            // Project 3D coordinate to 2D screen coordinate
+                            const screenPos = hit.position.clone();
+                            screenPos.applyMatrix4(worldGroup.matrixWorld);
+                            screenPos.project(camera);
+                            const x = ((screenPos.x + 1) * window.innerWidth) / 2;
+                            const y = ((-screenPos.y + 1) * window.innerHeight) / 2;
+                            setHudPos({ x, y });
+                            document.body.style.cursor = 'pointer';
+                        }
+                    } else {
+                        if (currentHoveredHit) {
+                            currentHoveredHit.userData.markerRoot.scale.set(1, 1, 1);
+                            currentHoveredHit = null;
+                            setHoveredNode(null);
+                            document.body.style.cursor = 'default';
+                        }
+                    }
+                };
+
+                const onCanvasClick = () => {
+                    if (currentHoveredHit && onSelectState) {
+                        playNodePing(1100);
+                        onSelectState(currentHoveredHit.userData.hub);
+                    }
+                };
+
+                // Gentle User Drag Interaction (Orbit Damping, settles without revolving away)
+                let isDragging = false;
+                let prevMouse = { x: 0, y: 0 };
+                let targetRot = { ...DEFAULT_ROTATION };
+
+                const onPointerDown = (e) => {
+                    if (e.target.closest('button, input, a, form, .border-beam-card, .node-telemetry-hud')) return;
+                    isDragging = true;
+                    prevMouse = { x: e.clientX, y: e.clientY };
+                };
+
+                const onPointerUp = () => { isDragging = false; };
+
+                const onDragMove = (e) => {
+                    if (isDragging) {
+                        const deltaX = (e.clientX - prevMouse.x) * 0.003;
+                        const deltaY = (e.clientY - prevMouse.y) * 0.003;
+                        targetRot.y += deltaX;
+                        targetRot.x = Math.max(-0.4, Math.min(0.6, targetRot.x + deltaY));
+                        prevMouse = { x: e.clientX, y: e.clientY };
+                    }
+                };
+
+                window.addEventListener('pointerdown', onPointerDown);
+                window.addEventListener('pointerup', onPointerUp);
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointermove', onDragMove);
+                window.addEventListener('click', onCanvasClick);
+
+                // 9. Animation & Render Loop (Stationary India - NO auto-rotation!)
+                let animId;
+                let clock = new THREE.Clock();
+
+                const animate = () => {
+                    animId = requestAnimationFrame(animate);
+                    const elapsedTime = clock.getElapsedTime();
+
+                    // Smooth spring lerp back to India focus if dragged
+                    worldGroup.rotation.x += (targetRot.x - worldGroup.rotation.x) * 0.06;
+                    worldGroup.rotation.y += (targetRot.y - worldGroup.rotation.y) * 0.06;
+
+                    // Multi-Mode Bleep Animation Logic on Points
+                    const activeMode = bleepModeRef.current || 'sonar';
+                    const speedMult = bleepSpeedRef.current || 1.0;
+
+                    nodePulseList.forEach((node) => {
+                        const isHovered = currentHoveredHit && currentHoveredHit.userData.hub.id === node.hub.id;
+                        let phase1 = 0;
+                        let phase2 = 0;
+                        let phase3 = 0;
+                        let coreFlash = 0;
+                        let haloPulse = 0;
+                        let beamScale = 1.0;
+                        let beamOpacity = 0.6;
+                        let reticleRot = elapsedTime * 0.5;
+
+                        if (isHovered) {
+                            // Hyper-Telemetry mode when hovered: 4.2 Hz rapid burst
+                            const hoverCycle = (elapsedTime * 4.2 + node.randomOffset) % 1.0;
+                            phase1 = hoverCycle;
+                            phase2 = (hoverCycle + 0.3) % 1.0;
+                            phase3 = (hoverCycle + 0.6) % 1.0;
+                            coreFlash = Math.max(0, 1.0 - hoverCycle * 2.8);
+                            haloPulse = 1.0;
+                            beamScale = 2.4;
+                            beamOpacity = 1.0;
+                            reticleRot = elapsedTime * 4.5;
+                        } else if (activeMode === 'sonar') {
+                            // 1. Sonar Radar Ping: smooth wave with delayed echo harmonics (1.6 Hz)
+                            const cycle = (elapsedTime * 1.6 * speedMult + node.randomOffset) % 1.0;
+                            phase1 = cycle;
+                            phase2 = (cycle - 0.25 + 1.0) % 1.0;
+                            phase3 = (cycle - 0.50 + 1.0) % 1.0;
+                            coreFlash = Math.max(0, 1.0 - cycle * 4.0);
+                            haloPulse = 0.35 + Math.sin(elapsedTime * 2.0) * 0.15;
+                            beamScale = 0.8 + Math.sin(cycle * Math.PI) * 0.5;
+                            beamOpacity = 0.5 + coreFlash * 0.45;
+                            reticleRot = elapsedTime * 0.8;
+                        } else if (activeMode === 'quantum') {
+                            // 2. Quantum Burst: rapid staccato telemetry pulses (3.2 Hz)
+                            const burstLoop = (elapsedTime * speedMult * 1.1) % 2.5;
+                            if (burstLoop < 1.1) {
+                                const burstCycle = (burstLoop * 3.2 + node.randomOffset * 0.15) % 1.0;
+                                phase1 = burstCycle;
+                                phase2 = (burstCycle + 0.2) % 1.0;
+                                phase3 = (burstCycle + 0.4) % 1.0;
+                                coreFlash = Math.max(0, 1.0 - burstCycle * 5.0);
+                                haloPulse = 0.8;
+                                beamScale = 1.1 + coreFlash * 1.3;
+                                beamOpacity = 0.65 + coreFlash * 0.35;
+                                reticleRot = Math.floor(burstLoop * 6.0) * (Math.PI / 4);
+                            } else {
+                                phase1 = 0.99;
+                                phase2 = 0.99;
+                                phase3 = 0.99;
+                                coreFlash = 0;
+                                haloPulse = 0.1;
+                                beamScale = 0.45;
+                                beamOpacity = 0.25;
+                                reticleRot = 0;
+                            }
+                        } else if (activeMode === 'cascade') {
+                            // 3. Cascade Wavefront: North-to-South regional domino wave (0.85 Hz)
+                            const cascadeCycle = (elapsedTime * 0.85 * speedMult) % 1.0;
+                            const latDelay = ((32.0 - node.hub.lat) / 22.0) * 0.70;
+                            let localTime = cascadeCycle - latDelay;
+                            if (localTime < 0) localTime += 1.0;
+                            const waveProgress = localTime < 0.42 ? localTime / 0.42 : 1.0;
+                            phase1 = waveProgress;
+                            phase2 = (waveProgress - 0.18 + 1.0) % 1.0;
+                            phase3 = (waveProgress - 0.36 + 1.0) % 1.0;
+                            coreFlash = Math.max(0, 1.0 - waveProgress * 4.5);
+                            haloPulse = waveProgress < 0.45 ? (1.0 - waveProgress / 0.45) : 0;
+                            beamScale = waveProgress < 0.5 ? 1.0 + (1.0 - waveProgress * 2.0) * 1.5 : 0.6;
+                            beamOpacity = waveProgress < 0.5 ? 0.95 : 0.25;
+                            reticleRot = elapsedTime * 1.2;
+                        } else if (activeMode === 'heartbeat') {
+                            // 4. Heartbeat Sync: double-thump rhythmic ba-BUMP (1.15 Hz)
+                            const beatCycle = (elapsedTime * 1.15 * speedMult) % 1.0;
+                            let beatIntensity = 0;
+                            if (beatCycle < 0.16) {
+                                const t = beatCycle / 0.16;
+                                phase1 = t * 0.7;
+                                phase2 = 0.99;
+                                phase3 = 0.99;
+                                coreFlash = 0.55 * (1.0 - t);
+                                beamScale = 1.0 + 0.5 * (1.0 - t);
+                                beamOpacity = 0.65;
+                                beatIntensity = 1.0 - t;
+                            } else if (beatCycle >= 0.20 && beatCycle < 0.44) {
+                                const t = (beatCycle - 0.20) / 0.24;
+                                phase1 = t;
+                                phase2 = t * 0.85;
+                                phase3 = t * 0.70;
+                                coreFlash = 1.0 * (1.0 - t);
+                                beamScale = 1.2 + 1.3 * (1.0 - t);
+                                beamOpacity = 1.0;
+                                beatIntensity = (1.0 - t) * 1.2;
+                            } else {
+                                phase1 = 0.99;
+                                phase2 = 0.99;
+                                phase3 = 0.99;
+                                coreFlash = 0;
+                                beamScale = 0.55;
+                                beamOpacity = 0.3;
+                                beatIntensity = 0;
+                            }
+                            haloPulse = beatIntensity * 0.85;
+                            reticleRot = elapsedTime * 0.5;
+                        } else if (activeMode === 'strobe') {
+                            // 5. Tactical Aerospace Strobe: ultra-sharp twin xenon flash (2.0 Hz)
+                            const strobeCycle = (elapsedTime * 2.0 * speedMult + node.randomOffset * 0.1) % 1.0;
+                            let flash = 0;
+                            if (strobeCycle < 0.08) {
+                                flash = Math.pow(1.0 - strobeCycle / 0.08, 2.5);
+                            } else if (strobeCycle >= 0.14 && strobeCycle < 0.22) {
+                                flash = Math.pow(1.0 - (strobeCycle - 0.14) / 0.08, 2.5);
+                            }
+                            coreFlash = flash;
+                            phase1 = strobeCycle < 0.35 ? strobeCycle / 0.35 : 0.99;
+                            phase2 = (strobeCycle >= 0.14 && strobeCycle < 0.45) ? (strobeCycle - 0.14) / 0.31 : 0.99;
+                            phase3 = 0.99;
+                            beamScale = 0.5 + flash * 2.2;
+                            beamOpacity = 0.25 + flash * 0.75;
+                            haloPulse = flash;
+                            reticleRot = elapsedTime * 2.5;
+                        } else if (activeMode === 'plasma') {
+                            // 6. Orbital Scanner: continuous 360° sweeping radar with cyan-red corona (1.4 Hz)
+                            const plasmaCycle = (elapsedTime * 1.4 * speedMult + node.randomOffset) % 1.0;
+                            phase1 = plasmaCycle;
+                            phase2 = (plasmaCycle + 0.5) % 1.0;
+                            phase3 = (plasmaCycle + 0.25) % 1.0;
+                            coreFlash = 0.3 + 0.7 * (Math.sin(elapsedTime * 4.0 * speedMult) * 0.5 + 0.5);
+                            beamScale = 1.0 + Math.sin(elapsedTime * 3.0 * speedMult) * 0.6;
+                            beamOpacity = 0.75;
+                            haloPulse = 0.5 + 0.5 * Math.sin(plasmaCycle * Math.PI * 2.0);
+                            reticleRot = elapsedTime * 3.2;
+                        }
+
+                        // Update Primary Sonar Ring
+                        const scale1 = 1.0 + Math.pow(phase1, 0.65) * (isHovered ? 3.8 : 3.0);
+                        node.ring1Mesh.scale.set(scale1, scale1, 1);
+                        node.ring1Mesh.material.opacity = Math.pow(Math.max(0, 1.0 - phase1), 1.2) * (isHovered ? 1.0 : 0.85);
+
+                        // Update Secondary Echo Ring
+                        const scale2 = 1.0 + Math.pow(phase2, 0.7) * (isHovered ? 3.0 : 2.3);
+                        node.ring2Mesh.scale.set(scale2, scale2, 1);
+                        node.ring2Mesh.material.opacity = Math.pow(Math.max(0, 1.0 - phase2), 1.4) * (isHovered ? 0.8 : 0.55);
+
+                        // Update Tertiary Dispersion Ring
+                        const scale3 = 1.0 + Math.pow(phase3, 0.75) * (isHovered ? 3.4 : 2.6);
+                        node.ring3Mesh.scale.set(scale3, scale3, 1);
+                        node.ring3Mesh.material.opacity = Math.pow(Math.max(0, 1.0 - phase3), 1.5) * (isHovered ? 0.6 : 0.35);
+
+                        // Update Rotating Reticle
+                        node.reticleMesh.rotation.z = reticleRot;
+                        node.reticleMesh.material.opacity = isHovered ? 0.95 : 0.45 + haloPulse * 0.3;
+
+                        // Update Vertical Laser Beam
+                        node.beamMesh.scale.set(isHovered ? 1.6 : 1.0, isHovered ? 1.6 : 1.0, beamScale);
+                        node.beamMesh.material.opacity = beamOpacity;
+                        if (coreFlash > 0.5 || isHovered) {
+                            node.beamMesh.material.color.setHex(0xff7799);
+                        } else {
+                            node.beamMesh.material.color.setHex(0xff3344);
+                        }
+
+                        // Update Halo Aura
+                        node.haloMesh.material.opacity = 0.2 + haloPulse * 0.55;
+                        node.haloMesh.scale.set(1.0 + haloPulse * 0.45, 1.0 + haloPulse * 0.45, 1);
+
+                        // Update Core & Pupil Flash
+                        const coreScale = 1.0 + coreFlash * 0.45;
+                        node.coreMesh.scale.set(coreScale, coreScale, 1);
+                        node.pupilMesh.scale.set(1.0 + coreFlash * 0.9, 1.0 + coreFlash * 0.9, 1);
+                        if (coreFlash > 0.6) {
+                            node.coreMesh.material.color.setHex(0xffffff);
+                        } else if (coreFlash > 0.25) {
+                            node.coreMesh.material.color.setHex(0xff7788);
+                        } else {
+                            node.coreMesh.material.color.setHex(0xff3344);
+                        }
+                    });
+
+                    // Highlight communication lines when hovering a node
+                    if (currentHoveredHit) {
+                        const hId = currentHoveredHit.userData.hub.id;
+                        lineMeshList.forEach(line => {
+                            if (line.userData.fromId === hId || line.userData.toId === hId) {
+                                line.material.opacity = 0.95;
+                                line.material.color.setHex(0xff4455);
+                            } else {
+                                line.material.opacity = 0.20;
+                                line.material.color.setHex(0x992233);
+                            }
+                        });
+                    } else {
+                        lineMeshList.forEach(line => {
+                            line.material.opacity = 0.55;
+                            line.material.color.setHex(0xff3344);
+                        });
+                    }
+
+                    // Animate flowing data photon packets along curves (with acceleration on hovered node)
+                    photonMeshes.forEach(pkt => {
+                        let speed = pkt.speed;
+                        if (currentHoveredHit) {
+                            const hId = currentHoveredHit.userData.hub.id;
+                            if (pkt.curve.fromId === hId || pkt.curve.toId === hId) {
+                                speed *= 2.6; // Stream data 2.6x faster on active lines
+                            }
+                        }
+                        pkt.t = (pkt.t + speed) % 1.0;
+                        pkt.mesh.position.copy(pkt.curve.getPoint(pkt.t));
+                    });
+
+                    renderer.render(scene, camera);
+                };
+                animate();
+
+                // Window Resize Handler
+                const onResize = () => {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(width, height);
+
+                    const desktop = width >= 1024;
+                    worldGroup.position.set(desktop ? 1.4 : 0, desktop ? -0.1 : -0.35, 0);
+                };
+                window.addEventListener('resize', onResize);
+
+                return () => {
+                    cancelAnimationFrame(animId);
+                    window.removeEventListener('pointerdown', onPointerDown);
+                    window.removeEventListener('pointerup', onPointerUp);
+                    window.removeEventListener('pointermove', onPointerMove);
+                    window.removeEventListener('pointermove', onDragMove);
+                    window.removeEventListener('click', onCanvasClick);
+                    window.removeEventListener('resize', onResize);
+
+                    sphereGeometry.dispose();
+                    globeShaderMaterial.dispose();
+                    atmosphereMaterial.dispose();
+                    starGeo.dispose();
+                    starMat.dispose();
+                    renderer.dispose();
+                    if (renderer.domElement && container.contains(renderer.domElement)) {
+                        container.removeChild(renderer.domElement);
+                    }
+                };
+            }, [isDark, onSelectState]);
+
+            return (
+                <>
+                    <div id="three-canvas" ref={mountRef} />
+                    {hoveredNode && (
+                        <div
+                            className="node-telemetry-hud px-3.5 py-2.5 rounded-xl bg-slate-950/95 text-white border border-red-500/60 shadow-[0_8px_30px_rgba(255,51,68,0.45)] animate-fade-in text-left min-w-[210px]"
+                            style={{ left: `${hudPos.x}px`, top: `${hudPos.y}px` }}
+                        >
+                            <div className="flex items-center space-x-1.5 text-xs font-bold text-red-400">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                <span>{hoveredNode.name} Central Hub</span>
+                            </div>
+                            <div className="text-[11px] text-slate-300 font-medium mt-0.5">{hoveredNode.hub}</div>
+                            <div className="text-[10px] font-mono text-cyan-300 mt-1 flex items-center justify-between">
+                                <span>{hoveredNode.traffic} Traffic</span>
+                                <span className="text-emerald-400 font-bold">● 100% Synced</span>
+                            </div>
+                            <div className="mt-1 pt-1 border-t border-slate-800 text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                                <span>Bleep Mode: {(bleepModeRef.current || 'sonar').toUpperCase()}</span>
+                                <span className="text-amber-400">3.4 Hz Pulse</span>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
+        // =========================================================================
+        // TYPEWRITER ANIMATION FOR SYSTEM NAME (Left Overlay)
+        // =========================================================================
+        const TypewriterHeader = ({ fullText = "Work Management Portal" }) => {
+            const [displayedText, setDisplayedText] = useState("");
+            const [isDone, setIsDone] = useState(false);
+
+            useEffect(() => {
+                let index = 0;
+                setDisplayedText("");
+                setIsDone(false);
+
+                const interval = setInterval(() => {
+                    if (index < fullText.length) {
+                        setDisplayedText(fullText.substring(0, index + 1));
+                        index++;
+                    } else {
+                        setIsDone(true);
+                        clearInterval(interval);
+                    }
+                }, 50);
+
+                return () => clearInterval(interval);
+            }, [fullText]);
+
+            return (
+                <div className="text-left max-w-lg mb-6">
+                    {/* Live Status Chip */}
+                    <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900/80 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono uppercase tracking-widest mb-3 font-semibold backdrop-blur-md shadow-md">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span>17 Indian State Hubs Active • Grid Synchronized</span>
+                    </div>
+
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white flex items-center drop-shadow-xl">
+                        <span>{displayedText}</span>
+                        <span className="inline-block w-[3px] h-8 sm:h-10 bg-cyan-400 ml-1.5 animate-blink"></span>
+                    </h1>
+
+                    <p className="text-sm sm:text-base text-slate-300 mt-3.5 font-medium leading-relaxed drop-shadow-md">
+                        Central operations tracking, fleet allocations, and cross-state workflow synchronization.
+                    </p>
+
+                    <div className="mt-4 flex items-center space-x-3 text-xs font-mono text-slate-400">
+                        <span className="flex items-center space-x-1.5">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                            <span>Photorealistic Earth Shaders</span>
+                        </span>
+                        <span>•</span>
+                        <span className="text-red-400 font-semibold">Zero-Drift Vector Telemetry</span>
+                    </div>
+                </div>
+            );
+        };
+
+        // =========================================================================
+        // BLEEP OPTIONS SELECTOR (Interactive Telemetry Pulse Controls)
+        // =========================================================================
+        const BleepOptionsSelector = ({ activeMode, activeSpeed = 1.0, onSelectMode, onSelectSpeed }) => {
+            const modes = [
+                {
+                    id: 'sonar',
+                    label: 'Sonar Radar',
+                    badge: '1.6 Hz',
+                    icon: '📡',
+                    animClass: 'anim-bleep-sonar',
+                    period: '625ms',
+                    wavelength: '480 km',
+                    desc: 'Expanding concentric acoustic ping shockwaves with trailing echo harmonics and photon core flash.'
+                },
+                {
+                    id: 'quantum',
+                    label: 'Quantum Burst',
+                    badge: '3.2 Hz',
+                    icon: '⚡',
+                    animClass: 'anim-bleep-quantum',
+                    period: '312ms',
+                    wavelength: '240 km',
+                    desc: 'High-frequency 3-pulse tactical staccato burst with white-hot pupil flare and vertical laser spikes.'
+                },
+                {
+                    id: 'cascade',
+                    label: 'Cascade Relay',
+                    badge: '0.85 Hz',
+                    icon: '🌊',
+                    animClass: 'anim-bleep-cascade',
+                    period: '1175ms',
+                    wavelength: '920 km',
+                    desc: 'Geographic domino wavefront propagating North-to-South (Delhi → Mumbai → Bangalore) across regional hubs.'
+                },
+                {
+                    id: 'heartbeat',
+                    label: 'Heartbeat Sync',
+                    badge: '1.15 Hz',
+                    icon: '💓',
+                    animClass: 'anim-bleep-heartbeat',
+                    period: '870ms',
+                    wavelength: '670 km',
+                    desc: 'National operations grid synchronized double-tap pulse (ba-BUMP) firing across all 17 hubs simultaneously.'
+                },
+                {
+                    id: 'strobe',
+                    label: 'Aero Strobe',
+                    badge: '2.0 Hz',
+                    icon: '🚨',
+                    animClass: 'anim-bleep-strobe',
+                    period: '500ms',
+                    wavelength: '390 km',
+                    desc: 'Ultra-crisp twin xenon avionics beacon strobes with sharp exponential decay and laser pulse spikes.'
+                },
+                {
+                    id: 'plasma',
+                    label: 'Plasma Scanner',
+                    badge: '1.4 Hz',
+                    icon: '🌐',
+                    animClass: 'anim-bleep-plasma',
+                    period: '714ms',
+                    wavelength: '550 km',
+                    desc: 'Continuous 360° rotating radar sweep reticle beam with dual-phase cyan and red atmospheric corona.'
+                }
+            ];
+
+            const current = modes.find(m => m.id === activeMode) || modes[0];
+
+            return (
+                <div className="mt-3.5 p-3.5 sm:p-4 rounded-2xl bg-slate-900/85 backdrop-blur-2xl border border-cyan-500/25 shadow-[0_12px_36px_rgba(0,0,0,0.55)] w-full max-w-lg text-left transition-all">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                            <span className="relative flex h-2.5 w-2.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                            </span>
+                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300">
+                                Point Bleep Animation Modes
+                            </span>
+                        </div>
+                        <div className="flex items-center space-x-1.5 text-[10px] font-mono text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-700/60">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>17 Hubs Synced</span>
+                        </div>
+                    </div>
+
+                    {/* Mode Grid - 6 Modes in 3x2 Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {modes.map(mode => {
+                            const isSelected = activeMode === mode.id;
+                            return (
+                                <button
+                                    key={mode.id}
+                                    type="button"
+                                    onClick={() => {
+                                        playBleepModeAudio(mode.id);
+                                        onSelectMode(mode.id);
+                                    }}
+                                    className={`relative p-2.5 rounded-xl text-xs font-semibold transition-all flex flex-col items-start justify-between cursor-pointer select-none min-h-[64px] overflow-hidden ${
+                                        isSelected
+                                            ? 'bg-gradient-to-br from-red-600/90 to-rose-700/90 text-white shadow-[0_0_20px_rgba(255,51,68,0.55)] border border-red-400/80 scale-[1.02]'
+                                            : 'bg-slate-800/70 text-slate-300 hover:bg-slate-700/80 hover:text-white border border-slate-700/60 hover:border-slate-600'
+                                    }`}
+                                >
+                                    <div className="w-full flex items-center justify-between">
+                                        <div className="flex items-center space-x-1.5">
+                                            <span className="text-xs">{mode.icon}</span>
+                                            <span className="font-bold text-[11px] tracking-tight">{mode.label}</span>
+                                        </div>
+                                        {/* Animated Rhythm Icon Indicator */}
+                                        <div className="relative w-3.5 h-3.5 flex items-center justify-center">
+                                            <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-white' : 'bg-red-500'} ${mode.animClass}`}></span>
+                                        </div>
+                                    </div>
+                                    <div className="w-full mt-1.5 flex items-center justify-between">
+                                        <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-full ${
+                                            isSelected ? 'bg-black/35 text-rose-100 font-bold' : 'bg-slate-900/70 text-slate-400'
+                                        }`}>
+                                            {mode.badge}
+                                        </span>
+                                        <span className={`text-[9px] font-mono ${isSelected ? 'text-rose-100' : 'text-slate-400'}`}>
+                                            {mode.period}
+                                        </span>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Frequency Speed Controls */}
+                    <div className="mt-2.5 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-1">
+                            <span>Pulse Speed:</span>
+                        </span>
+                        <div className="flex items-center space-x-1 bg-slate-950/70 p-0.5 rounded-lg border border-slate-800">
+                            {[
+                                { val: 0.6, label: '0.6x Calm' },
+                                { val: 1.0, label: '1.0x Normal' },
+                                { val: 1.6, label: '1.6x Hyper' }
+                            ].map(spd => (
+                                <button
+                                    key={spd.val}
+                                    type="button"
+                                    onClick={() => onSelectSpeed && onSelectSpeed(spd.val)}
+                                    className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold transition-all ${
+                                        activeSpeed === spd.val
+                                            ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
+                                            : 'text-slate-400 hover:text-slate-200'
+                                    }`}
+                                >
+                                    {spd.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Mode Description & Real-Time Telemetry Bar */}
+                    <div className="mt-2 text-[11px] font-medium text-slate-300 leading-snug">
+                        {current.desc}
+                    </div>
+
+                    <div className="mt-2 pt-1.5 border-t border-slate-800/70 flex items-center justify-between text-[10px] font-mono text-cyan-300">
+                        <span>Wave: {current.wavelength}</span>
+                        <span className="text-slate-400">Atmosphere Rim: #bc490b</span>
+                        <span className="text-emerald-400 font-semibold">Uplink 100%</span>
+                    </div>
+                </div>
+            );
+        };
+
+        // =========================================================================
+        // ANIME.JS POWERED AUTHORIZE ACCESS BUTTON (Micro-Interactions)
+        // =========================================================================
+        const AnimeAuthorizeButton = ({ onClick, disabled }) => {
+            const btnRef = useRef(null);
+            const arrowRef = useRef(null);
+
+            const handleMouseEnter = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.018,
+                        duration: 250,
+                        easing: 'easeOutCubic'
+                    });
+                    if (arrowRef.current) {
+                        window.anime({
+                            targets: arrowRef.current,
+                            translateX: 4,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                }
+            };
+
+            const handleMouseLeave = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.0,
+                        duration: 250,
+                        easing: 'easeOutCubic'
+                    });
+                    if (arrowRef.current) {
+                        window.anime({
+                            targets: arrowRef.current,
+                            translateX: 0,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                }
+            };
+
+            const handleMouseDown = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 0.978,
+                        duration: 120,
+                        easing: 'easeInOutQuad'
+                    });
+                }
+            };
+
+            const handleMouseUp = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.018,
+                        duration: 150,
+                        easing: 'easeOutCubic'
+                    });
+                }
+            };
+
+            return (
+                <button
+                    ref={btnRef}
+                    type="submit"
+                    disabled={disabled}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    className="btn-authorize-saas group relative w-full min-h-[48px] rounded-xl text-white text-sm font-bold flex items-center justify-center space-x-2 cursor-pointer overflow-hidden shadow-lg select-none"
+                >
+                    {/* Shimmer Light Sweep */}
+                    <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] animate-shimmer pointer-events-none"></div>
+
+                    <span className="relative z-10 font-bold tracking-wide">Authorize Access</span>
+                    <span ref={arrowRef} className="relative z-10 inline-block">
+                        <ArrowRightIcon className="w-4 h-4" />
+                    </span>
+                </button>
+            );
+        };
+
+        // =========================================================================
+        // MAIN APPLICATION COMPONENT
+        // =========================================================================
+        const App = () => {
+            // Form state
+            const [empId, setEmpId] = useState('');
+            const [password, setPassword] = useState('');
+            const [showPassword, setShowPassword] = useState(false);
+            const [rememberMe, setRememberMe] = useState(true);
+            const [isShaking, setIsShaking] = useState(false);
+
+            // Theme (Dark / Light)
+            const [isDarkMode, setIsDarkMode] = useState(() => {
+                if (typeof window !== 'undefined') {
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+                }
+                return true;
+            });
+
+            // Modals: 'privacy' | 'security' | 'helpdesk' | 'validation' | null
+            const [activeModal, setActiveModal] = useState(null);
+
+            // Toasts (Docked at Top-Right)
+            const [toasts, setToasts] = useState([]);
+
+            // Multi-step Auth sequence
+            const [phase, setPhase] = useState('idle'); // 'idle' | 'loading' | 'success'
+            const [loadingMessage, setLoadingMessage] = useState('');
+            const [redirectCountdown, setRedirectCountdown] = useState(3);
+
+            // Bleep Options State ('sonar' | 'quantum' | 'cascade' | 'heartbeat' | 'strobe' | 'plasma')
+            const [bleepMode, setBleepMode] = useState('sonar');
+            const [bleepSpeed, setBleepSpeed] = useState(1.0);
+
+            // Sync Dark Mode class on <html>
+            useEffect(() => {
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }, [isDarkMode]);
+
+            // Add Toast helper
+            const addToast = useCallback((title, description, type = 'info') => {
+                const id = Date.now() + Math.random();
+                setToasts(prev => [...prev.slice(-3), { id, title, description, type }]);
+                setTimeout(() => {
+                    setToasts(prev => prev.filter(t => t.id !== id));
+                }, 4000);
+            }, []);
+
+            // Keyboard shortcut (Escape to close modals)
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (e.key === 'Escape') {
+                        setActiveModal(null);
+                    }
+                };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, []);
+
+            // Realistic Authentication Flow with Delay & Loading Metrics
+            const handleLogin = async (e) => {
+                if (e) e.preventDefault();
+
+                // Validation check
+                if (!empId.trim() || !password.trim()) {
+                    setIsShaking(true);
+                    setTimeout(() => setIsShaking(false), 450);
+                    setActiveModal('validation');
+                    addToast('Missing Credentials', 'Please enter your Employee ID and password.', 'warning');
+                    return;
+                }
+
+                setPhase('loading');
+                setLoadingMessage('Checking your credentials...');
+
+                // Realistic async delay phase 1
+                await new Promise(r => setTimeout(r, 700));
+                setLoadingMessage('Signing in to your workspace...');
+
+                // Phase 2
+                await new Promise(r => setTimeout(r, 800));
+                setLoadingMessage('Opening your dashboard...');
+
+                // Phase 3
+                await new Promise(r => setTimeout(r, 550));
+
+                // Trigger pleasant success chime automatically (no speaker button)
+                playSuccessChime();
+                setPhase('success');
+                addToast('Access Granted', 'Welcome back to Work Management Portal.', 'success');
+                setRedirectCountdown(3);
+            };
+
+            // Countdown redirect timer
+            useEffect(() => {
+                let timer;
+                if (phase === 'success' && redirectCountdown > 0) {
+                    timer = setTimeout(() => {
+                        setRedirectCountdown(c => c - 1);
+                    }, 1000);
+                }
+                return () => clearTimeout(timer);
+            }, [phase, redirectCountdown]);
+
+            return (
+                <div className={`min-h-screen w-full relative flex flex-col justify-between transition-colors duration-700 safe-area-top safe-area-bottom overflow-x-hidden ${
+                    isDarkMode ? 'dark text-slate-100' : 'text-slate-900'
+                }`}>
+                    {/* ========================================================= */}
+                    {/* THREE.JS JOURNEY EARTH SHADERS BACKGROUND CANVAS          */}
+                    {/* Photorealistic Earth with #4db2ff atmosphere & #bc490b rim*/}
+                    {/* Stationary: NO auto-revolving, India prominently featured */}
+                    {/* 17 State data-movement points directly on the Earth in 3D */}
+                    {/* ========================================================= */}
+                    <NaturalEarthSpaceExperience
+                        bleepMode={bleepMode}
+                        bleepSpeed={bleepSpeed}
+                        isDark={isDarkMode}
+                        onSelectState={(state) => {
+                            addToast(`${state.name} Hub`, `${state.hub} • ${state.traffic} live traffic`, 'info');
+                        }}
+                    />
+
+                    {/* ========================================================= */}
+                    {/* FLOATING TOP-LEFT BRANDING HEADER                         */}
+                    {/* ========================================================= */}
+                    <header className="relative z-20 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between pointer-events-none">
+                        <div className="flex items-center space-x-3.5 pointer-events-auto">
+                            <img
+                                src="./img/logo.png"
+                                onError={(e) => { e.target.onerror = null; e.target.src = "../img/logo.png"; }}
+                                alt="CIRIL"
+                                className="h-9 w-auto object-contain shrink-0 transition-transform duration-300 hover:scale-105 drop-shadow-md"
+                            />
+                            <div className="h-5 w-[1px] bg-slate-400 dark:bg-slate-700 shrink-0"></div>
+                            <span className="text-xs sm:text-sm font-bold tracking-wide text-white uppercase drop-shadow-md">
+                                Work Management Portal
+                            </span>
+                        </div>
+                    </header>
+
+                    {/* ========================================================= */}
+                    {/* MAIN IMMERSIVE CONTENT: TYPING BRANDING & RIGHT LOGIN CARD*/}
+                    {/* Overlapping the Earth in space as sketched in sample_page  */}
+                    {/* ========================================================= */}
+                    <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row items-center justify-between gap-8 pointer-events-none">
+                        
+                        {/* ===================================================== */}
+                        {/* LEFT: BRANDING TITLE, STATUS & BLEEP OPTIONS CONTROLS */}
+                        {/* ===================================================== */}
+                        <div className="w-full lg:w-1/2 flex flex-col items-start justify-center py-4 pointer-events-auto">
+                            <TypewriterHeader fullText="Work Management Portal" />
+                            <BleepOptionsSelector
+                                activeMode={bleepMode}
+                                activeSpeed={bleepSpeed}
+                                onSelectMode={(mode) => {
+                                    setBleepMode(mode);
+                                    addToast('Bleep Mode Updated', `Telemetry animation switched to ${mode.toUpperCase()} pulse`, 'info');
+                                }}
+                                onSelectSpeed={(speed) => {
+                                    setBleepSpeed(speed);
+                                    addToast('Bleep Speed Adjusted', `Pulse frequency rate calibrated to ${speed}x`, 'info');
+                                }}
+                            />
+                        </div>
+
+                        {/* ===================================================== */}
+                        {/* RIGHT: SLEEK FLOATING GLASSMORPHIC LOGIN PANE         */}
+                        {/* Floating over the Earth in space (sample_page.png)    */}
+                        {/* ===================================================== */}
+                        <div className="w-full lg:w-[410px] xl:w-[430px] pointer-events-auto my-auto">
+                            <div className={`border-beam-card shadow-2xl transition-all duration-300 ${isShaking ? 'animate-shake' : ''}`}>
+                                <div className="glass-card-surface p-7 sm:p-9 rounded-[28px]">
+                                    
+                                    {/* Card Header */}
+                                    <div className="mb-6 text-left">
+                                        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                            Welcome back
+                                        </h2>
+                                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
+                                            Sign in to manage real estate operations, pipeline & inventory.
+                                        </p>
+                                    </div>
+
+                                    {/* ================================================= */}
+                                    {/* PHASE: IDLE LOGIN FORM                            */}
+                                    {/* ================================================= */}
+                                    {phase === 'idle' && (
+                                        <form onSubmit={handleLogin} noValidate className="space-y-4">
+                                            {/* Employee ID */}
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                                    Employee ID
+                                                </label>
+                                                <div className="relative group">
+                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-400 transition-colors pointer-events-none">
+                                                        <UserIcon className="w-4 h-4" />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={empId}
+                                                        onChange={(e) => setEmpId(e.target.value)}
+                                                        placeholder="e.g. EMP-8492"
+                                                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-300 min-h-[44px] font-mono"
+                                                    />
+                                                    {empId && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setEmpId('')}
+                                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
+                                                        >
+                                                            <XIcon className="w-3.5 h-3.5" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Password */}
+                                            <div className="space-y-1.5">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                                        Password
+                                                    </label>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setActiveModal('helpdesk')}
+                                                        className="text-xs text-cyan-500 dark:text-cyan-400 hover:underline font-semibold transition-colors"
+                                                    >
+                                                        Forgot password?
+                                                    </button>
+                                                </div>
+                                                <div className="relative group">
+                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-400 transition-colors pointer-events-none">
+                                                        <LockIcon className="w-4 h-4" />
+                                                    </div>
+                                                    <input
+                                                        type={showPassword ? "text" : "password"}
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        placeholder="••••••••••••"
+                                                        className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-300 min-h-[44px] font-mono"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-2 rounded-lg transition-colors"
+                                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                                    >
+                                                        {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Routine "Remember me" Checkbox (Apple toggle) */}
+                                            <div className="flex items-center justify-between pt-1">
+                                                <label className="checkbox-apple-container space-x-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={rememberMe}
+                                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                                        className="sr-only"
+                                                    />
+                                                    <div className="checkbox-apple-toggle"></div>
+                                                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 select-none">
+                                                        Remember me
+                                                    </span>
+                                                </label>
+                                            </div>
+
+                                            {/* Authorize Access Button (Anime.js SaaS Button) */}
+                                            <div className="pt-2">
+                                                <AnimeAuthorizeButton />
+                                            </div>
+
+                                            {/* Quick Test Autofill Helper */}
+                                            <div className="pt-3 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-800">
+                                                <span>Quick test fill:</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setEmpId('EMP-8492');
+                                                        setPassword('ciril_ops_2026');
+                                                        addToast('Credentials Filled', 'Demo credentials inserted for EMP-8492', 'info');
+                                                    }}
+                                                    className="font-semibold text-cyan-500 dark:text-cyan-400 hover:underline"
+                                                >
+                                                    Autofill Demo
+                                                </button>
+                                            </div>
+                                        </form>
+                                    )}
+
+                                    {/* ================================================= */}
+                                    {/* PHASE: LOADING STATE WITH NETWORK DELAY METRICS   */}
+                                    {/* ================================================= */}
+                                    {phase === 'loading' && (
+                                        <div className="py-8 text-center space-y-6 animate-fade-in">
+                                            {/* Animated Radar Beacon */}
+                                            <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40"></span>
+                                                <span className="animate-pulse absolute inline-flex h-12 w-12 rounded-full bg-cyan-500/20"></span>
+                                                <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-700 text-white flex items-center justify-center shadow-lg">
+                                                    <div className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                                                    {loadingMessage}
+                                                </h3>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                    Connecting to CIRIL operations network.
+                                                </p>
+                                            </div>
+
+                                            {/* Visual Progress Bar */}
+                                            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                                <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full w-3/4 animate-pulse"></div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* ================================================= */}
+                                    {/* PHASE: SUCCESS SCREEN (Simple & Relatable Copy)   */}
+                                    {/* ================================================= */}
+                                    {phase === 'success' && (
+                                        <div className="py-6 text-center space-y-5 animate-fade-in">
+                                            <div className="mx-auto w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                                                <CheckCircleIcon className="w-8 h-8" />
+                                            </div>
+
+                                            <div className="space-y-1">
+                                                <h3 className="text-xl font-black text-slate-900 dark:text-white">
+                                                    Access Authorized
+                                                </h3>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                    Welcome back to the Work Management Portal.
+                                                </p>
+                                            </div>
+
+                                            {/* Verified Badge */}
+                                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-left">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="w-9 h-9 rounded-xl bg-cyan-600 text-white font-bold flex items-center justify-center text-xs">
+                                                        {empId.slice(-2) || 'OK'}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xs font-bold text-slate-900 dark:text-white font-mono">{empId}</div>
+                                                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Active Operational Session</div>
+                                                    </div>
+                                                </div>
+                                                <div className="px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 font-mono text-[10px] font-bold">
+                                                    VERIFIED
+                                                </div>
+                                            </div>
+
+                                            {/* Launch CTA */}
+                                            <div className="pt-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => addToast('Opening Workspace', 'Redirecting to operations dashboard...', 'success')}
+                                                    className="w-full min-h-[46px] rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-all flex items-center justify-center space-x-2 shadow-md cursor-pointer"
+                                                >
+                                                    <span>Launch Workspace ({redirectCountdown}s)</span>
+                                                    <ArrowRightIcon className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </main>
+
+                    {/* ========================================================= */}
+                    {/* FOOTER (Clean & Simplified)                                */}
+                    {/* ========================================================= */}
+                    <footer className="relative z-20 w-full max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-slate-400 dark:text-slate-400 border-t border-slate-800/60 pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <span>© 2026 CIRIL Real Estate Network. All rights reserved.</span>
+                        </div>
+                        <div className="flex items-center space-x-4 font-medium pointer-events-auto">
+                            <button
+                                type="button"
+                                onClick={() => setActiveModal('privacy')}
+                                className="hover:text-white transition-colors cursor-pointer"
+                            >
+                                Privacy Policy
+                            </button>
+                            <span>•</span>
+                            <button
+                                type="button"
+                                onClick={() => setActiveModal('security')}
+                                className="hover:text-white transition-colors cursor-pointer"
+                            >
+                                Security Architecture
+                            </button>
+                            <span>•</span>
+                            <button
+                                type="button"
+                                onClick={() => setActiveModal('helpdesk')}
+                                className="hover:text-white transition-colors cursor-pointer text-cyan-400 font-semibold"
+                            >
+                                IT Support
+                            </button>
+                        </div>
+                    </footer>
+
+                    {/* ========================================================= */}
+                    {/* NIGHT MODE TOGGLE BUTTON (BOTTOM-LEFT WITH HOVER TOOLTIP) */}
+                    {/* ========================================================= */}
+                    <div className="fixed left-6 bottom-6 z-40 theme-button-wrap flex items-center">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setIsDarkMode(!isDarkMode);
+                                addToast('Theme Switched', !isDarkMode ? 'Dark mode enabled' : 'Light mode enabled', 'info');
+                            }}
+                            aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/85 backdrop-blur-xl text-slate-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all cursor-pointer"
+                        >
+                            <div className="transition-transform duration-500 hover:rotate-90">
+                                {isDarkMode ? <SunIcon className="w-5 h-5 text-amber-400" /> : <MoonIcon className="w-5 h-5 text-slate-300" />}
+                            </div>
+                        </button>
+
+                        {/* Minimalist Tooltip as requested */}
+                        <div className="theme-tooltip px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-xl border border-slate-700/60">
+                            {isDarkMode ? "Switch to Light" : "Switch to Dark"}
+                        </div>
+                    </div>
+
+                    {/* ========================================================= */}
+                    {/* TOAST NOTIFICATION STACK (TOP-RIGHT CORNER)               */}
+                    {/* ========================================================= */}
+                    <div className="fixed top-6 right-6 z-50 space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0">
+                        {toasts.map(toast => (
+                            <div
+                                key={toast.id}
+                                className="pointer-events-auto flex items-start space-x-3 p-3.5 rounded-2xl bg-slate-900/95 backdrop-blur-2xl border border-slate-800/90 shadow-[0_12px_35px_rgba(0,0,0,0.4)] text-xs text-white animate-slide-down"
+                            >
+                                <div className={`p-1.5 rounded-lg shrink-0 ${
+                                    toast.type === 'success' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/60' :
+                                    toast.type === 'warning' ? 'bg-amber-950 text-amber-400 border border-amber-800/60' :
+                                    'bg-cyan-950 text-cyan-400 border border-cyan-800/60'
+                                }`}>
+                                    {toast.type === 'success' ? <CheckCircleIcon className="w-4 h-4" /> :
+                                     toast.type === 'warning' ? <AlertCircleIcon className="w-4 h-4" /> :
+                                     <ShieldIcon className="w-4 h-4" />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-bold text-white">{toast.title}</h4>
+                                    <p className="text-slate-400 mt-0.5">{toast.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ========================================================= */}
+                    {/* DIALOG MODALS: PRIVACY, SECURITY, IT SUPPORT, VALIDATION  */}
+                    {/* ========================================================= */}
+                    {activeModal && (
+                        <div
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in"
+                            onClick={() => setActiveModal(null)}
+                            role="dialog"
+                            aria-modal="true"
+                        >
+                            <div
+                                className="w-full max-w-md rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-slate-700/70 shadow-2xl p-6 sm:p-7 animate-slide-up text-white"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                                    <div className="flex items-center space-x-2.5">
+                                        <div className="p-2 rounded-xl bg-cyan-950/60 text-cyan-400 border border-cyan-800/50">
+                                            <ShieldIcon className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-base font-bold text-white">
+                                            {activeModal === 'privacy' && 'Privacy Policy'}
+                                            {activeModal === 'security' && 'Security Architecture'}
+                                            {activeModal === 'helpdesk' && 'IT Support & Assistance'}
+                                            {activeModal === 'validation' && 'Credentials Required'}
+                                        </h3>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveModal(null)}
+                                        className="p-1.5 rounded-lg text-slate-400 hover:text-white transition-colors"
+                                    >
+                                        <XIcon className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                <div className="py-4 text-xs text-slate-300 space-y-3 leading-relaxed">
+                                    {activeModal === 'privacy' && (
+                                        <>
+                                            <p>CIRIL operates under strict operational confidentiality standards. Your account access logs, IP session signatures, and workflow activity are maintained in secure internal storage.</p>
+                                            <div className="p-3 rounded-xl bg-slate-800/80 font-mono text-[11px] space-y-1">
+                                                <div>• Data Encryption: AES-256-GCM</div>
+                                                <div>• Audit Logs: Kept for 90 days for operational safety</div>
+                                                <div>• Third-Party Tracking: None</div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeModal === 'security' && (
+                                        <>
+                                            <p>Our Work Management Portal uses zero-trust identity verification. Access tokens expire after 8 hours of inactivity to safeguard real estate records and transaction ledgers.</p>
+                                            <div className="p-3 rounded-xl bg-slate-800/80 font-mono text-[11px] space-y-1">
+                                                <div>• Protocol: TLS 1.3 End-to-End Encrypted</div>
+                                                <div>• Session Replay Protection: Enabled</div>
+                                                <div>• Multi-State Sync: Encrypted WebSockets</div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeModal === 'helpdesk' && (
+                                        <>
+                                            <p>Need password assistance or account activation? Get in touch with our internal IT operations desk.</p>
+                                            <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-900/50 space-y-1.5 text-[11px]">
+                                                <div className="font-semibold text-cyan-200">Support Channels:</div>
+                                                <div>• Internal Slack: <strong>#it-support</strong></div>
+                                                <div>• Desk Extension: <strong>x4900</strong></div>
+                                                <div>• Support Email: <strong>support@ciril.internal</strong></div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    {activeModal === 'validation' && (
+                                        <>
+                                            <p>Please enter both your <strong>Employee ID</strong> and <strong>Password</strong> to access the Work Management Portal.</p>
+                                            <p>For quick testing, you can click "Autofill Demo" below.</p>
+                                        </>
+                                    )}
+                                </div>
+
+                                <div className="flex justify-end pt-3 border-t border-slate-800">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (activeModal === 'validation') {
+                                                setEmpId('EMP-8492');
+                                                setPassword('ciril_ops_2026');
+                                            }
+                                            setActiveModal(null);
+                                        }}
+                                        className="min-h-[40px] px-5 py-2 rounded-xl bg-white text-slate-900 text-xs font-bold hover:bg-slate-100 transition-colors shadow-sm"
+                                    >
+                                        {activeModal === 'validation' ? 'Autofill & Close' : 'Got it'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
