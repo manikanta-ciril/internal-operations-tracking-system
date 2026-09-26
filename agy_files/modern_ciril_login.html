@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CIRIL Internal Operations Tracking System - secure access portal" />
+  <title>CIRIL — Internal Operations Tracking System</title>
+
+  <!-- Lightweight React runtime only. No Tailwind, no animation libraries, no canvas/WebGL. -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --surface: rgba(255,255,255,.9);
+      --surface-solid: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --subtle: #9ca3af;
+      --line: #e5e7eb;
+      --line-strong: #d1d5db;
+      --accent: #166534;
+      --accent-soft: #ecfdf3;
+      --accent-line: #bbf7d0;
+      --shadow: 0 24px 70px rgba(15,23,42,.10);
+      --radius-lg: 24px;
+      --radius-md: 14px;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --surface: rgba(18,24,33,.92);
+      --surface-solid: #121821;
+      --text: #f5f7fa;
+      --muted: #9aa4b2;
+      --subtle: #667085;
+      --line: #25303d;
+      --line-strong: #344152;
+      --accent: #86efac;
+      --accent-soft: rgba(34,197,94,.08);
+      --accent-line: rgba(134,239,172,.22);
+      --shadow: 0 28px 90px rgba(0,0,0,.36);
+    }
+
+    * { box-sizing: border-box; }
+    html, body, #root { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(420px, .88fr);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(22,101,52,.055), transparent 28%),
+        radial-gradient(circle at 75% 80%, rgba(15,23,42,.045), transparent 34%),
+        var(--bg);
+      overflow: hidden;
+    }
+
+    .visual-panel {
+      position: relative;
+      min-height: 100vh;
+      padding: 40px 6vw 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--line);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .visual-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        linear-gradient(rgba(148,163,184,.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,.075) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(to bottom right, #000 18%, transparent 88%);
+      -webkit-mask-image: linear-gradient(to bottom right, #000 18%, transparent 88%);
+    }
+
+    .visual-panel::after {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      right: -170px;
+      bottom: -200px;
+      border: 1px solid var(--accent-line);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 42px rgba(34,197,94,.025),
+        0 0 0 86px rgba(34,197,94,.018);
+      z-index: -1;
+      animation: slowFloat 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes slowFloat {
+      from { transform: translate3d(0,0,0) rotate(-2deg); }
+      to { transform: translate3d(-18px,-12px,0) rotate(2deg); }
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+    .brand-row img {
+      height: 34px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .brand-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--line-strong);
+    }
+    .brand-caption {
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .visual-copy {
+      max-width: 720px;
+      margin-top: auto;
+      margin-bottom: 10vh;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid var(--accent-line);
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 4px rgba(34,197,94,.08);
+    }
+    .visual-copy h1 {
+      margin: 20px 0 0;
+      font-size: clamp(42px, 5.4vw, 76px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      max-width: 760px;
+      font-weight: 760;
+    }
+    .visual-copy p {
+      margin: 22px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .network {
+      position: relative;
+      margin-top: 46px;
+      width: min(680px, 100%);
+      height: 156px;
+    }
+    .network-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+    }
+    .network-line::after {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 18%;
+      height: 5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      filter: blur(.2px);
+      animation: travel 5.4s linear infinite;
+    }
+    @keyframes travel { to { transform: translateX(455%); } }
+    .node {
+      position: absolute;
+      top: 50%;
+      width: 74px;
+      height: 74px;
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--line-strong);
+      border-radius: 20px;
+      background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+      box-shadow: 0 10px 30px rgba(15,23,42,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .node::before,
+    .node::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .node::before { top: 9px; left: 9px; opacity: .8; }
+    .node::after { right: 9px; bottom: 9px; opacity: .25; }
+    .node svg { width: 25px; height: 25px; stroke: var(--muted); }
+    .node-1 { left: 8%; }
+    .node-2 { left: 36%; }
+    .node-3 { left: 64%; }
+    .node-4 { left: 92%; }
+
+    .visual-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--subtle);
+      font-size: 11px;
+      letter-spacing: .02em;
+    }
+    .visual-foot strong { color: var(--muted); font-weight: 650; }
+
+    .auth-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 6vw;
+      position: relative;
+    }
+    .auth-panel-inner {
+      width: min(430px, 100%);
+    }
+    .panel-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 22px;
+    }
+    .theme-button {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color .2s ease, color .2s ease, transform .2s ease;
+    }
+    .theme-button:hover { border-color: var(--line-strong); color: var(--text); transform: translateY(-1px); }
+
+    .login-card {
+      position: relative;
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+    .card-rule {
+      width: 48px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--accent);
+      margin-bottom: 25px;
+    }
+    .login-card h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.12;
+      letter-spacing: -.035em;
+      font-weight: 750;
+    }
+    .login-card .intro {
+      margin: 11px 0 28px;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .form-group { margin-bottom: 17px; }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 750;
+      color: var(--text);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .field {
+      position: relative;
+    }
+    .field-icon {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      transform: translateY(-50%);
+      color: var(--subtle);
+      pointer-events: none;
+    }
+    .field-icon svg { width: 17px; height: 17px; }
+    .input {
+      width: 100%;
+      height: 50px;
+      padding: 0 42px 0 43px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      outline: none;
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .input::placeholder { color: #a1aab8; }
+    .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      width: 34px;
+      height: 34px;
+      border: 0;
+      background: transparent;
+      color: var(--subtle);
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .password-toggle:hover { color: var(--text); background: color-mix(in srgb, var(--line) 45%, transparent); }
+    .password-toggle svg { width: 17px; height: 17px; }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: -2px 0 20px;
+    }
+    .help-link {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    .help-link:hover { color: var(--text); }
+    .session-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--subtle);
+      font-size: 10px;
+    }
+    .session-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .submit {
+      width: 100%;
+      height: 50px;
+      border: 1px solid #0f172a;
+      border-radius: 14px;
+      background: #111827;
+      color: #ffffff;
+      font-weight: 750;
+      font-size: 13px;
+      letter-spacing: .01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .submit:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(15,23,42,.18); background: #0b1220; }
+    .submit:active { transform: translateY(0); }
+    .submit:disabled { cursor: wait; opacity: .76; transform: none; box-shadow: none; }
+    .submit svg { width: 16px; height: 16px; }
+
+    .info-strip {
+      margin-top: 20px;
+      padding: 12px 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.55;
+    }
+    .info-strip svg { flex: 0 0 auto; width: 15px; height: 15px; margin-top: 1px; }
+
+    .card-footer {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--subtle);
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .loading-state,
+    .success-state {
+      min-height: 248px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .state-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: var(--surface-solid);
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+    .state-icon svg { width: 23px; height: 23px; }
+    .state-title { font-weight: 750; font-size: 15px; }
+    .state-copy { margin-top: 7px; max-width: 260px; font-size: 12px; line-height: 1.55; color: var(--muted); }
+    .spinner {
+      width: 19px;
+      height: 19px;
+      border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer {
+      position: fixed;
+      left: 6vw;
+      bottom: 24px;
+      color: var(--subtle);
+      font-size: 10px;
+      z-index: 2;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1024px) {
+      .page { grid-template-columns: 1fr; }
+      .visual-panel {
+        min-height: auto;
+        padding: 28px 28px 0;
+        border-right: 0;
+      }
+      .visual-copy { margin: 70px 0 30px; }
+      .visual-copy h1 { font-size: clamp(40px, 8vw, 64px); max-width: 680px; }
+      .network { margin-top: 34px; height: 126px; }
+      .auth-panel { padding: 0 28px 90px; }
+      .footer { position: static; margin: -60px 28px 24px; }
+    }
+
+    @media (max-width: 600px) {
+      .visual-panel { padding: 22px 20px 0; }
+      .brand-row img { height: 29px; }
+      .brand-caption { font-size: 9px; }
+      .visual-copy { margin: 56px 0 10px; }
+      .visual-copy h1 { font-size: 39px; }
+      .visual-copy p { font-size: 13px; margin-top: 16px; }
+      .network { transform: scale(.9); transform-origin: left center; width: 111%; margin-top: 20px; }
+      .node { width: 60px; height: 60px; border-radius: 16px; }
+      .node svg { width: 20px; height: 20px; }
+      .auth-panel { padding: 10px 20px 74px; }
+      .login-card { padding: 25px 21px; border-radius: 20px; }
+      .panel-top { margin-bottom: 13px; }
+      .footer { margin: -42px 20px 18px; text-align: center; }
+      .visual-foot { font-size: 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useEffect, useState } = React;
+
+  const Icon = ({ children, size = 18 }) => (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
+    </svg>
+  );
+
+  const UserIcon = () => <Icon><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></Icon>;
+  const LockIcon = () => <Icon><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></Icon>;
+  const EyeIcon = () => <Icon><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/></Icon>;
+  const EyeOffIcon = () => <Icon><path d="m3 3 18 18"/><path d="M10.6 5.2A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a16.3 16.3 0 0 1-2.2 3.1"/><path d="M6.2 6.2C3.4 8 2 12 2 12s3.5 7 10 7a10.3 10.3 0 0 0 5.8-1.7"/><path d="M9.7 9.7a3 3 0 0 0 4.6 4.6"/></Icon>;
+  const ArrowRightIcon = () => <Icon><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></Icon>;
+  const MoonIcon = () => <Icon><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.8 6.8 0 0 0 21 12.8Z"/></Icon>;
+  const SunIcon = () => <Icon><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></Icon>;
+  const ShieldIcon = () => <Icon><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></Icon>;
+  const BuildingIcon = () => <Icon size={25}><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/><path d="M8 21v-3h8v3"/></Icon>;
+  const NetworkIcon = () => <Icon size={25}><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="6" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="m7.2 11 9.4-4M7.2 13l9.4 4"/></Icon>;
+  const ChartIcon = () => <Icon size={25}><path d="M4 19V5M4 19h16"/><path d="m7 15 3-4 3 2 5-7"/></Icon>;
+  const CheckIcon = () => <Icon size={24}><path d="m5 12 4 4L19 6"/></Icon>;
+
+  function App() {
+    const [empId, setEmpId] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [phase, setPhase] = useState('idle');
+    const [theme, setTheme] = useState(() => localStorage.getItem('ciril-theme') || 'light');
+
+    useEffect(() => {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem('ciril-theme', theme);
+    }, [theme]);
+
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      if (!empId.trim() || !password.trim()) return;
+      setPhase('loading');
+      await new Promise(resolve => setTimeout(resolve, 850));
+      setPhase('success');
+    };
+
+    return (
+      <div className="page">
+        <section className="visual-panel" aria-label="CIRIL operations overview">
+          <div className="brand-row">
+            <img src="../img/logo.png" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = './img/logo.png'; }} alt="CIRIL" />
+            <span className="brand-divider" />
+            <span className="brand-caption">Internal Operations</span>
+          </div>
+
+          <div className="visual-copy">
+            <span className="eyebrow"><span className="eyebrow-dot"/> Secure workspace</span>
+            <h1>One system.<br/>Every operation connected.</h1>
+            <p>
+              A controlled workspace for the people, tasks, leads and decisions that keep CIRIL's operations moving — with every important action traceable.
+            </p>
+
+            <div className="network" aria-hidden="true">
+              <span className="network-line" />
+              <div className="node node-1"><BuildingIcon /></div>
+              <div className="node node-2"><NetworkIcon /></div>
+              <div className="node node-3"><ChartIcon /></div>
+              <div className="node node-4"><ShieldIcon /></div>
+            </div>
+          </div>
+
+          <div className="visual-foot">
+            <span><strong>CIRIL</strong> · Internal Operations Tracking System</span>
+            <span>Authorized personnel only</span>
+          </div>
+        </section>
+
+        <section className="auth-panel">
+          <div className="auth-panel-inner">
+            <div className="panel-top">
+              <button
+                className="theme-button"
+                type="button"
+                aria-label="Toggle theme"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              >
+                {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+              </button>
+            </div>
+
+            <div className="login-card">
+              <div className="card-rule" />
+
+              {phase === 'idle' && (
+                <>
+                  <h2>Sign in</h2>
+                  <p className="intro">
+                    Use your organization-issued credentials to access your authorized workspace.
+                  </p>
+
+                  <form onSubmit={handleSubmit} noValidate>
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="employee-id">Employee ID</label>
+                      <div className="field">
+                        <span className="field-icon"><UserIcon /></span>
+                        <input
+                          id="employee-id"
+                          className="input"
+                          autoComplete="username"
+                          value={empId}
+                          onChange={(e) => setEmpId(e.target.value)}
+                          placeholder="Enter employee ID"
+                          aria-label="Employee ID"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="password">Password</label>
+                      <div className="field">
+                        <span className="field-icon"><LockIcon /></span>
+                        <input
+                          id="password"
+                          className="input"
+                          type={showPassword ? 'text' : 'password'}
+                          autoComplete="current-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter password"
+                          aria-label="Password"
+                        />
+                        <button
+                          className="password-toggle"
+                          type="button"
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="meta-row">
+                      <span className="session-note"><span className="session-dot"/> Secure session</span>
+                      <button className="help-link" type="button" onClick={() => window.alert('Please contact your authorized CIRIL administrator or IT support for account assistance.')}>Need access help?</button>
+                    </div>
+
+                    <button className="submit" type="submit" disabled={!empId.trim() || !password.trim()}>
+                      <span>Continue to workspace</span>
+                      <ArrowRightIcon />
+                    </button>
+                  </form>
+
+                  <div className="info-strip">
+                    <ShieldIcon />
+                    <span>Your role and permissions are resolved automatically after authentication. No role selection is required.</span>
+                  </div>
+
+                  <div className="card-footer">
+                    No public registration · Accounts are provisioned internally by authorized administrators.
+                  </div>
+                </>
+              )}
+
+              {phase === 'loading' && (
+                <div className="loading-state" role="status" aria-live="polite">
+                  <div className="state-icon"><span className="spinner" /></div>
+                  <div className="state-title">Verifying access</div>
+                  <div className="state-copy">Checking your credentials and preparing your authorized workspace.</div>
+                </div>
+              )}
+
+              {phase === 'success' && (
+                <div className="success-state" role="status" aria-live="polite">
+                  <div className="state-icon"><CheckIcon /></div>
+                  <div className="state-title">Access verified</div>
+                  <div className="state-copy">Your workspace is ready. The application would now route you according to your authorized role.</div>
+                  <button className="help-link" style={{marginTop:'18px'}} type="button" onClick={() => setPhase('idle')}>Return to sign in</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <div className="footer">© 2026 CIRIL · Internal use</div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

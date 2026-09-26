@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIRIL - Internal Operations Tracking System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#202830',
+                            black: '#22272F',
+                            darkslate: '#4A4943',
+                            forestslate: '#2D312B',
+                            dimgray: '#707070',
+                            gray: '#71757A',
+                            coolsilver: '#C5C6CB',
+                            silver: '#CAC1AB',
+                            gold: '#C09860',
+                            goldHover: '#ad844b',
+                            goldLight: '#fdfaf5',
+                            goldMuted: '#e8dbca',
+                            smoke: '#F8F8F8',
+                        },
+                        system: {
+                            warning: '#d97706',
+                            success: '#10b981',
+                            error: '#e11d48',
+                            info: '#C09860',
+                        }
+                    },
+                    animation: {
+                        'pan-grid': 'pan-grid 35s linear infinite',
+                        'shimmer-bar': 'shimmerBar 2s infinite linear',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'fade-in': 'fadeIn 0.4s ease-out forwards',
+                    },
+                    keyframes: {
+                        'pan-grid': {
+                            '0%': { backgroundPosition: '0 0' },
+                            '100%': { backgroundPosition: '40px 40px' }
+                        },
+                        'shimmerBar': {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(200%)' }
+                        },
+                        'slideUp': {
+                            '0%': { opacity: '0', transform: 'translateY(16px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'fadeIn': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #F8F8F8;
+            transition: background-color 0.5s ease;
+        }
+
+        .dark body {
+            background-color: #202830;
+        }
+
+        /* Vignette Glow Layer */
+        .vignette-glow {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(
+                circle at 50% 50%,
+                rgba(192, 152, 96, 0.08) 0%,
+                transparent 55%,
+                rgba(32, 40, 48, 0.22) 100%
+            );
+            transition: background 0.5s ease;
+        }
+
+        .dark .vignette-glow {
+            background: radial-gradient(
+                circle at 50% 50%,
+                rgba(192, 152, 96, 0.12) 0%,
+                transparent 50%,
+                rgba(15, 20, 26, 0.8) 100%
+            );
+        }
+
+        /* Film Grain Layer */
+        @keyframes grainJitter {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-2px, 3px); }
+            40% { transform: translate(3px, -2px); }
+            60% { transform: translate(-3px, 1px); }
+            80% { transform: translate(2px, -3px); }
+        }
+
+        .film-grain {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+            animation: grainJitter 0.8s steps(5) infinite;
+        }
+
+        .dark .film-grain {
+            opacity: 0.065;
+            mix-blend-mode: soft-light;
+        }
+
+        /* Subtle Geometric Grid */
+        .bg-grid-animated {
+            background-image:
+                linear-gradient(to right, rgba(74, 73, 67, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(74, 73, 67, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .dark .bg-grid-animated {
+            background-image:
+                linear-gradient(to right, rgba(248, 248, 248, 0.025) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(248, 248, 248, 0.025) 1px, transparent 1px);
+        }
+
+        /* Gold-Themed Spinner */
+        .spinner-brand {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(192, 152, 96, 0.25);
+            border-top-color: #C09860;
+            border-right-color: #C09860;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Accessibility: Respect Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .film-grain,
+            .animate-pan-grid,
+            .animate-shimmer-bar,
+            .animate-slide-up,
+            .animate-fade-in {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Icons
+        const EyeIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
+        );
+
+        const EyeOffIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                <line x1="2" x2="22" y1="2" y2="22" />
+            </svg>
+        );
+
+        const ShieldIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+        );
+
+        const LockIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+        );
+
+        const AlertCircleIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+        );
+
+        const CheckCircleIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+        );
+
+        const MapPinIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+            </svg>
+        );
+
+        const CrosshairIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="22" y1="12" x2="18" y2="12" />
+                <line x1="6" y1="12" x2="2" y2="12" />
+                <line x1="12" y1="6" x2="12" y2="2" />
+                <line x1="12" y1="22" x2="12" y2="18" />
+            </svg>
+        );
+
+        const TerminalIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+        );
+
+        const MoonIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+        );
+
+        const SunIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+            </svg>
+        );
+
+        // Animated Simplex-Noise WebGL Canvas with Palette Blending
+        const SimplexNoiseBackground = ({ isDarkMode }) => {
+            const canvasRef = useRef(null);
+            const darkTargetRef = useRef(isDarkMode ? 1.0 : 0.0);
+            const darkCurrentRef = useRef(isDarkMode ? 1.0 : 0.0);
+
+            useEffect(() => {
+                darkTargetRef.current = isDarkMode ? 1.0 : 0.0;
+            }, [isDarkMode]);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return;
+
+                const vsSource = `
+                    attribute vec2 position;
+                    void main() {
+                        gl_Position = vec4(position, 0.0, 1.0);
+                    }
+                `;
+
+                // Simplex Noise 2D Shader with Domain Warping & Palette Mixing
+                const fsSource = `
+                    precision mediump float;
+                    uniform vec2 u_resolution;
+                    uniform float u_time;
+                    uniform float u_dark;
+
+                    vec3 permute(vec3 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+
+                    float snoise(vec2 v) {
+                        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                                 -0.577350269189626, 0.024390243902439);
+                        vec2 i  = floor(v + dot(v, C.yy));
+                        vec2 x0 = v - i + dot(i, C.xx);
+                        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+                        vec4 x12 = x0.xyxy + C.xxzz;
+                        x12.xy -= i1;
+                        i = mod(i, 289.0);
+                        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
+                            + i.x + vec3(0.0, i1.x, 1.0));
+                        vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy),
+                            dot(x12.zw, x12.zw)), 0.0);
+                        m = m * m;
+                        m = m * m;
+                        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+                        vec3 h = abs(x) - 0.5;
+                        vec3 ox = floor(x + 0.5);
+                        vec3 a0 = x - ox;
+                        m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+                        vec3 g;
+                        g.x  = a0.x  * x0.x  + h.x  * x0.y;
+                        g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+                        return 130.0 * dot(m, g);
+                    }
+
+                    void main() {
+                        vec2 st = gl_FragCoord.xy / u_resolution.xy;
+                        st.x *= u_resolution.x / u_resolution.y;
+
+                        float t = u_time * 0.06;
+
+                        // Simplex noise domain warping
+                        vec2 q = vec2(
+                            snoise(st * 0.85 + vec2(t * 0.35, t * 0.25)),
+                            snoise(st * 0.85 + vec2(-t * 0.28, t * 0.32))
+                        );
+
+                        vec2 r = vec2(
+                            snoise(st * 1.15 + q * 1.1 + vec2(t * 0.16, -t * 0.22)),
+                            snoise(st * 1.15 + q * 1.1 + vec2(-t * 0.24, t * 0.18))
+                        );
+
+                        float f = 0.5 + 0.5 * snoise(st * 1.35 + r * 1.15 + t * 0.09);
+                        float f2 = 0.5 + 0.5 * snoise(st * 1.95 - r * 0.95 - t * 0.13);
+
+                        // Dark mode colors from color.txt:
+                        vec3 darkNavy = vec3(0.125, 0.157, 0.188);    // #202830
+                        vec3 darkCharcoal = vec3(0.133, 0.153, 0.184);// #22272F
+                        vec3 darkSlate = vec3(0.245, 0.242, 0.230);   // #4A4943
+                        vec3 goldDark = vec3(0.753, 0.596, 0.376);    // #C09860
+
+                        vec3 colDark = mix(darkNavy, darkCharcoal, f);
+                        colDark = mix(colDark, darkSlate, clamp(length(q) * 0.32, 0.0, 1.0));
+                        colDark = mix(colDark, goldDark, clamp(pow(f2, 3.2) * 0.30, 0.0, 1.0));
+
+                        // Light mode colors from color.txt:
+                        vec3 smoke = vec3(0.965, 0.962, 0.958);       // #F8F8F8
+                        vec3 softIvory = vec3(0.915, 0.898, 0.865);   // Champagne blend
+                        vec3 silver = vec3(0.792, 0.757, 0.671);      // #CAC1AB
+                        vec3 goldLight = vec3(0.753, 0.596, 0.376);   // #C09860
+
+                        vec3 colLight = mix(smoke, softIvory, f);
+                        colLight = mix(colLight, silver, clamp(length(q) * 0.22, 0.0, 1.0));
+                        colLight = mix(colLight, goldLight, clamp(pow(f2, 2.7) * 0.16, 0.0, 1.0));
+
+                        vec3 finalColor = mix(colLight, colDark, u_dark);
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `;
+
+                function createShader(gl, type, source) {
+                    const shader = gl.createShader(type);
+                    gl.shaderSource(shader, source);
+                    gl.compileShader(shader);
+                    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                        console.error(gl.getShaderInfoLog(shader));
+                        gl.deleteShader(shader);
+                        return null;
+                    }
+                    return shader;
+                }
+
+                const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+                const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+                if (!vs || !fs) return;
+
+                const program = gl.createProgram();
+                gl.attachShader(program, vs);
+                gl.attachShader(program, fs);
+                gl.linkProgram(program);
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    console.error(gl.getProgramInfoLog(program));
+                    return;
+                }
+
+                gl.useProgram(program);
+
+                const buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(
+                    gl.ARRAY_BUFFER,
+                    new Float32Array([
+                        -1.0, -1.0,
+                         1.0, -1.0,
+                        -1.0,  1.0,
+                        -1.0,  1.0,
+                         1.0, -1.0,
+                         1.0,  1.0,
+                    ]),
+                    gl.STATIC_DRAW
+                );
+
+                const posLoc = gl.getAttribLocation(program, "position");
+                gl.enableVertexAttribArray(posLoc);
+                gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+                const resLoc = gl.getUniformLocation(program, "u_resolution");
+                const timeLoc = gl.getUniformLocation(program, "u_time");
+                const darkLoc = gl.getUniformLocation(program, "u_dark");
+
+                let animationFrameId;
+                let startTime = performance.now();
+
+                const handleResize = () => {
+                    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                    const width = window.innerWidth;
+                    const height = window.innerHeight;
+                    canvas.width = Math.floor(width * dpr);
+                    canvas.height = Math.floor(height * dpr);
+                    gl.viewport(0, 0, canvas.width, canvas.height);
+                };
+
+                handleResize();
+                window.addEventListener('resize', handleResize);
+
+                const render = () => {
+                    darkCurrentRef.current += (darkTargetRef.current - darkCurrentRef.current) * 0.08;
+                    const elapsed = (performance.now() - startTime) / 1000;
+
+                    gl.uniform2f(resLoc, canvas.width, canvas.height);
+                    gl.uniform1f(timeLoc, elapsed);
+                    gl.uniform1f(darkLoc, darkCurrentRef.current);
+
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                    animationFrameId = requestAnimationFrame(render);
+                };
+
+                render();
+
+                return () => {
+                    cancelAnimationFrame(animationFrameId);
+                    window.removeEventListener('resize', handleResize);
+                    gl.deleteProgram(program);
+                    gl.deleteShader(vs);
+                    gl.deleteShader(fs);
+                    gl.deleteBuffer(buffer);
+                };
+            }, []);
+
+            return (
+                <canvas
+                    ref={canvasRef}
+                    className="absolute inset-0 w-full h-full pointer-events-none z-0"
+                />
+            );
+        };
+
+        // Minimal Typing Title with Disappearing Cursor & Stable Layout
+        const MinimalTypingTitle = () => {
+            const line1 = "Internal Operations";
+            const line2 = "Tracking System";
+            const [text1, setText1] = useState("");
+            const [text2, setText2] = useState("");
+            const [cursorStage, setCursorStage] = useState("line1"); // 'line1' | 'line2' | 'done'
+
+            useEffect(() => {
+                let index1 = 0;
+                let index2 = 0;
+                let timer1, timer2, doneTimer;
+
+                const typeLine1 = () => {
+                    if (index1 < line1.length) {
+                        setText1(line1.slice(0, index1 + 1));
+                        index1++;
+                        timer1 = setTimeout(typeLine1, 45);
+                    } else {
+                        setCursorStage("line2");
+                        timer2 = setTimeout(typeLine2, 120);
+                    }
+                };
+
+                const typeLine2 = () => {
+                    if (index2 < line2.length) {
+                        setText2(line2.slice(0, index2 + 1));
+                        index2++;
+                        timer2 = setTimeout(typeLine2, 50);
+                    } else {
+                        doneTimer = setTimeout(() => {
+                            setCursorStage("done");
+                        }, 500);
+                    }
+                };
+
+                const startTimer = setTimeout(typeLine1, 200);
+
+                return () => {
+                    clearTimeout(startTimer);
+                    clearTimeout(timer1);
+                    clearTimeout(timer2);
+                    clearTimeout(doneTimer);
+                };
+            }, []);
+
+            return (
+                <h1 className="text-4xl lg:text-5xl font-semibold leading-[1.15] mb-5 tracking-tight text-brand-dark dark:text-brand-smoke transition-colors">
+                    <span className="block min-h-[1.2em]">
+                        {text1}
+                        {cursorStage === "line1" && (
+                            <span className="inline-block w-[3px] h-[0.82em] ml-1 bg-brand-gold align-middle animate-pulse rounded-full" />
+                        )}
+                    </span>
+                    <span className="block min-h-[1.2em] text-brand-gold">
+                        {text2}
+                        {cursorStage === "line2" && (
+                            <span className="inline-block w-[3px] h-[0.82em] ml-1 bg-brand-gold align-middle animate-pulse rounded-full" />
+                        )}
+                    </span>
+                </h1>
+            );
+        };
+
+        // Accessible Modern Button (Gold / Deep Slate Theme - No White)
+        const AnimatedButton = ({ children, type = "button", onClick }) => {
+            return (
+                <button
+                    type={type}
+                    onClick={onClick}
+                    className="group relative flex w-full h-12 cursor-pointer items-center justify-between overflow-hidden rounded-lg bg-brand-gold hover:bg-brand-goldHover text-brand-dark px-5 font-semibold tracking-wide shadow-md shadow-brand-gold/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 transition-all duration-200"
+                >
+                    <span className="flex items-center space-x-2.5">
+                        <LockIcon />
+                        <span className="text-sm font-semibold">{children}</span>
+                    </span>
+                    
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-dark/15 text-brand-dark transition-transform duration-200 group-hover:translate-x-1">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </span>
+                </button>
+            );
+        };
+
+        // Composed UI Pattern: form-section (Glassmorphic Login Card)
+        const LoginFormSection = ({
+            phase,
+            processStep,
+            errorMessage,
+            txHash,
+            empId,
+            setEmpId,
+            password,
+            setPassword,
+            showPassword,
+            setShowPassword,
+            handleLogin,
+            onOpenRecovery,
+            currentLocation,
+            geoDetails,
+            activeScenario
+        }) => {
+            return (
+                <div className="w-full max-w-md animate-slide-up">
+                    <div className="bg-brand-smoke/90 dark:bg-brand-black/90 backdrop-blur-xl rounded-2xl shadow-[0_24px_50px_-12px_rgba(32,40,48,0.12)] dark:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.5)] border border-brand-silver/50 dark:border-brand-darkslate/60 p-7 sm:p-8 relative overflow-hidden transition-all duration-300">
+                        
+                        {phase === 'idle' || phase === 'error' ? (
+                            <div>
+                                <div className="mb-7">
+                                    <div className="inline-flex items-center space-x-2 px-3 py-1 bg-brand-gold/10 border border-brand-gold/30 rounded-full text-xs font-medium text-brand-gold mb-4 transition-colors">
+                                        <TerminalIcon />
+                                        <span>Secure Login Portal</span>
+                                    </div>
+                                    <h2 className="text-2xl font-semibold text-brand-dark dark:text-brand-smoke transition-colors">System Access</h2>
+                                    <p className="text-xs text-brand-darkslate dark:text-brand-silver mt-1 transition-colors">Login with your organizational identity.</p>
+                                </div>
+
+                                {phase === 'error' && (
+                                    <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg text-xs text-rose-700 dark:text-rose-300 flex items-start space-x-3 transition-colors">
+                                        <div className="mt-0.5 shrink-0 text-rose-500"><AlertCircleIcon /></div>
+                                        <div>
+                                            <span className="font-semibold block mb-0.5">Authentication Exception</span>
+                                            {errorMessage}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <form onSubmit={handleLogin} noValidate className="space-y-5">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-semibold uppercase tracking-wider text-brand-darkslate dark:text-brand-silver block transition-colors">
+                                            Username or E-mail
+                                        </label>
+                                        <input
+                                            id="input-username"
+                                            type="text"
+                                            value={empId}
+                                            onChange={(e) => setEmpId(e.target.value)}
+                                            className="w-full h-11 px-4 bg-brand-silver/15 dark:bg-brand-black/60 border border-brand-silver/60 dark:border-brand-darkslate/80 rounded-lg text-sm text-brand-dark dark:text-brand-smoke placeholder-brand-gray/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:border-brand-gold transition-all font-mono"
+                                            placeholder="Username or account@ciril.in"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <div className="flex justify-between items-center">
+                                            <label className="text-xs font-semibold uppercase tracking-wider text-brand-darkslate dark:text-brand-silver block transition-colors">
+                                                Password
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={onOpenRecovery}
+                                                className="text-xs text-brand-gold hover:text-brand-goldHover font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold rounded"
+                                            >
+                                                Recovery Process
+                                            </button>
+                                        </div>
+                                        <div className="relative">
+                                            <input
+                                                id="input-password"
+                                                type={showPassword ? "text" : "password"}
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className="w-full h-11 pl-4 pr-11 bg-brand-silver/15 dark:bg-brand-black/60 border border-brand-silver/60 dark:border-brand-darkslate/80 rounded-lg text-sm text-brand-dark dark:text-brand-smoke placeholder-brand-gray/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:border-brand-gold transition-all font-mono tracking-widest"
+                                                placeholder="••••••••"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                aria-label={showPassword ? "Hide password" : "Show password"}
+                                                className="w-10 h-10 flex items-center justify-center absolute right-1 top-1/2 -translate-y-1/2 text-brand-gray dark:text-brand-silver/70 hover:text-brand-gold transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                                            >
+                                                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-2">
+                                        <AnimatedButton type="submit">Authorize Access</AnimatedButton>
+                                    </div>
+                                </form>
+                            </div>
+                        ) : null}
+
+                        {(phase === 'processing' || phase === 'success') && (
+                            <div className="space-y-6 relative transition-colors">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-brand-darkslate/60 rounded-full overflow-hidden">
+                                    <div className="h-full bg-brand-gold w-1/3 animate-shimmer-bar"></div>
+                                </div>
+
+                                <div className="border-b border-brand-silver/40 dark:border-brand-darkslate/60 pb-4 pt-2 transition-colors">
+                                    <h3 className="text-sm font-semibold text-brand-dark dark:text-brand-smoke flex items-center transition-colors">
+                                        <span className="text-brand-gold mr-2"><TerminalIcon /></span>
+                                        <span className="tracking-wide">Secure Login</span>
+                                    </h3>
+                                    {phase === 'processing' && (
+                                        <div className="mt-2 text-xs font-mono text-brand-darkslate dark:text-brand-silver/80 flex justify-between">
+                                            <span>TX_HASH: {txHash}</span>
+                                            <span className="text-brand-gold animate-pulse">Active</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-5">
+                                    <div className="flex items-start space-x-3.5">
+                                        <div className="mt-0.5 shrink-0">
+                                            {processStep === 1 ? <div className="spinner-brand"></div> : <span className="text-emerald-500 bg-emerald-950/60 p-1 rounded-full block"><CheckCircleIcon /></span>}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className={`text-sm font-medium transition-colors ${processStep >= 1 ? 'text-brand-dark dark:text-brand-smoke' : 'text-brand-gray'}`}>Verifying Your Account</p>
+                                            {processStep === 1 && <div className="h-1 w-full bg-brand-darkslate/60 rounded-full mt-2 overflow-hidden"><div className="h-full bg-brand-gold animate-shimmer-bar"></div></div>}
+                                            {processStep > 1 && <p className="text-xs font-mono text-brand-darkslate dark:text-brand-silver/70 mt-0.5">ID_{empId || 'REQ'} Your account has been verified successfully.</p>}
+                                        </div>
+                                    </div>
+
+                                    {processStep >= 2 && (
+                                        <div className="flex items-start space-x-3.5">
+                                            <div className="mt-0.5 shrink-0">
+                                                {processStep === 2 ? (
+                                                    <div className="spinner-brand"></div>
+                                                ) : activeScenario === 'mismatch' ? (
+                                                    <span className="text-amber-500 bg-amber-950/60 p-1 rounded-full block"><AlertCircleIcon /></span>
+                                                ) : (
+                                                    <span className="text-emerald-500 bg-emerald-950/60 p-1 rounded-full block"><CheckCircleIcon /></span>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className={`text-sm font-medium transition-colors ${processStep >= 2 ? 'text-brand-dark dark:text-brand-smoke' : 'text-brand-gray'}`}>Confirming Your Access</p>
+                                                {processStep === 2 && <div className="h-1 w-full bg-brand-darkslate/60 rounded-full mt-2 overflow-hidden"><div className="h-full bg-brand-gold animate-shimmer-bar"></div></div>}
+                                                {processStep >= 3 && (
+                                                    activeScenario === 'mismatch' ? (
+                                                        <div className="space-y-1.5 mt-1 font-mono text-xs">
+                                                            <p className="text-amber-600 dark:text-amber-400">
+                                                                As your location is mis-matched, we are recording your exact location, and prepares for workspace access:
+                                                            </p>
+                                                            <div className="p-2.5 bg-amber-500/10 border border-amber-500/25 rounded-md text-[11px] text-amber-800 dark:text-amber-300 space-y-1">
+                                                                <div className="flex items-center space-x-1.5 font-semibold">
+                                                                    <CrosshairIcon />
+                                                                    <span>GPS_FIX: {geoDetails?.lat || '17.448291'}° N, {geoDetails?.lon || '78.374829'}° E (±{geoDetails?.accuracy || '4.8'}m)</span>
+                                                                </div>
+                                                                <div className="text-[10px] text-amber-700/90 dark:text-amber-400/90 pl-4">
+                                                                    AREA: {geoDetails?.locality || 'Remote Operational Node'}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-1 mt-1 font-mono text-xs">
+                                                            <p className="text-brand-darkslate dark:text-brand-silver/75 font-medium">
+                                                                Your location matches allowed locations.
+                                                            </p>
+                                                            <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center space-x-1.5">
+                                                                <CrosshairIcon />
+                                                                <span>GPS Locked: {geoDetails?.lat || '17.448291'}° N, {geoDetails?.lon || '78.374829'}° E (±{geoDetails?.accuracy || '4.8'}m)</span>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {processStep >= 4 && (
+                                        <div className="flex items-start space-x-3.5">
+                                            <div className="mt-0.5 shrink-0">
+                                                {phase !== 'success' ? <div className="spinner-brand"></div> : <span className="text-emerald-500 bg-emerald-950/60 p-1 rounded-full block"><CheckCircleIcon /></span>}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className={`text-sm font-medium transition-colors ${processStep >= 4 ? 'text-brand-dark dark:text-brand-smoke' : 'text-brand-gray'}`}>Preparing Your Workspace</p>
+                                                {phase !== 'success' && <div className="h-1 w-full bg-brand-darkslate/60 rounded-full mt-2 overflow-hidden"><div className="h-full bg-brand-gold animate-shimmer-bar"></div></div>}
+                                                {phase === 'success' && (
+                                                    <p className="text-xs font-mono text-brand-darkslate dark:text-brand-silver/70 mt-0.5">
+                                                        {activeScenario === 'mismatch' 
+                                                            ? 'Location coordinates cryptographically recorded. Workspace ready.'
+                                                            : 'Your access to workspace is ready to open.'}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {phase === 'success' && (
+                                    <div className="mt-6 p-4 bg-emerald-500/10 dark:bg-emerald-950/50 border border-emerald-500/30 dark:border-emerald-800/60 rounded-lg text-center transition-colors">
+                                        <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300 flex items-center justify-center space-x-2">
+                                            <ShieldIcon />
+                                            <span>Login successful. Opening your workspace...</span>
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Clean & Accessible Theme Toggle (Deep Slate / Gold - No White)
+        const ThemeToggle = ({ isDarkMode, setIsDarkMode }) => {
+            return (
+                <button
+                    type="button"
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                    className="absolute top-6 right-6 lg:right-12 z-40 flex items-center space-x-2 px-3.5 py-2 rounded-full bg-brand-smoke/90 dark:bg-brand-black/85 backdrop-blur-md border border-brand-silver/50 dark:border-brand-darkslate/60 text-brand-dark dark:text-brand-silver shadow-sm hover:border-brand-gold/60 dark:hover:border-brand-gold/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold transition-all duration-200"
+                >
+                    <div className="w-5 h-5 flex items-center justify-center text-brand-gold">
+                        {isDarkMode ? <SunIcon /> : <MoonIcon />}
+                    </div>
+                    <span className="text-xs font-medium text-brand-dark dark:text-brand-smoke tracking-wide">
+                        {isDarkMode ? 'Dark' : 'Light'}
+                    </span>
+                </button>
+            );
+        };
+
+        const App = () => {
+            const [empId, setEmpId] = useState('');
+            const [password, setPassword] = useState('');
+            const [showPassword, setShowPassword] = useState(false);
+            const [helpModalOpen, setHelpModalOpen] = useState(false);
+            const [emptyCredsModalOpen, setEmptyCredsModalOpen] = useState(false);
+
+            // Default color theme as LIGHT MODE
+            const [isDarkMode, setIsDarkMode] = useState(false);
+
+            // Location permission state: 'prompt' | 'granted' | 'denied'
+            const [locationPermissionState, setLocationPermissionState] = useState(() => {
+                const saved = localStorage.getItem('ciril_location_permitted');
+                return saved === 'granted' ? 'granted' : 'prompt';
+            });
+
+            // Testing Scenarios: 'success' | 'failed' | 'mismatch'
+            const [activeScenario, setActiveScenario] = useState('success');
+            const [testToolbarOpen, setTestToolbarOpen] = useState(true);
+
+            const [phase, setPhase] = useState('idle');
+            const [processStep, setProcessStep] = useState(0);
+            const [errorMessage, setErrorMessage] = useState('');
+            const [txHash, setTxHash] = useState('');
+
+            const [currentDate, setCurrentDate] = useState('');
+            const [currentLocation, setCurrentLocation] = useState('17.448291° N, 78.374829° E (±3.8m) · HITEC City, Hyderabad');
+
+            // Precise Geolocation Telemetry State (sub-meter tracking)
+            const [geoDetails, setGeoDetails] = useState({
+                lat: '17.448291',
+                lon: '78.374829',
+                accuracy: '3.8',
+                altitude: '542.0',
+                speed: null,
+                heading: null,
+                locality: 'HITEC City, Hyderabad, Telangana',
+                fullAddress: 'HITEC City, Hyderabad, Telangana, India',
+                timestamp: 'Active Lock',
+                isLive: false,
+                trackingMode: 'High Precision (GPS / Triangulated)'
+            });
+
+            const lastGeocodeRef = useRef({ lat: 0, lon: 0, locality: '' });
+
+            // Free, robust reverse geocoding via BigDataCloud with Nominatim fallback
+            const reverseGeocode = async (lat, lon) => {
+                const dist = Math.abs(lat - lastGeocodeRef.current.lat) + Math.abs(lon - lastGeocodeRef.current.lon);
+                if (dist < 0.0005 && lastGeocodeRef.current.locality) {
+                    return lastGeocodeRef.current;
+                }
+
+                try {
+                    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const locality = [data.locality, data.city, data.principalSubdivision].filter(Boolean).join(', ');
+                        const result = {
+                            locality: locality || `${data.city || 'Hyderabad'}, ${data.principalSubdivision || 'Telangana'}`,
+                            fullAddress: `${data.locality ? data.locality + ', ' : ''}${data.city || ''}, ${data.principalSubdivision || ''}, ${data.countryName || 'India'}`
+                        };
+                        lastGeocodeRef.current = { lat, lon, ...result };
+                        return result;
+                    }
+                } catch (e) {
+                    console.warn("Reverse geocode fetch skipped:", e.message);
+                }
+                return null;
+            };
+
+            // High-precision coordinate processor (up to 6 decimal places = ~0.1m precision)
+            const updatePreciseLocation = async (position) => {
+                if (!position || !position.coords) return;
+                const { latitude, longitude, accuracy, altitude, speed, heading } = position.coords;
+
+                const latFixed = latitude.toFixed(6);
+                const lonFixed = longitude.toFixed(6);
+                const accFixed = accuracy != null ? accuracy.toFixed(1) : '3.5';
+                const altFixed = altitude != null ? altitude.toFixed(1) : null;
+
+                setGeoDetails(prev => ({
+                    ...prev,
+                    lat: latFixed,
+                    lon: lonFixed,
+                    accuracy: accFixed,
+                    altitude: altFixed,
+                    speed: speed != null ? speed.toFixed(1) : null,
+                    heading: heading != null ? heading.toFixed(0) : null,
+                    timestamp: new Date().toLocaleTimeString(),
+                    isLive: true,
+                    trackingMode: 'GPS Satellite Fix'
+                }));
+
+                const precisionCoordString = `${latFixed}° N, ${lonFixed}° E (±${accFixed}m)`;
+                setCurrentLocation(precisionCoordString);
+
+                const geoInfo = await reverseGeocode(latitude, longitude);
+                if (geoInfo) {
+                    setGeoDetails(prev => ({
+                        ...prev,
+                        locality: geoInfo.locality,
+                        fullAddress: geoInfo.fullAddress
+                    }));
+                    setCurrentLocation(`${precisionCoordString} · ${geoInfo.locality}`);
+                }
+            };
+
+            // Live continuous precise GPS tracking
+            const startPreciseTracking = () => {
+                if (!navigator.geolocation) {
+                    console.warn("Geolocation API not supported in this browser.");
+                    setLocationPermissionState('denied');
+                    return null;
+                }
+
+                // Strictly demand high accuracy from hardware GPS and Wi-Fi SSID mapping
+                const preciseOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setLocationPermissionState('granted');
+                        localStorage.setItem('ciril_location_permitted', 'granted');
+                        updatePreciseLocation(position);
+                    },
+                    (error) => {
+                        console.warn("High-accuracy initial query status:", error.code, error.message);
+                        if (error.code === 1) { // User clicked Block/Deny
+                            setLocationPermissionState('denied');
+                            localStorage.setItem('ciril_location_permitted', 'denied');
+                        } else {
+                            // User granted permission, but hardware GPS timed out on PC/laptop
+                            setLocationPermissionState('granted');
+                            localStorage.setItem('ciril_location_permitted', 'granted');
+                            navigator.geolocation.getCurrentPosition(
+                                (stdPos) => updatePreciseLocation(stdPos),
+                                () => {
+                                    // Fallback enterprise coordinate fix
+                                    setGeoDetails(prev => ({
+                                        ...prev,
+                                        isLive: true,
+                                        trackingMode: 'Corporate Network Node'
+                                    }));
+                                },
+                                { enableHighAccuracy: false, timeout: 6000 }
+                            );
+                        }
+                    },
+                    preciseOptions
+                );
+
+                try {
+                    const watchId = navigator.geolocation.watchPosition(
+                        (pos) => {
+                            setLocationPermissionState('granted');
+                            localStorage.setItem('ciril_location_permitted', 'granted');
+                            updatePreciseLocation(pos);
+                        },
+                        (err) => {
+                            if (err.code === 1) {
+                                setLocationPermissionState('denied');
+                                localStorage.setItem('ciril_location_permitted', 'denied');
+                            }
+                        },
+                        preciseOptions
+                    );
+                    return watchId;
+                } catch (e) {
+                    console.warn("watchPosition error:", e);
+                    return null;
+                }
+            };
+
+            useEffect(() => {
+                // Initialize formatted system date
+                const today = new Date();
+                setCurrentDate(today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
+                
+                let watchId = null;
+
+                // If navigator.permissions API is available, check persistent permission state first
+                if (navigator.permissions && navigator.permissions.query) {
+                    navigator.permissions.query({ name: 'geolocation' }).then((status) => {
+                        if (status.state === 'granted') {
+                            setLocationPermissionState('granted');
+                            localStorage.setItem('ciril_location_permitted', 'granted');
+                            watchId = startPreciseTracking();
+                        } else if (status.state === 'denied') {
+                            setLocationPermissionState('denied');
+                            localStorage.setItem('ciril_location_permitted', 'denied');
+                        } else {
+                            // State is 'prompt': prompt the user
+                            watchId = startPreciseTracking();
+                        }
+
+                        // Listen to permission changes (e.g. if changed in browser settings)
+                        status.onchange = () => {
+                            if (status.state === 'granted') {
+                                setLocationPermissionState('granted');
+                                localStorage.setItem('ciril_location_permitted', 'granted');
+                                watchId = startPreciseTracking();
+                            } else if (status.state === 'denied') {
+                                setLocationPermissionState('denied');
+                                localStorage.setItem('ciril_location_permitted', 'denied');
+                            }
+                        };
+                    }).catch(() => {
+                        watchId = startPreciseTracking();
+                    });
+                } else {
+                    watchId = startPreciseTracking();
+                }
+
+                return () => {
+                    if (watchId !== null && navigator.geolocation) {
+                        navigator.geolocation.clearWatch(watchId);
+                    }
+                };
+            }, []);
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                
+                // Requirement 1: Separate dialog box when user attempts access without entering credentials
+                if (!empId.trim() || !password.trim()) {
+                    setEmptyCredsModalOpen(true);
+                    return;
+                }
+
+                setPhase('processing');
+                setProcessStep(1);
+                setTxHash('TX-' + Math.random().toString(36).substring(2, 10).toUpperCase());
+
+                // Scenario 2: Credentials Failed
+                if (activeScenario === 'failed' || empId.toLowerCase().includes('fail')) {
+                    try {
+                        await new Promise(r => setTimeout(r, 1200));
+                        throw new Error('Authentication failed. Invalid username or security credential.');
+                    } catch (error) {
+                        setPhase('error');
+                        setProcessStep(0);
+                        setErrorMessage(error.message);
+                    }
+                    return;
+                }
+
+                // Scenario 1 (Success) & Scenario 3 (Location Mismatch)
+                try {
+                    await new Promise(r => setTimeout(r, 1200));
+                    setProcessStep(2);
+                    await new Promise(r => setTimeout(r, 1300));
+                    setProcessStep(3);
+                    await new Promise(r => setTimeout(r, 1100));
+                    setProcessStep(4);
+                    await new Promise(r => setTimeout(r, 900));
+                    setPhase('success');
+                } catch (error) {
+                    setPhase('error');
+                    setProcessStep(0);
+                    setErrorMessage(error.message || 'Authentication failed. Please verify credentials.');
+                }
+            };
+
+            return (
+                <div className={`h-screen w-full relative selection:bg-brand-gold selection:text-brand-dark overflow-hidden transition-colors duration-500 ${isDarkMode ? 'dark' : ''}`}>
+                    
+                    {/* Animated Simplex-Noise Canvas (GPU Accelerated) */}
+                    <SimplexNoiseBackground isDarkMode={isDarkMode} />
+
+                    {/* Vignette Glow Layer */}
+                    <div className="vignette-glow"></div>
+
+                    {/* Film Grain Layer */}
+                    <div className="film-grain"></div>
+
+                    {/* Subtle Geometric Texture Overlay */}
+                    <div className="absolute inset-0 bg-grid-animated animate-pan-grid z-[3] opacity-35 pointer-events-none"></div>
+
+                    {/* Accessible Theme Toggle */}
+                    <ThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
+                    {/* Main Layout or Location Permission Blocked UI */}
+                    {locationPermissionState === 'denied' ? (
+                        /* Requirement 4: Location permission required screen disabling view access to login-pane */
+                        <div className="relative z-20 w-full h-full flex flex-col items-center justify-center px-6 py-12 text-center animate-fade-in">
+                            <div className="max-w-md w-full bg-brand-smoke/90 dark:bg-brand-black/90 backdrop-blur-xl border border-brand-silver/50 dark:border-brand-darkslate/60 rounded-3xl p-8 sm:p-10 shadow-[0_24px_50px_-12px_rgba(32,40,48,0.2)] dark:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.6)] flex flex-col items-center">
+                                
+                                {/* Logo */}
+                                <div className="w-16 h-16 bg-brand-silver/15 dark:bg-brand-dark/85 backdrop-blur-md rounded-2xl flex items-center justify-center p-3 shadow-md border border-brand-silver/40 dark:border-brand-darkslate/60 mb-6 transition-colors">
+                                    <img src="./img/logo.png" alt="CIRIL Logo" className="h-10 w-auto object-contain" />
+                                </div>
+
+                                {/* Security Badge */}
+                                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 text-xs font-mono mb-4 shadow-sm">
+                                    <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <span className="font-semibold tracking-wider uppercase text-[11px]">Security Gate · Access Restricted</span>
+                                </div>
+
+                                <h2 className="text-2xl font-bold tracking-tight text-brand-dark dark:text-brand-smoke mb-2">
+                                    Location Permission Required
+                                </h2>
+                                
+                                <p className="text-xs text-brand-darkslate dark:text-brand-silver leading-relaxed mb-6">
+                                    Verified geographic telemetry is strictly required by CIRIL enterprise protocol before granting access to this operations gateway.
+                                </p>
+
+                                <div className="w-full p-4 bg-brand-silver/15 dark:bg-brand-black/60 border border-brand-silver/40 dark:border-brand-darkslate/60 rounded-xl text-left mb-6 font-mono text-xs space-y-2">
+                                    <div className="text-brand-gold font-semibold flex items-center">
+                                        <TerminalIcon />
+                                        <span className="ml-1.5">Action Required</span>
+                                    </div>
+                                    <p className="text-brand-dark dark:text-brand-silver/90 text-[11px] leading-relaxed">
+                                        1. Click the site permissions / lock icon in your browser address bar.<br />
+                                        2. Set <strong>Location</strong> to <strong>Allow</strong>.<br />
+                                        3. Click Retry Verification below.
+                                    </p>
+                                </div>
+
+                                <div className="w-full flex flex-col gap-2.5">
+                                    <button
+                                        type="button"
+                                        onClick={startPreciseTracking}
+                                        className="w-full h-11 flex items-center justify-center space-x-2 bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-semibold text-xs rounded-xl shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                                    >
+                                        <CrosshairIcon />
+                                        <span>Retry Precise Geolocation</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setLocationPermissionState('granted');
+                                            localStorage.setItem('ciril_location_permitted', 'granted');
+                                            setGeoDetails({
+                                                lat: '17.448291',
+                                                lon: '78.374829',
+                                                accuracy: '3.8',
+                                                altitude: '542.0',
+                                                speed: null,
+                                                heading: null,
+                                                locality: 'HITEC City, Hyderabad, Telangana',
+                                                fullAddress: 'HITEC City, Hyderabad, Telangana, India',
+                                                timestamp: new Date().toLocaleTimeString(),
+                                                isLive: true,
+                                                trackingMode: 'High Precision Fix'
+                                            });
+                                            setCurrentLocation("17.448291° N, 78.374829° E (±3.8m) · HITEC City, Hyderabad");
+                                        }}
+                                        className="text-xs font-mono text-brand-darkslate dark:text-brand-silver/60 hover:text-brand-gold py-2 transition-colors"
+                                    >
+                                        [Demo Bypass: Allow Telemetry]
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        /* Normal Screen: Introduction UI & Login Pane */
+                        <div className="relative z-10 w-full max-w-[1440px] mx-auto h-full flex flex-col lg:flex-row items-center justify-between px-6 lg:px-20">
+                            
+                            {/* Left Side: Rich Introduction UI & Platform Identity */}
+                            <div className="w-full lg:w-5/12 flex flex-col items-start mb-8 lg:mb-0">
+
+                                {/* Brand Logo Container */}
+                                <div className="flex items-center space-x-3.5 mb-6">
+                                    <div className="bg-brand-smoke/80 dark:bg-brand-black/85 backdrop-blur-md rounded-2xl flex items-center justify-center p-2.5 shadow-lg border border-brand-silver/50 dark:border-brand-darkslate/60 shrink-0 transition-colors">
+                                        <img src="./img/logo.png" alt="CIRIL Logo" className="h-10 w-auto object-contain" />
+                                    </div>
+                                </div>
+
+                                {/* Minimal Typing Heading with High Contrast */}
+                                <MinimalTypingTitle />
+
+                                {/* Description Block */}
+                                <div className="p-4 bg-brand-smoke/80 dark:bg-brand-black/50 backdrop-blur-md border border-brand-silver/40 dark:border-brand-darkslate/60 border-l-4 border-l-brand-gold rounded-r-xl max-w-lg mb-6 shadow-sm transition-colors">
+                                    <p className="text-brand-dark dark:text-brand-silver text-sm leading-relaxed">
+                                        A centralized secure platform for managing employee access, daily work, and business activities.
+                                    </p>
+                                </div>
+                                
+                                {/* High-Precision Live Telemetry Card */}
+                                <div className="w-full max-w-lg">
+                                    <div className="p-4 rounded-2xl bg-brand-smoke/80 dark:bg-brand-black/75 backdrop-blur-xl border border-brand-silver/50 dark:border-brand-darkslate/60 shadow-md transition-all">
+                                        <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-brand-silver/30 dark:border-brand-darkslate/50">
+                                            <div className="flex items-center space-x-2">
+                                                <span className="relative flex h-2.5 w-2.5">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                                </span>
+                                                <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-brand-gold">
+                                                    Live GPS Telemetry
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-mono font-medium">
+                                                <CrosshairIcon />
+                                                <span>{geoDetails.accuracy ? `±${geoDetails.accuracy}m Accuracy` : 'Locked'}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <div className="flex items-start space-x-2">
+                                                <div className="mt-0.5 text-brand-gold shrink-0">
+                                                    <MapPinIcon />
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-xs font-semibold text-brand-dark dark:text-brand-smoke truncate">
+                                                        {geoDetails.locality || 'Locating network node...'}
+                                                    </p>
+                                                    {geoDetails.fullAddress && (
+                                                        <p className="text-[10px] text-brand-darkslate dark:text-brand-silver/70 truncate mt-0.5" title={geoDetails.fullAddress}>
+                                                            {geoDetails.fullAddress}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between p-2 rounded-lg bg-brand-silver/15 dark:bg-brand-black/60 border border-brand-silver/30 dark:border-brand-darkslate/70 font-mono text-[11px]">
+                                                <div className="flex items-center space-x-1 text-brand-dark dark:text-brand-smoke font-medium">
+                                                    <span className="text-brand-gold">LAT:</span>
+                                                    <span>{geoDetails.lat || '17.448291'}° N</span>
+                                                    <span className="text-brand-silver/60 dark:text-brand-darkslate mx-1">|</span>
+                                                    <span className="text-brand-gold">LON:</span>
+                                                    <span>{geoDetails.lon || '78.374829'}° E</span>
+                                                </div>
+                                                {geoDetails.altitude && (
+                                                    <span className="text-[10px] text-brand-darkslate dark:text-brand-silver/70">
+                                                        {geoDetails.altitude}m MSL
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Side: Composed UI Pattern Form Section */}
+                            <LoginFormSection
+                                phase={phase}
+                                processStep={processStep}
+                                errorMessage={errorMessage}
+                                txHash={txHash}
+                                empId={empId}
+                                setEmpId={setEmpId}
+                                password={password}
+                                setPassword={setPassword}
+                                showPassword={showPassword}
+                                setShowPassword={setShowPassword}
+                                handleLogin={handleLogin}
+                                onOpenRecovery={() => setHelpModalOpen(true)}
+                                currentLocation={currentLocation || 'Hyderabad, TS'}
+                                geoDetails={geoDetails}
+                                activeScenario={activeScenario}
+                            />
+
+                        </div>
+                    )}
+
+                    {/* Accessible Footer */}
+                    <div className="absolute bottom-5 w-full text-center pointer-events-none z-10">
+                        <p className="text-xs text-brand-darkslate dark:text-brand-silver/70 uppercase tracking-wider font-mono transition-colors">
+                            Authorized personnel only. All access is cryptographically audited.
+                        </p>
+                    </div>
+
+                    {/* Separate Dialog Box: Empty Credentials Warning */}
+                    {emptyCredsModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/60 dark:bg-brand-black/75 backdrop-blur-sm p-4 animate-fade-in">
+                            <div className="bg-brand-smoke dark:bg-brand-dark rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-brand-silver/50 dark:border-brand-darkslate/70 transition-all transform animate-slide-up">
+                                <div className="flex items-center space-x-3 mb-3">
+                                    <div className="w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-500 shrink-0">
+                                        <AlertCircleIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base font-semibold text-brand-dark dark:text-brand-smoke">Credentials Required</h3>
+                                        <p className="text-xs text-brand-darkslate dark:text-brand-silver">Authentication cannot proceed</p>
+                                    </div>
+                                </div>
+                                <div className="p-3.5 bg-amber-500/10 border border-amber-500/25 rounded-xl mb-5">
+                                    <p className="text-xs font-mono text-brand-dark dark:text-brand-silver leading-relaxed">
+                                        Please provide your <strong>Username or E-mail</strong> and <strong>Password</strong> to enter the system.
+                                    </p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEmptyCredsModalOpen(false);
+                                            if (!empId) {
+                                                document.getElementById('input-username')?.focus();
+                                            } else {
+                                                document.getElementById('input-password')?.focus();
+                                            }
+                                        }}
+                                        className="px-5 py-2.5 bg-brand-gold hover:bg-brand-goldHover text-brand-dark text-xs font-semibold rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold shadow-sm"
+                                    >
+                                        Understood
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Help Modal (Access Recovery) */}
+                    {helpModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-black/70 backdrop-blur-sm p-4">
+                            <div className="bg-brand-dark/95 dark:bg-brand-black/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-brand-coolsilver/25 dark:border-brand-darkslate/60 text-brand-smoke transition-colors">
+                                <div className="flex items-center space-x-2.5 mb-3 text-brand-smoke">
+                                    <span className="text-brand-gold"><ShieldIcon /></span>
+                                    <h3 className="text-base font-semibold tracking-wide">Access Recovery</h3>
+                                </div>
+                                <div className="p-4 bg-brand-black/60 border border-brand-darkslate/60 rounded-lg mb-5 transition-colors">
+                                    <p className="text-xs font-mono text-brand-silver/90 leading-relaxed">
+                                        ⚠️ Password reset is unavailable<br /><br />
+                                        Please contact your Department Administrator or IT Service Desk to request an access.
+                                    </p>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={() => setHelpModalOpen(false)}
+                                        className="px-5 py-2.5 bg-brand-gold hover:bg-brand-goldHover text-brand-dark text-xs font-semibold rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                                    >
+                                        Understood!
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Testing Scenarios Dock */}
+                    <div className="fixed bottom-3 right-3 z-50">
+                        {testToolbarOpen ? (
+                            <div className="bg-brand-smoke/95 dark:bg-brand-black/95 backdrop-blur-xl border border-brand-silver/60 dark:border-brand-darkslate/70 p-3 rounded-2xl shadow-2xl text-xs font-mono flex flex-col gap-2 max-w-xs transition-all">
+                                <div className="flex items-center justify-between border-b border-brand-silver/30 dark:border-brand-darkslate/60 pb-1.5">
+                                    <span className="font-semibold text-brand-gold uppercase text-[10px] tracking-wider flex items-center">
+                                        <TerminalIcon />
+                                        <span className="ml-1">Testing Scenarios</span>
+                                    </span>
+                                    <button
+                                        onClick={() => setTestToolbarOpen(false)}
+                                        className="text-brand-darkslate dark:text-brand-silver hover:text-brand-gold text-[10px] p-0.5"
+                                        title="Minimize toolbar"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => { setActiveScenario('success'); setPhase('idle'); }}
+                                        className={`py-1.5 px-2 rounded-lg text-[10px] font-semibold text-center transition-all ${activeScenario === 'success' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-brand-silver/20 dark:bg-brand-dark text-brand-dark dark:text-brand-silver'}`}
+                                    >
+                                        1. Success
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setActiveScenario('failed'); setPhase('idle'); }}
+                                        className={`py-1.5 px-2 rounded-lg text-[10px] font-semibold text-center transition-all ${activeScenario === 'failed' ? 'bg-rose-500 text-white shadow-sm' : 'bg-brand-silver/20 dark:bg-brand-dark text-brand-dark dark:text-brand-silver'}`}
+                                    >
+                                        2. Failed
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setActiveScenario('mismatch'); setPhase('idle'); }}
+                                        className={`py-1.5 px-2 rounded-lg text-[10px] font-semibold text-center transition-all ${activeScenario === 'mismatch' ? 'bg-amber-500 text-white shadow-sm' : 'bg-brand-silver/20 dark:bg-brand-dark text-brand-dark dark:text-brand-silver'}`}
+                                    >
+                                        3. Mismatch
+                                    </button>
+                                </div>
+
+                                <div className="p-2 rounded-lg bg-brand-silver/15 dark:bg-brand-black/60 border border-brand-silver/30 dark:border-brand-darkslate/60 text-[10px] space-y-0.5">
+                                    <div className="flex justify-between items-center text-brand-dark dark:text-brand-smoke font-semibold">
+                                        <span className="flex items-center space-x-1">
+                                            <CrosshairIcon />
+                                            <span>GPS Fix</span>
+                                        </span>
+                                        <span className="text-emerald-600 dark:text-emerald-400 font-mono">±{geoDetails.accuracy || '3.8'}m</span>
+                                    </div>
+                                    <div className="text-[9px] font-mono text-brand-darkslate dark:text-brand-silver/80 truncate">
+                                        {geoDetails.lat}° N, {geoDetails.lon}° E
+                                    </div>
+                                </div>
+
+                                <div className="pt-1 border-t border-brand-silver/30 dark:border-brand-darkslate/60 flex items-center justify-between">
+                                    <span className="text-[10px] text-brand-darkslate dark:text-brand-silver">Loc. Permission:</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const nextState = locationPermissionState === 'denied' ? 'granted' : 'denied';
+                                            setLocationPermissionState(nextState);
+                                            localStorage.setItem('ciril_location_permitted', nextState);
+                                            if (nextState === 'granted') setCurrentLocation("Hyderabad, TS");
+                                        }}
+                                        className={`px-2 py-0.5 rounded text-[10px] font-semibold ${locationPermissionState === 'denied' ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400' : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'}`}
+                                    >
+                                        {locationPermissionState === 'denied' ? 'Blocked (Toggle)' : 'Granted (Toggle)'}
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => setTestToolbarOpen(true)}
+                                className="px-3 py-1.5 rounded-full bg-brand-smoke/90 dark:bg-brand-black/90 backdrop-blur-md border border-brand-silver/50 dark:border-brand-darkslate/60 shadow-lg text-[11px] font-mono text-brand-gold hover:border-brand-gold transition-all"
+                            >
+                                ⚙️ Scenarios ({activeScenario})
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
+
+<!-- Resume with -c (or command below):
+agy --conversation=92cb7572-74bd-48d5-b9f1-f75b13419768 -->

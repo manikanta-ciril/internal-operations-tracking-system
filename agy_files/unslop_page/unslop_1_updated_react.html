@@ -6,14 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>CIRIL - Work Management Portal</title>
 
-    <!-- Tailwind CSS, Three.js, React 18 & Babel Standalone -->
+    <!-- Tailwind CSS, Three.js (r160), Anime.js, React 18 & Babel Standalone -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono (Free for Personal & Commercial Use) -->
+    <!-- High-Resolution Solar System Scope Earth Textures (Zero-latency data URLs for local/offline) -->
+    <script src="./textures/earth_textures_data.js"></script>
+
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,40 +41,29 @@
                     },
                     colors: {
                         ciril: {
-                            base: '#202830',
-                            dark: '#22272F',
-                            slate: '#2D312B',
-                            grey: '#4A4943',
-                            dimgray: '#707070',
-                            sand: '#CAC1AB',
-                            gold: '#C09860',
-                            silver: '#C5C6CB',
-                            smoke: '#F8F8F8',
+                            base: '#020408',
+                            dark: '#060a10',
+                            slate: '#121820',
+                            charcoal: '#202830',
+                            darkslate: '#2D312B',
+                            cyan: '#4db2ff',
+                            twilight: '#bc490b',
+                            redArc: '#ff3344',
                             emerald: '#4cd964',
-                            emeraldHover: '#5de24e',
-                            sage: '#53c2a9',
-                            cyan: '#7bd8c4'
+                            aurora: '#7bd8c4'
                         }
                     },
                     animation: {
-                        'aurora': 'auroraMove 18s ease-in-out infinite alternate',
-                        'aurora-slow': 'auroraMove 28s ease-in-out infinite alternate',
                         'beam': 'borderBeam 7s linear infinite',
                         'shimmer': 'shimmerSweep 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'pulse-glow': 'pulseGlow 5s ease-in-out infinite alternate',
-                        'float': 'floating 6s ease-in-out infinite alternate',
                         'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'slide-down': 'slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'shake': 'shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
                         'blink': 'blinkCursor 1s infinite',
+                        'pulse-slow': 'pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
-                        auroraMove: {
-                            '0%': { transform: 'scale(1) translate(0%, 0%) rotate(0deg)' },
-                            '50%': { transform: 'scale(1.15) translate(-4%, 3%) rotate(2deg)' },
-                            '100%': { transform: 'scale(0.95) translate(4%, -3%) rotate(-2deg)' }
-                        },
                         borderBeam: {
                             '0%': { transform: 'rotate(0deg)' },
                             '100%': { transform: 'rotate(360deg)' },
@@ -78,14 +71,6 @@
                         shimmerSweep: {
                             '0%': { transform: 'translateX(-100%)' },
                             '100%': { transform: 'translateX(250%)' },
-                        },
-                        pulseGlow: {
-                            '0%': { opacity: '0.4', transform: 'scale(0.96)' },
-                            '100%': { opacity: '0.8', transform: 'scale(1.04)' },
-                        },
-                        floating: {
-                            '0%': { transform: 'translateY(0px)' },
-                            '100%': { transform: 'translateY(-10px)' },
                         },
                         fadeIn: {
                             '0%': { opacity: '0' },
@@ -108,6 +93,10 @@
                         blinkCursor: {
                             '0%, 100%': { opacity: '1' },
                             '50%': { opacity: '0' }
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { opacity: '0.8', transform: 'scale(1)' },
+                            '50%': { opacity: '0.4', transform: 'scale(0.97)' }
                         }
                     }
                 }
@@ -130,109 +119,61 @@
             padding: 0;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: #020408;
+            touch-action: pan-y;
         }
 
         /* Safe area support for mobile devices */
         .safe-area-top { padding-top: env(safe-area-inset-top, 0px); }
         .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
-        /* Premium Aurora Veil & Line-based Gradient Movement from color.txt */
-        .bg-aurora-canvas {
+        /* Fullscreen Three.js Background Canvas Container */
+        #three-canvas {
             position: fixed;
-            inset: -20%;
-            width: 140%;
-            height: 140%;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-            transition: background 0.8s ease;
+            pointer-events: auto;
+            touch-action: pan-y;
         }
 
-        /* Dark Mode: Obsidian, Dark Slate Grey (#2D312B), Deep Black (#202830), Sand (#CAC1AB), Sage/Emerald (#53c2a9) */
-        .dark .bg-aurora-canvas {
-            background: 
-                radial-gradient(ellipse 60% 50% at 20% 30%, rgba(83, 194, 169, 0.18), transparent 60%),
-                radial-gradient(ellipse 55% 45% at 75% 75%, rgba(192, 152, 96, 0.14), transparent 65%),
-                radial-gradient(ellipse 70% 60% at 50% 50%, rgba(45, 49, 43, 0.75), transparent 75%),
-                linear-gradient(135deg, #182026 0%, #202830 45%, #151a20 100%);
-        }
-
-        /* Light Mode: Quartz, Warm Sand (#CAC1AB), Whitesmoke (#F8F8F8), Burlywood Tint (#C09860), Sage (#7bd8c4) */
-        .bg-aurora-canvas {
-            background: 
-                radial-gradient(ellipse 60% 50% at 25% 25%, rgba(83, 194, 169, 0.15), transparent 60%),
-                radial-gradient(ellipse 55% 45% at 80% 70%, rgba(192, 152, 96, 0.12), transparent 65%),
-                radial-gradient(ellipse 65% 55% at 50% 50%, rgba(202, 193, 171, 0.22), transparent 70%),
-                linear-gradient(135deg, #F8F8F8 0%, #EDE9DE 50%, #F5F3ED 100%);
-        }
-
-        /* Moving Aurora Veil Overlay Layers */
-        .aurora-layer-1 {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 35% 35%, rgba(83, 194, 169, 0.22) 0%, rgba(45, 49, 43, 0) 55%);
-            filter: blur(80px);
-            animation: auroraMove 22s ease-in-out infinite alternate;
-        }
-
-        .aurora-layer-2 {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 70% 65%, rgba(192, 152, 96, 0.18) 0%, rgba(32, 40, 48, 0) 50%);
-            filter: blur(85px);
-            animation: auroraMove 26s ease-in-out infinite alternate-reverse;
-        }
-
-        /* Line-based Grid Mesh Texture */
-        .grid-line-mesh {
+        /* Ambient Cosmic & Aurora Backdrop from color.txt palette */
+        .space-backdrop-overlay {
             position: fixed;
             inset: 0;
             z-index: 1;
             pointer-events: none;
-            background-image: 
-                linear-gradient(to right, rgba(112, 112, 112, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(112, 112, 112, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 95%);
-            -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 95%);
+            background: 
+                radial-gradient(circle at 18% 25%, rgba(77, 178, 255, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 78% 75%, rgba(188, 73, 11, 0.07) 0%, transparent 52%),
+                radial-gradient(circle at 45% 85%, rgba(45, 49, 43, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 82% 20%, rgba(123, 216, 196, 0.05) 0%, transparent 35%),
+                radial-gradient(circle at 50% 50%, rgba(2, 4, 8, 0.05) 0%, rgba(2, 4, 8, 0.72) 100%);
         }
 
-        /* 3D Circular Globe Viewport */
-        .globe-circular-frame {
-            position: relative;
-            border-radius: 9999px;
-            overflow: hidden;
-            box-shadow: 
-                0 0 0 1px rgba(192, 152, 96, 0.25),
-                0 25px 60px -15px rgba(0, 0, 0, 0.4),
-                inset 0 0 35px rgba(83, 194, 169, 0.15);
-            background: radial-gradient(circle at 45% 45%, rgba(45, 49, 43, 0.8), rgba(21, 26, 32, 0.95));
-        }
-        .dark .globe-circular-frame {
-            box-shadow: 
-                0 0 0 1px rgba(83, 194, 169, 0.35),
-                0 30px 80px -15px rgba(0, 0, 0, 0.7),
-                inset 0 0 45px rgba(83, 194, 169, 0.25);
-        }
-
-        /* Border Beam Container for Modern SaaS Card */
+        /* Glassmorphic Border Beam Effect (Floating Login Card) */
         .border-beam-card {
             position: relative;
-            overflow: hidden;
             border-radius: 28px;
+            overflow: hidden;
+            isolation: isolate;
         }
+
         .border-beam-card::after {
             content: '';
             position: absolute;
-            inset: -150%;
+            inset: -2px;
+            border-radius: inherit;
             background: conic-gradient(
-                from 0deg,
+                from 0deg at 50% 50%,
                 transparent 0deg,
-                transparent 75deg,
-                rgba(83, 194, 169, 0.75) 120deg,
-                rgba(192, 152, 96, 0.9) 130deg,
-                rgba(83, 194, 169, 0.75) 140deg,
-                transparent 185deg,
+                rgba(77, 178, 255, 0.75) 45deg,
+                transparent 90deg,
+                transparent 180deg,
+                rgba(255, 51, 68, 0.65) 225deg,
+                transparent 270deg,
                 transparent 360deg
             );
             animation: borderBeam 8s linear infinite;
@@ -245,40 +186,40 @@
             position: relative;
             z-index: 1;
             border-radius: inherit;
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.45);
         }
         .dark .glass-card-surface {
-            background: rgba(32, 40, 48, 0.85);
+            background: rgba(8, 13, 20, 0.82);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(202, 193, 171, 0.12);
+            border: 1px solid rgba(77, 178, 255, 0.18);
+            box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), inset 0 0 30px rgba(77, 178, 255, 0.03);
         }
 
-        /* High-End Authorize Button inspired by button-types.html */
+        /* Modernized Authorize Button with Anime.js */
         .btn-authorize-saas {
             position: relative;
-            background: linear-gradient(135deg, #2D312B 0%, #1e252b 50%, #202830 100%);
+            background: linear-gradient(135deg, #1b2430 0%, #111720 50%, #1e2938 100%);
             box-shadow: 
-                0 4px 15px -2px rgba(45, 49, 43, 0.5),
-                0 0 0 1px rgba(192, 152, 96, 0.3),
+                0 4px 15px -2px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(77, 178, 255, 0.35),
                 inset 0 1px 1px rgba(255, 255, 255, 0.2);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+            transform-origin: center center;
+            will-change: transform;
         }
         .btn-authorize-saas:hover {
             box-shadow: 
-                0 8px 25px -4px rgba(76, 217, 100, 0.4),
-                0 0 0 1px rgba(83, 194, 169, 0.6),
-                inset 0 1px 1px rgba(255, 255, 255, 0.35);
-            transform: translateY(-1.5px);
-        }
-        .btn-authorize-saas:active {
-            transform: translateY(0.5px) scale(0.985);
+                0 8px 25px -4px rgba(77, 178, 255, 0.5),
+                0 0 0 1px rgba(77, 178, 255, 0.8),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
         }
 
-        /* Apple-Inspired Toggle Checkbox from button.html */
+        /* Apple-Inspired Toggle Checkbox */
         .checkbox-apple-container {
             display: inline-flex;
             align-items: center;
@@ -295,7 +236,7 @@
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
         }
         .dark .checkbox-apple-toggle {
-            background: linear-gradient(to bottom, #4A4943, #2D312B);
+            background: linear-gradient(to bottom, #303742, #1b212a);
         }
         .checkbox-apple-toggle::after {
             content: '';
@@ -310,13 +251,13 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         input[type="checkbox"]:checked + .checkbox-apple-toggle {
-            background: linear-gradient(to bottom, #4cd964, #5de24e);
+            background: linear-gradient(to bottom, #4db2ff, #0088ff);
         }
         input[type="checkbox"]:checked + .checkbox-apple-toggle::after {
             transform: translateX(16px);
         }
 
-        /* Night Mode Floating Tooltip */
+        /* Tooltip on Theme Toggle at Bottom-Left */
         .theme-tooltip {
             position: absolute;
             left: 58px;
@@ -332,6 +273,17 @@
             transform: translateY(-50%) translateX(4px);
         }
 
+        /* 3D Telemetry HUD Tooltip attached to hovered node */
+        .node-telemetry-hud {
+            position: fixed;
+            pointer-events: none;
+            z-index: 30;
+            transform: translate(-50%, -125%);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
         /* Respect prefers-reduced-motion */
         @media (prefers-reduced-motion: reduce) {
             *, ::before, ::after {
@@ -340,16 +292,27 @@
                 transition-duration: 0.01ms !important;
             }
             .border-beam-card::after { display: none; }
-            .bg-aurora-canvas { animation: none; }
         }
     </style>
 </head>
 
-<body class="selection:bg-emerald-500/20 selection:text-emerald-700 dark:selection:text-emerald-300">
+<body class="selection:bg-cyan-500/20 selection:text-cyan-300">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+        // =========================================================================
+        // WEBGL HARDWARE CAPABILITY CHECK (Skill Pattern: Fallback Strategy)
+        // =========================================================================
+        const checkWebGLSupport = () => {
+            try {
+                const canvas = document.createElement('canvas');
+                return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+            } catch (e) {
+                return false;
+            }
+        };
 
         // =========================================================================
         // PURE CLIENT-SIDE SYNTHETIC AUDIO (Success Login Chime Only - No UI toggle)
@@ -361,7 +324,7 @@
                 const ctx = new AudioCtx();
                 if (ctx.state === 'suspended') ctx.resume();
 
-                // Uplifting major triad chord: C5 (523Hz), E5 (659Hz), G5 (784Hz), C6 (1046Hz)
+                // Uplifting harmonic major triad chord: C5 (523Hz), E5 (659Hz), G5 (784Hz), C6 (1046Hz)
                 const frequencies = [523.25, 659.25, 783.99, 1046.50];
                 frequencies.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
@@ -379,8 +342,28 @@
                     osc.stop(ctx.currentTime + idx * 0.07 + 0.38);
                 });
             } catch (err) {
-                // Audio autoplay silently handled
+                // Audio autoplay handled silently
             }
+        };
+
+        const playNodePing = (freq = 920) => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.13);
+            } catch (err) {}
         };
 
         // =========================================================================
@@ -452,30 +435,38 @@
             </svg>
         );
 
+        const GlobeIcon = ({ className = "w-4 h-4" }) => (
+            <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+        );
+
         // =========================================================================
-        // 17 STATES FROM states.txt (Geocoded for 3D Globe with Skyscrapers & Hubs)
+        // 17 STATES FROM states.txt (Geographic Lat/Lon on Earth Sphere)
+        // No skyscrapers: Only sleek pulsing data beacon points & red photon pathways
         // =========================================================================
         const STATE_HUBS = [
-            { id: "delhi", name: "Delhi", hub: "National Operations HQ", lat: 28.6139, lon: 77.2090, height: 0.95, color: "#4cd964", traffic: "2.8 Gbps" },
-            { id: "maharashtra", name: "Maharashtra", hub: "Western Hub (Mumbai)", lat: 19.0760, lon: 72.8777, height: 1.25, color: "#5de24e", traffic: "4.2 Gbps" },
-            { id: "karnataka", name: "Karnataka", hub: "Tech Operations Core (Bengaluru)", lat: 12.9716, lon: 77.5946, height: 1.15, color: "#53c2a9", traffic: "3.6 Gbps" },
-            { id: "telangana", name: "Telangana", hub: "Operations Logistics (Hyderabad)", lat: 17.3850, lon: 78.4867, height: 1.05, color: "#7bd8c4", traffic: "2.5 Gbps" },
-            { id: "tamilnadu", name: "Tamil Nadu", hub: "Southern Maritime Hub (Chennai)", lat: 13.0827, lon: 80.2707, height: 1.0, color: "#53c2a9", traffic: "2.1 Gbps" },
-            { id: "gujarat", name: "Gujarat", hub: "Commercial Gateway (Ahmedabad)", lat: 23.0225, lon: 72.5714, height: 0.95, color: "#C09860", traffic: "1.9 Gbps" },
-            { id: "westbengal", name: "West Bengal", hub: "Eastern Operations Terminal (Kolkata)", lat: 22.5726, lon: 88.3639, height: 0.9, color: "#C09860", traffic: "1.8 Gbps" },
-            { id: "rajasthan", name: "Rajasthan", hub: "Regional Distribution Grid", lat: 26.9124, lon: 75.7873, height: 0.85, color: "#CAC1AB", traffic: "940 Mbps" },
-            { id: "punjab", name: "Punjab", hub: "Northern Transport Node", lat: 31.1471, lon: 75.3412, height: 0.8, color: "#CAC1AB", traffic: "810 Mbps" },
-            { id: "haryana", name: "Haryana", hub: "Industrial Corridor Link", lat: 29.0588, lon: 76.0856, height: 0.85, color: "#4cd964", traffic: "1.2 Gbps" },
-            { id: "madhyapradesh", name: "Madhya Pradesh", hub: "Central Logistics Center (Bhopal)", lat: 23.2599, lon: 77.4126, height: 0.9, color: "#C5C6CB", traffic: "890 Mbps" },
-            { id: "goa", name: "Goa", hub: "Coastal Data Terminal", lat: 15.2993, lon: 74.1240, height: 0.7, color: "#53c2a9", traffic: "640 Mbps" },
-            { id: "kerala", name: "Kerala", hub: "South-West Operations (Kochi)", lat: 9.9312, lon: 76.2673, height: 0.8, color: "#53c2a9", traffic: "780 Mbps" },
-            { id: "assam", name: "Assam", hub: "North-Eastern Terminal (Guwahati)", lat: 26.1445, lon: 91.7362, height: 0.75, color: "#C09860", traffic: "710 Mbps" },
-            { id: "chattisgarh", name: "Chattisgarh", hub: "Energy & Resource Grid", lat: 21.2514, lon: 81.6296, height: 0.75, color: "#C5C6CB", traffic: "730 Mbps" },
-            { id: "jharkhand", name: "Jharkhand", hub: "Operations Logistics Node", lat: 23.3441, lon: 85.3096, height: 0.75, color: "#C5C6CB", traffic: "720 Mbps" },
-            { id: "odisha", name: "Odisha", hub: "Eastern Port Corridor", lat: 20.2961, lon: 85.8245, height: 0.8, color: "#C09860", traffic: "790 Mbps" },
+            { id: "delhi", name: "Delhi", hub: "National Operations HQ", lat: 28.61, lon: 77.20, traffic: "3.2 Gbps" },
+            { id: "punjab", name: "Punjab", hub: "Northern Logistics Link", lat: 31.14, lon: 75.34, traffic: "950 Mbps" },
+            { id: "haryana", name: "Haryana", hub: "Industrial Corridor Link", lat: 29.05, lon: 76.08, traffic: "1.4 Gbps" },
+            { id: "rajasthan", name: "Rajasthan", hub: "Regional Distribution Grid", lat: 27.02, lon: 74.21, traffic: "1.1 Gbps" },
+            { id: "gujarat", name: "Gujarat", hub: "Commercial Gateway (Ahmedabad)", lat: 22.25, lon: 71.19, traffic: "2.4 Gbps" },
+            { id: "maharashtra", name: "Maharashtra", hub: "Western Financial Gateway (Mumbai)", lat: 19.75, lon: 75.71, traffic: "4.8 Gbps" },
+            { id: "goa", name: "Goa", hub: "Coastal Data Terminal", lat: 15.29, lon: 74.12, traffic: "780 Mbps" },
+            { id: "karnataka", name: "Karnataka", hub: "Tech Operations Core (Bengaluru)", lat: 15.31, lon: 75.71, traffic: "4.1 Gbps" },
+            { id: "kerala", name: "Kerala", hub: "South-West Hub (Kochi)", lat: 10.85, lon: 76.27, traffic: "910 Mbps" },
+            { id: "tamilnadu", name: "Tamil Nadu", hub: "Southern Maritime Hub (Chennai)", lat: 11.12, lon: 78.65, traffic: "2.6 Gbps" },
+            { id: "telangana", name: "Telangana", hub: "Operations Logistics (Hyderabad)", lat: 18.11, lon: 79.01, traffic: "2.9 Gbps" },
+            { id: "madhyapradesh", name: "Madhya Pradesh", hub: "Central Logistics Center (Bhopal)", lat: 22.97, lon: 78.65, traffic: "1.2 Gbps" },
+            { id: "chhattisgarh", name: "Chhattisgarh", hub: "Energy & Resource Grid", lat: 21.27, lon: 81.86, traffic: "870 Mbps" },
+            { id: "odisha", name: "Odisha", hub: "Eastern Port Corridor", lat: 20.95, lon: 85.09, traffic: "940 Mbps" },
+            { id: "jharkhand", name: "Jharkhand", hub: "Operations Logistics Node", lat: 23.61, lon: 85.27, traffic: "860 Mbps" },
+            { id: "westbengal", name: "West Bengal", hub: "Eastern Operations Terminal (Kolkata)", lat: 22.98, lon: 87.85, traffic: "2.2 Gbps" },
+            { id: "assam", name: "Assam", hub: "North-Eastern Terminal (Guwahati)", lat: 26.20, lon: 92.93, traffic: "840 Mbps" },
         ];
 
-        // Many-to-many communication lines between state hubs
+        // Many-to-many communication lines between state hubs across India
         const NETWORK_CONNECTIONS = [
             ["delhi", "maharashtra"],
             ["maharashtra", "karnataka"],
@@ -491,8 +482,8 @@
             ["karnataka", "kerala"],
             ["kerala", "tamilnadu"],
             ["delhi", "madhyapradesh"],
-            ["madhyapradesh", "chattisgarh"],
-            ["chattisgarh", "odisha"],
+            ["madhyapradesh", "chhattisgarh"],
+            ["chhattisgarh", "odisha"],
             ["odisha", "westbengal"],
             ["westbengal", "jharkhand"],
             ["westbengal", "assam"],
@@ -501,348 +492,644 @@
             ["madhyapradesh", "maharashtra"]
         ];
 
+        // Convert Lat/Lon to 3D Cartesian coordinates on sphere of radius R
+        const latLonToVector3 = (lat, lon, radius) => {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        };
+
         // =========================================================================
-        // THREE.JS INTERACTIVE 3D GLOBE WITH INDIA HIGHLIGHT, SKYSCRAPERS & NETWORK
+        // THREE.JS JOURNEY EARTH SHADERS (WebGL Implementation)
+        // Photorealistic Earth directly in space as background
+        // Atmosphere Day Color: #4db2ff | Twilight Rim: #bc490b | Directional Sun
+        // Stationary: NO revolving, India prominently centered & facing camera
+        // WebGL Detection, Mobile DPR optimization, Loading state integration
         // =========================================================================
-        const ThreeGlobeView = ({ isDark, onSelectState }) => {
+        const NaturalEarthSpaceExperience = ({ isDark, onSelectState, onLoaded }) => {
             const mountRef = useRef(null);
-            const [hoveredState, setHoveredState] = useState(null);
+            const [hoveredNode, setHoveredNode] = useState(null);
+            const [hudPos, setHudPos] = useState({ x: 0, y: 0 });
+            const [webGLSupported, setWebGLSupported] = useState(true);
 
             useEffect(() => {
                 const container = mountRef.current;
                 if (!container || typeof THREE === 'undefined') return;
 
-                const width = container.clientWidth || 460;
-                const height = container.clientHeight || 460;
+                // 0. Verify WebGL Support
+                if (!checkWebGLSupport()) {
+                    setWebGLSupported(false);
+                    if (onLoaded) onLoaded();
+                    return;
+                }
 
-                // 1. Scene, Camera, Renderer
+                let width = window.innerWidth;
+                let height = window.innerHeight;
+
+                // 1. Scene & Camera
                 const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-                camera.position.set(0, 0, 9.6);
+                scene.background = new THREE.Color(0x020408); // Deep Starry Space Black
 
-                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+                const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
+                camera.position.set(0, 0, 8.6);
+
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const renderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: 'high-performance'
+                });
                 renderer.setSize(width, height);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                // DPR Optimization: 1 on mobile to protect GPU, max 2 on desktop
+                renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
                 container.appendChild(renderer.domElement);
 
-                // Group that holds the entire globe world
+                // Deep Space Starfield Particles
+                const starGeo = new THREE.BufferGeometry();
+                const starCount = 1400;
+                const starPositions = new Float32Array(starCount * 3);
+                for (let i = 0; i < starCount * 3; i += 3) {
+                    starPositions[i] = (Math.random() - 0.5) * 80;
+                    starPositions[i + 1] = (Math.random() - 0.5) * 80;
+                    starPositions[i + 2] = -12 - Math.random() * 50;
+                }
+                starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+                const starMat = new THREE.PointsMaterial({
+                    color: 0xffffff,
+                    size: 0.12,
+                    transparent: true,
+                    opacity: 0.75
+                });
+                const starField = new THREE.Points(starGeo, starMat);
+                scene.add(starField);
+
+                // Earth World Group positioned in center/center-right (matching sample_page.png & reference_ui.png)
                 const worldGroup = new THREE.Group();
+                const isDesktop = width >= 1024;
+                worldGroup.position.set(isDesktop ? 1.4 : 0, isDesktop ? -0.1 : -0.35, 0);
                 scene.add(worldGroup);
 
-                // 2. Lighting (PBR standards from threejs.csv)
-                const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.9 : 1.2);
-                scene.add(ambientLight);
+                // Sun Direction
+                const sunPosition = new THREE.Vector3(6.0, 3.5, 5.0);
 
-                const dirLight = new THREE.DirectionalLight(0xffffff, isDark ? 1.6 : 1.8);
-                dirLight.position.set(5, 8, 7);
-                scene.add(dirLight);
+                // 2. Texture Loading (Solar System Scope Earth Textures)
+                const textureLoader = new THREE.TextureLoader();
 
-                const pointLight = new THREE.PointLight(isDark ? 0x53c2a9 : 0x4cd964, 2.5, 20);
-                pointLight.position.set(0, 3, 6);
-                scene.add(pointLight);
-
-                // 3. Globe Spheres
-                const GLOBE_RADIUS = 3.65;
-
-                // Base Sphere with high-tech dark slate material
-                const globeGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
-                const globeMat = new THREE.MeshStandardMaterial({
-                    color: isDark ? 0x182026 : 0x2D312B,
-                    roughness: 0.65,
-                    metalness: 0.35,
-                    wireframe: false,
-                });
-                const globeMesh = new THREE.Mesh(globeGeo, globeMat);
-                worldGroup.add(globeMesh);
-
-                // Latitude/Longitude Holographic Wireframe
-                const wireGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 0.015, 32, 24);
-                const wireMat = new THREE.MeshBasicMaterial({
-                    color: isDark ? 0x53c2a9 : 0xC09860,
-                    wireframe: true,
-                    transparent: true,
-                    opacity: isDark ? 0.09 : 0.07,
-                });
-                const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-                worldGroup.add(wireMesh);
-
-                // Outer Glowing Atmosphere Halo
-                const haloGeo = new THREE.SphereGeometry(GLOBE_RADIUS + 0.12, 48, 48);
-                const haloMat = new THREE.MeshBasicMaterial({
-                    color: isDark ? 0x7bd8c4 : 0x4cd964,
-                    transparent: true,
-                    opacity: isDark ? 0.12 : 0.08,
-                    side: THREE.BackSide,
-                });
-                const haloMesh = new THREE.Mesh(haloGeo, haloMat);
-                worldGroup.add(haloMesh);
-
-                // Helper: Lat/Lon to 3D Cartesian coordinates
-                const latLonToVector3 = (lat, lon, radius, alt = 0) => {
-                    const phi = (90 - lat) * (Math.PI / 180);
-                    const theta = (lon + 180) * (Math.PI / 180);
-                    const r = radius + alt;
-                    return new THREE.Vector3(
-                        -r * Math.sin(phi) * Math.cos(theta),
-                        r * Math.cos(phi),
-                        r * Math.sin(phi) * Math.sin(theta)
-                    );
+                const getTexture = (key, fallbackPath) => {
+                    if (window.EARTH_TEXTURE_DATA && window.EARTH_TEXTURE_DATA[key]) {
+                        const tex = textureLoader.load(window.EARTH_TEXTURE_DATA[key]);
+                        tex.colorSpace = THREE.SRGBColorSpace;
+                        return tex;
+                    }
+                    const tex = textureLoader.load(fallbackPath);
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    return tex;
                 };
 
-                // Map hub positions
-                const hubPositions = {};
-                const skyscraperMeshes = [];
+                const dayTexture = getTexture('earthDay', './textures/planets/earth_day_4096.jpg');
+                const nightTexture = getTexture('earthNight', './textures/planets/earth_night_4096.jpg');
+                const bumpRoughnessCloudsTexture = getTexture('earthClouds', './textures/planets/earth_bump_roughness_clouds_4096.jpg');
 
-                // 4. Generate Architectural 3D Skyscrapers on States from states.txt
-                STATE_HUBS.forEach(hub => {
-                    const pos = latLonToVector3(hub.lat, hub.lon, GLOBE_RADIUS, 0);
-                    hubPositions[hub.id] = pos;
+                // 3. Globe Sphere Mesh & Three.js Journey Shaders
+                const GLOBE_RADIUS = 3.25;
+                const sphereGeometry = new THREE.SphereGeometry(GLOBE_RADIUS, 64, 64);
 
-                    const towerGroup = new THREE.Group();
-                    towerGroup.position.copy(pos);
+                const globeShaderMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        uSunPosition: { value: sunPosition },
+                        uAtmosphereDayColor: { value: new THREE.Color('#4db2ff') },      // Three.js Journey Day Color
+                        uAtmosphereTwilightColor: { value: new THREE.Color('#bc490b') }, // Three.js Journey Twilight Color
+                        uDayTexture: { value: dayTexture },
+                        uNightTexture: { value: nightTexture },
+                        uBumpRoughnessCloudsTexture: { value: bumpRoughnessCloudsTexture }
+                    },
+                    vertexShader: `
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
 
-                    // Normal orientation pointing outward from sphere surface
-                    const normal = pos.clone().normalize();
-                    towerGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
+                        void main() {
+                            vUv = uv;
+                            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                            vPosition = worldPos.xyz;
+                            vNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+                            gl_Position = projectionMatrix * viewMatrix * worldPos;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 uSunPosition;
+                        uniform vec3 uAtmosphereDayColor;
+                        uniform vec3 uAtmosphereTwilightColor;
+                        uniform sampler2D uDayTexture;
+                        uniform sampler2D uNightTexture;
+                        uniform sampler2D uBumpRoughnessCloudsTexture;
 
-                    // Skyscraper base disc / beacon
-                    const baseGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.04, 16);
-                    const baseMat = new THREE.MeshBasicMaterial({
-                        color: new THREE.Color(hub.color),
-                        transparent: true,
-                        opacity: 0.8
-                    });
-                    const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-                    towerGroup.add(baseMesh);
+                        varying vec2 vUv;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
 
-                    // Main multi-tiered skyscraper tower
-                    const towerHeight = hub.height * 0.55;
-                    const bldgGeo = new THREE.BoxGeometry(0.09, towerHeight, 0.09);
-                    const bldgMat = new THREE.MeshStandardMaterial({
-                        color: isDark ? 0x22272F : 0x4A4943,
-                        emissive: new THREE.Color(hub.color),
-                        emissiveIntensity: 0.35,
-                        roughness: 0.25,
-                        metalness: 0.85
-                    });
-                    const bldgMesh = new THREE.Mesh(bldgGeo, bldgMat);
-                    bldgMesh.position.y = towerHeight / 2;
-                    towerGroup.add(bldgMesh);
+                        void main() {
+                            vec3 normal = normalize(vNormal);
+                            vec3 viewDir = normalize(vPosition - cameraPosition);
+                            vec3 sunDir = normalize(uSunPosition);
 
-                    // Spire antenna on top
-                    const spireGeo = new THREE.CylinderGeometry(0.012, 0.025, 0.18, 8);
-                    const spireMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-                    const spireMesh = new THREE.Mesh(spireGeo, spireMat);
-                    spireMesh.position.y = towerHeight + 0.09;
-                    towerGroup.add(spireMesh);
+                            // Fresnel calculation
+                            float fresnel = 1.0 - abs(dot(viewDir, normal));
+                            fresnel = pow(fresnel, 2.0);
 
-                    // Tip glow beacon
-                    const beaconGeo = new THREE.SphereGeometry(0.035, 12, 12);
-                    const beaconMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(hub.color) });
-                    const beaconMesh = new THREE.Mesh(beaconGeo, beaconMat);
-                    beaconMesh.position.y = towerHeight + 0.18;
-                    towerGroup.add(beaconMesh);
+                            // Sun orientation (day vs night side)
+                            float sunOrientation = dot(normal, sunDir);
 
-                    // Attach user data for raycasting
-                    towerGroup.userData = { hub };
-                    bldgMesh.userData = { hub };
-                    baseMesh.userData = { hub };
+                            // Atmosphere color mix: twilight orange to day cyan
+                            float sunStep = smoothstep(-0.25, 0.75, sunOrientation);
+                            vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, sunStep);
 
-                    worldGroup.add(towerGroup);
-                    skyscraperMeshes.push(bldgMesh);
+                            // Sample textures
+                            vec4 dayColor = texture2D(uDayTexture, vUv);
+                            vec4 nightColor = texture2D(uNightTexture, vUv);
+                            vec4 bumpRoughClouds = texture2D(uBumpRoughnessCloudsTexture, vUv);
+
+                            // Clouds strength from .b channel
+                            float cloudsStrength = smoothstep(0.2, 1.0, bumpRoughClouds.b);
+                            vec3 colorWithClouds = mix(dayColor.rgb, vec3(1.0), cloudsStrength * 1.5);
+
+                            // Specular sheen for water: green channel is roughness (oceans ~0 roughness)
+                            float roughness = max(bumpRoughClouds.g, step(0.01, cloudsStrength));
+                            vec3 reflectDir = reflect(-sunDir, normal);
+                            float spec = pow(max(dot(-viewDir, reflectDir), 0.0), 24.0);
+                            float specular = (1.0 - roughness) * spec * max(sunOrientation, 0.0);
+
+                            // Day / Night transition
+                            float dayStrength = smoothstep(-0.25, 0.5, sunOrientation);
+                            vec3 finalOutput = mix(nightColor.rgb * 1.45, colorWithClouds + vec3(specular * 0.4), dayStrength);
+
+                            // Atmosphere Fresnel rim glow
+                            float atmosphereDayStrength = smoothstep(-0.5, 1.0, sunOrientation);
+                            float atmosphereMix = clamp(atmosphereDayStrength * fresnel, 0.0, 1.0);
+                            finalOutput = mix(finalOutput, atmosphereColor, atmosphereMix * 0.9);
+
+                            gl_FragColor = vec4(finalOutput, 1.0);
+                        }
+                    `
                 });
 
-                // 5. Many-to-Many 3D Curved Communication Arcs & Photon Packets
+                const globeMesh = new THREE.Mesh(sphereGeometry, globeShaderMaterial);
+                worldGroup.add(globeMesh);
+
+                // 4. Outer Atmosphere Shell (side: THREE.BackSide, scale 1.04)
+                const atmosphereMaterial = new THREE.ShaderMaterial({
+                    side: THREE.BackSide,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    uniforms: {
+                        uSunPosition: { value: sunPosition },
+                        uAtmosphereDayColor: { value: new THREE.Color('#4db2ff') },
+                        uAtmosphereTwilightColor: { value: new THREE.Color('#bc490b') }
+                    },
+                    vertexShader: `
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                            vPosition = worldPos.xyz;
+                            vNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+                            gl_Position = projectionMatrix * viewMatrix * worldPos;
+                        }
+                    `,
+                    fragmentShader: `
+                        uniform vec3 uSunPosition;
+                        uniform vec3 uAtmosphereDayColor;
+                        uniform vec3 uAtmosphereTwilightColor;
+                        varying vec3 vNormal;
+                        varying vec3 vPosition;
+
+                        void main() {
+                            vec3 normal = normalize(vNormal);
+                            vec3 viewDir = normalize(vPosition - cameraPosition);
+                            vec3 sunDir = normalize(uSunPosition);
+
+                            float fresnel = 1.0 - abs(dot(viewDir, normal));
+                            float alpha = clamp((1.0 - fresnel) / (1.0 - 0.73), 0.0, 1.0);
+                            alpha = pow(alpha, 3.0);
+
+                            float sunOrientation = dot(normal, sunDir);
+                            alpha *= smoothstep(-0.5, 1.0, sunOrientation);
+
+                            float sunStep = smoothstep(-0.25, 0.75, sunOrientation);
+                            vec3 atmosphereColor = mix(uAtmosphereTwilightColor, uAtmosphereDayColor, sunStep);
+
+                            gl_FragColor = vec4(atmosphereColor, alpha * 0.95);
+                        }
+                    `
+                });
+
+                const atmosphereMesh = new THREE.Mesh(sphereGeometry, atmosphereMaterial);
+                atmosphereMesh.scale.setScalar(1.04);
+                worldGroup.add(atmosphereMesh);
+
+                // 5. Stationary Orientation (Calibrated for India - NO AUTO REVOLUTION)
+                const DEFAULT_ROTATION = { x: 0.192, y: 3.07 };
+                worldGroup.rotation.x = DEFAULT_ROTATION.x;
+                worldGroup.rotation.y = DEFAULT_ROTATION.y;
+
+                // 6. India Telemetry Network Directly on Earth Surface (17 States)
+                const telemetryGroup = new THREE.Group();
+                worldGroup.add(telemetryGroup);
+
+                const stateVectors = {};
+                const interactiveSpheres = [];
+                const nodePulseList = [];
+                const lineMeshList = [];
+
+                STATE_HUBS.forEach((hub, hubIdx) => {
+                    const vec = latLonToVector3(hub.lat, hub.lon, GLOBE_RADIUS);
+                    stateVectors[hub.id] = vec;
+
+                    // Normal vector pointing outwards from sphere center
+                    const normal = vec.clone().normalize();
+
+                    // Marker Root situated slightly above surface
+                    const markerRoot = new THREE.Group();
+                    markerRoot.position.copy(vec.clone().multiplyScalar(1.002));
+                    markerRoot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+
+                    // 1. Center Core Mesh (flashes and scales on pulse)
+                    const coreGeo = new THREE.CircleGeometry(0.024, 24);
+                    const coreMat = new THREE.MeshBasicMaterial({ color: 0xff3344, side: THREE.DoubleSide });
+                    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+                    markerRoot.add(coreMesh);
+
+                    // 2. White Center Pupil Light
+                    const pupilGeo = new THREE.CircleGeometry(0.010, 16);
+                    const pupilMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+                    const pupilMesh = new THREE.Mesh(pupilGeo, pupilMat);
+                    pupilMesh.position.z = 0.001;
+                    markerRoot.add(pupilMesh);
+
+                    // 3. Primary Sonar Shockwave Ring
+                    const ring1Geo = new THREE.RingGeometry(0.026, 0.046, 32);
+                    const ring1Mat = new THREE.MeshBasicMaterial({
+                        color: 0xff3344,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.85
+                    });
+                    const ring1Mesh = new THREE.Mesh(ring1Geo, ring1Mat);
+                    ring1Mesh.position.z = 0.001;
+                    markerRoot.add(ring1Mesh);
+
+                    // 4. Secondary Echo Harmonic Ring
+                    const ring2Geo = new THREE.RingGeometry(0.024, 0.038, 32);
+                    const ring2Mat = new THREE.MeshBasicMaterial({
+                        color: 0xff5566,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.6
+                    });
+                    const ring2Mesh = new THREE.Mesh(ring2Geo, ring2Mat);
+                    ring2Mesh.position.z = 0.001;
+                    markerRoot.add(ring2Mesh);
+
+                    // 5. Elevated Sky Corona / Halo Ring
+                    const haloGeo = new THREE.RingGeometry(0.018, 0.065, 32);
+                    const haloMat = new THREE.MeshBasicMaterial({
+                        color: 0x4db2ff,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        opacity: 0.35
+                    });
+                    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+                    haloMesh.position.z = 0.002;
+                    markerRoot.add(haloMesh);
+
+                    // 6. 3D Vertical Atmospheric Uplink Laser Beam
+                    const beamGeo = new THREE.CylinderGeometry(0.0012, 0.005, 0.15, 8);
+                    beamGeo.rotateX(Math.PI / 2);
+                    beamGeo.translate(0, 0, 0.075);
+                    const beamMat = new THREE.MeshBasicMaterial({
+                        color: 0xff3344,
+                        transparent: true,
+                        opacity: 0.75,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false
+                    });
+                    const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+                    markerRoot.add(beamMesh);
+
+                    // Invisible Hit-Test Sphere for Raycasting
+                    const hitGeo = new THREE.SphereGeometry(0.10, 12, 12);
+                    const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+                    const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+                    hitMesh.position.copy(vec);
+                    hitMesh.userData = { hub, markerRoot, coreMesh, pupilMesh, ring1Mesh, ring2Mesh, haloMesh, beamMesh };
+                    telemetryGroup.add(hitMesh);
+                    interactiveSpheres.push(hitMesh);
+
+                    telemetryGroup.add(markerRoot);
+
+                    nodePulseList.push({
+                        hub,
+                        hubIdx,
+                        markerRoot,
+                        coreMesh,
+                        pupilMesh,
+                        ring1Mesh,
+                        ring2Mesh,
+                        haloMesh,
+                        beamMesh,
+                        randomOffset: (hubIdx * 0.37) % (Math.PI * 2)
+                    });
+                });
+
+                // 7. Red Elevated Curved Communication Pathways & Animated Photons
                 const arcCurves = [];
-                const packetMeshes = [];
+                const photonMeshes = [];
 
-                NETWORK_CONNECTIONS.forEach(([fromId, toId]) => {
-                    const p1 = hubPositions[fromId];
-                    const p2 = hubPositions[toId];
-                    if (!p1 || !p2) return;
+                NETWORK_CONNECTIONS.forEach(([fromId, toId], idx) => {
+                    const v1 = stateVectors[fromId];
+                    const v2 = stateVectors[toId];
+                    if (!v1 || !v2) return;
 
-                    // Calculate elevated midpoint for 3D curved trajectory
-                    const distance = p1.distanceTo(p2);
-                    const mid = p1.clone().lerp(p2, 0.5);
-                    const elevation = GLOBE_RADIUS + Math.min(distance * 0.45, 0.8);
-                    mid.normalize().multiplyScalar(elevation);
+                    const dist = v1.distanceTo(v2);
+                    const mid = v1.clone().add(v2).multiplyScalar(0.5);
+                    const elevation = dist * 0.16 + 0.035;
+                    const controlPoint = mid.clone().normalize().multiplyScalar(GLOBE_RADIUS + elevation);
 
-                    const curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
-                    arcCurves.push(curve);
+                    const curve = new THREE.QuadraticBezierCurve3(v1, controlPoint, v2);
+                    arcCurves.push({ fromId, toId, curve });
 
-                    // Arc line geometry
-                    const points = curve.getPoints(24);
-                    const arcGeo = new THREE.BufferGeometry().setFromPoints(points);
-                    const arcMat = new THREE.LineBasicMaterial({
-                        color: isDark ? 0x53c2a9 : 0x4cd964,
+                    const points = curve.getPoints(36);
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                    const lineMat = new THREE.LineBasicMaterial({
+                        color: 0xff3344,
                         transparent: true,
-                        opacity: isDark ? 0.45 : 0.35,
+                        opacity: 0.55,
+                        linewidth: 1.5
                     });
-                    const arcLine = new THREE.Line(arcGeo, arcMat);
-                    worldGroup.add(arcLine);
+                    const lineMesh = new THREE.Line(lineGeo, lineMat);
+                    lineMesh.userData = { fromId, toId };
+                    telemetryGroup.add(lineMesh);
+                    lineMeshList.push(lineMesh);
 
-                    // Moving signal photon packet along curve
-                    const packetGeo = new THREE.SphereGeometry(0.04, 8, 8);
-                    const packetMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-                    const packet = new THREE.Mesh(packetGeo, packetMat);
-                    packet.userData = {
-                        curve,
-                        progress: Math.random(),
-                        speed: 0.0035 + Math.random() * 0.003
-                    };
-                    worldGroup.add(packet);
-                    packetMeshes.push(packet);
+                    // Flowing Glowing Data Photon Packet
+                    const photonGeo = new THREE.SphereGeometry(0.016, 12, 12);
+                    const photonMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    const photon = new THREE.Mesh(photonGeo, photonMat);
+                    photon.position.copy(v1);
+                    telemetryGroup.add(photon);
+                    photonMeshes.push({ mesh: photon, curve, t: (idx * 0.08) % 1.0, speed: 0.0035 + (idx % 3) * 0.001 });
                 });
 
-                // 6. Center India facing forward towards user
-                // India coordinates approx lat: 21, lon: 78
-                // We rotate the worldGroup so India starts front and center
-                worldGroup.rotation.x = 0.35;
-                worldGroup.rotation.y = -1.35;
-
-                // 7. Interactive Drag Orbit & Mouse Raycasting
-                let isDragging = false;
-                let prevMouse = { x: 0, y: 0 };
-                let targetRotation = { x: 0.35, y: -1.35 };
-
+                // 8. Raycasting & Interactive Mouse Hover
                 const raycaster = new THREE.Raycaster();
                 const mouse = new THREE.Vector2(-999, -999);
+                let currentHoveredHit = null;
+
+                const onPointerMove = (e) => {
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+                    // Check raycasting
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(interactiveSpheres);
+
+                    if (intersects.length > 0) {
+                        const hit = intersects[0].object;
+                        if (currentHoveredHit !== hit) {
+                            if (currentHoveredHit) {
+                                currentHoveredHit.userData.markerRoot.scale.set(1, 1, 1);
+                            }
+                            currentHoveredHit = hit;
+                            currentHoveredHit.userData.markerRoot.scale.set(1.4, 1.4, 1.4);
+                            setHoveredNode(hit.userData.hub);
+
+                            // Project 3D coordinate to 2D screen coordinate
+                            const screenPos = hit.position.clone();
+                            screenPos.applyMatrix4(worldGroup.matrixWorld);
+                            screenPos.project(camera);
+                            const x = ((screenPos.x + 1) * window.innerWidth) / 2;
+                            const y = ((-screenPos.y + 1) * window.innerHeight) / 2;
+                            setHudPos({ x, y });
+                            document.body.style.cursor = 'pointer';
+                        }
+                    } else {
+                        if (currentHoveredHit) {
+                            currentHoveredHit.userData.markerRoot.scale.set(1, 1, 1);
+                            currentHoveredHit = null;
+                            setHoveredNode(null);
+                            document.body.style.cursor = 'default';
+                        }
+                    }
+                };
+
+                const onCanvasClick = () => {
+                    if (currentHoveredHit && onSelectState) {
+                        playNodePing(1100);
+                        onSelectState(currentHoveredHit.userData.hub);
+                    }
+                };
+
+                // Gentle User Drag Interaction (Orbit Damping, settles without revolving away)
+                let isDragging = false;
+                let prevMouse = { x: 0, y: 0 };
+                let targetRot = { ...DEFAULT_ROTATION };
 
                 const onPointerDown = (e) => {
+                    if (e.target.closest('button, input, a, form, .border-beam-card, .node-telemetry-hud')) return;
                     isDragging = true;
                     prevMouse = { x: e.clientX, y: e.clientY };
                 };
 
-                const onPointerUp = () => {
-                    isDragging = false;
-                };
+                const onPointerUp = () => { isDragging = false; };
 
-                const onPointerMove = (e) => {
-                    const rect = container.getBoundingClientRect();
-                    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
+                const onDragMove = (e) => {
                     if (isDragging) {
-                        const deltaX = (e.clientX - prevMouse.x) * 0.005;
-                        const deltaY = (e.clientY - prevMouse.y) * 0.005;
-                        targetRotation.y += deltaX;
-                        targetRotation.x = Math.max(-0.6, Math.min(0.8, targetRotation.x + deltaY));
+                        const deltaX = (e.clientX - prevMouse.x) * 0.003;
+                        const deltaY = (e.clientY - prevMouse.y) * 0.003;
+                        targetRot.y += deltaX;
+                        targetRot.x = Math.max(-0.4, Math.min(0.6, targetRot.x + deltaY));
                         prevMouse = { x: e.clientX, y: e.clientY };
                     }
                 };
 
-                container.addEventListener('pointerdown', onPointerDown);
-                window.addEventListener('pointerup', onPointerUp);
-                container.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerdown', onPointerDown, { passive: true });
+                window.addEventListener('pointerup', onPointerUp, { passive: true });
+                window.addEventListener('pointermove', onPointerMove, { passive: true });
+                window.addEventListener('pointermove', onDragMove, { passive: true });
+                window.addEventListener('click', onCanvasClick);
 
-                // 8. Animation Render Loop (THREE.Clock delta time)
-                const clock = new THREE.Clock();
+                // 9. Animation & Render Loop (Stationary India - NO auto-rotation!)
                 let animId;
+                let clock = new THREE.Clock();
+
+                // Signal scene loaded
+                if (onLoaded) {
+                    setTimeout(onLoaded, 300);
+                }
 
                 const animate = () => {
                     animId = requestAnimationFrame(animate);
-                    const dt = clock.getDelta();
+                    const elapsedTime = clock.getElapsedTime();
 
-                    // Subtle continuous rotation if not manually dragging
-                    if (!isDragging) {
-                        targetRotation.y += dt * 0.08;
-                    }
+                    // Smooth spring lerp back to India focus if dragged
+                    worldGroup.rotation.x += (targetRot.x - worldGroup.rotation.x) * 0.06;
+                    worldGroup.rotation.y += (targetRot.y - worldGroup.rotation.y) * 0.06;
 
-                    // Smooth lerp camera/world rotation
-                    worldGroup.rotation.x += (targetRotation.x - worldGroup.rotation.x) * 0.08;
-                    worldGroup.rotation.y += (targetRotation.y - worldGroup.rotation.y) * 0.08;
+                    // Organic Multi-Wave Point Bleep Animations
+                    nodePulseList.forEach((node) => {
+                        const isHovered = currentHoveredHit && currentHoveredHit.userData.hub.id === node.hub.id;
+                        
+                        // Natural concentric pulse cycle (1.6 Hz base frequency)
+                        const cycle = (elapsedTime * (isHovered ? 3.4 : 1.6) + node.randomOffset) % 1.0;
+                        const phase1 = cycle;
+                        const phase2 = (cycle - 0.26 + 1.0) % 1.0;
+                        const coreFlash = Math.max(0, 1.0 - cycle * (isHovered ? 3.0 : 4.0));
 
-                    // Animate network signal packets moving along arcs
-                    packetMeshes.forEach(pkt => {
-                        pkt.userData.progress = (pkt.userData.progress + pkt.userData.speed) % 1.0;
-                        const posOnCurve = pkt.userData.curve.getPoint(pkt.userData.progress);
-                        pkt.position.copy(posOnCurve);
+                        // Primary Expanding Shockwave Ring
+                        const scale1 = 1.0 + Math.pow(phase1, 0.65) * (isHovered ? 3.6 : 2.8);
+                        node.ring1Mesh.scale.set(scale1, scale1, 1);
+                        node.ring1Mesh.material.opacity = Math.pow(Math.max(0, 1.0 - phase1), 1.2) * (isHovered ? 1.0 : 0.85);
+
+                        // Secondary Echo Harmonic Ring
+                        const scale2 = 1.0 + Math.pow(phase2, 0.7) * (isHovered ? 2.8 : 2.2);
+                        node.ring2Mesh.scale.set(scale2, scale2, 1);
+                        node.ring2Mesh.material.opacity = Math.pow(Math.max(0, 1.0 - phase2), 1.4) * (isHovered ? 0.75 : 0.5);
+
+                        // Elevated Sky Corona Halo
+                        const haloPulse = isHovered ? 0.8 : (0.25 + 0.15 * Math.sin(elapsedTime * 2.0));
+                        node.haloMesh.material.opacity = haloPulse;
+                        node.haloMesh.scale.set(1.0 + haloPulse * 0.3, 1.0 + haloPulse * 0.3, 1);
+
+                        // Vertical Laser Spike
+                        const beamScale = isHovered ? 2.2 : (0.7 + 0.4 * Math.sin(cycle * Math.PI));
+                        node.beamMesh.scale.set(isHovered ? 1.5 : 1.0, isHovered ? 1.5 : 1.0, beamScale);
+                        node.beamMesh.material.opacity = isHovered ? 0.95 : (0.45 + coreFlash * 0.45);
+
+                        // Core Flash & White Center Pupil Flare
+                        const coreScale = 1.0 + coreFlash * 0.45;
+                        node.coreMesh.scale.set(coreScale, coreScale, 1);
+                        node.pupilMesh.scale.set(1.0 + coreFlash * 0.8, 1.0 + coreFlash * 0.8, 1);
+
+                        if (coreFlash > 0.4) {
+                            node.coreMesh.material.color.setHex(0xff7788);
+                            node.beamMesh.material.color.setHex(0xff7799);
+                        } else {
+                            node.coreMesh.material.color.setHex(0xff3344);
+                            node.beamMesh.material.color.setHex(0xff3344);
+                        }
                     });
 
-                    // Raycasting on skyscrapers for hover detection
-                    raycaster.setFromCamera(mouse, camera);
-                    const intersects = raycaster.intersectObjects(skyscraperMeshes, false);
-
-                    if (intersects.length > 0) {
-                        const hitHub = intersects[0].object.userData.hub;
-                        setHoveredState(hitHub);
-                        container.style.cursor = 'pointer';
+                    // Highlight communication lines when hovering a node
+                    if (currentHoveredHit) {
+                        const hId = currentHoveredHit.userData.hub.id;
+                        lineMeshList.forEach(line => {
+                            if (line.userData.fromId === hId || line.userData.toId === hId) {
+                                line.material.opacity = 0.95;
+                                line.material.color.setHex(0xff4455);
+                            } else {
+                                line.material.opacity = 0.20;
+                                line.material.color.setHex(0x992233);
+                            }
+                        });
                     } else {
-                        setHoveredState(null);
-                        container.style.cursor = isDragging ? 'grabbing' : 'grab';
+                        lineMeshList.forEach(line => {
+                            line.material.opacity = 0.55;
+                            line.material.color.setHex(0xff3344);
+                        });
                     }
+
+                    // Animate flowing data photon packets along curves (with acceleration on hovered node)
+                    photonMeshes.forEach(pkt => {
+                        let speed = pkt.speed;
+                        if (currentHoveredHit) {
+                            const hId = currentHoveredHit.userData.hub.id;
+                            if (pkt.curve.fromId === hId || pkt.curve.toId === hId) {
+                                speed *= 2.6; // Stream data 2.6x faster on active lines
+                            }
+                        }
+                        pkt.t = (pkt.t + speed) % 1.0;
+                        pkt.mesh.position.copy(pkt.curve.getPoint(pkt.t));
+                    });
 
                     renderer.render(scene, camera);
                 };
-
                 animate();
 
-                // 9. Resize Handler
-                const handleResize = () => {
-                    const w = container.clientWidth || 460;
-                    const h = container.clientHeight || 460;
-                    camera.aspect = w / h;
+                // Window Resize Handler
+                const onResize = () => {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    camera.aspect = width / height;
                     camera.updateProjectionMatrix();
-                    renderer.setSize(w, h);
+                    renderer.setSize(width, height);
+
+                    const desktop = width >= 1024;
+                    worldGroup.position.set(desktop ? 1.4 : 0, desktop ? -0.1 : -0.35, 0);
                 };
-                window.addEventListener('resize', handleResize);
+                window.addEventListener('resize', onResize);
 
                 return () => {
                     cancelAnimationFrame(animId);
-                    container.removeEventListener('pointerdown', onPointerDown);
+                    window.removeEventListener('pointerdown', onPointerDown);
                     window.removeEventListener('pointerup', onPointerUp);
-                    container.removeEventListener('pointermove', onPointerMove);
-                    window.removeEventListener('resize', handleResize);
-
-                    // Dispose resources
-                    globeGeo.dispose();
-                    globeMat.dispose();
-                    wireGeo.dispose();
-                    wireMat.dispose();
-                    haloGeo.dispose();
-                    haloMat.dispose();
+                    window.removeEventListener('pointermove', onPointerMove);
+                    window.removeEventListener('pointermove', onDragMove);
+                    window.removeEventListener('click', onCanvasClick);
+                    window.removeEventListener('resize', onResize);
                     renderer.dispose();
                     if (renderer.domElement && container.contains(renderer.domElement)) {
                         container.removeChild(renderer.domElement);
                     }
                 };
-            }, [isDark]);
+            }, [isDark, onSelectState, onLoaded]);
+
+            if (!webGLSupported) {
+                return (
+                    <div className="fixed inset-0 z-0 bg-slate-950 flex items-center justify-center p-6 text-center">
+                        <div className="max-w-md p-6 rounded-3xl bg-slate-900/90 border border-cyan-500/30 text-white backdrop-blur-xl">
+                            <GlobeIcon className="w-10 h-10 text-cyan-400 mx-auto mb-3" />
+                            <h3 className="text-base font-bold">Standard Visual Mode Active</h3>
+                            <p className="text-xs text-slate-400 mt-2">
+                                WebGL hardware acceleration is not active on this browser session. The portal remains fully functional with all enterprise security controls.
+                            </p>
+                        </div>
+                    </div>
+                );
+            }
 
             return (
-                <div className="relative w-full flex flex-col items-center justify-center">
-                    {/* Circular Globe Viewport Frame */}
-                    <div
-                        ref={mountRef}
-                        className="globe-circular-frame w-[340px] h-[340px] xs:w-[380px] xs:h-[380px] sm:w-[440px] sm:h-[440px] md:w-[460px] md:h-[460px] cursor-grab transition-all"
-                    >
-                        {/* Interactive Hover HUD Tooltip */}
-                        {hoveredState && (
-                            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none px-3.5 py-2 rounded-xl bg-slate-900/90 dark:bg-black/90 text-white backdrop-blur-xl border border-emerald-400/40 shadow-xl text-center animate-fade-in">
-                                <div className="text-xs font-bold text-emerald-400 flex items-center justify-center space-x-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    <span>{hoveredState.name}</span>
-                                </div>
-                                <div className="text-[11px] text-slate-300 font-medium mt-0.5">{hoveredState.hub}</div>
-                                <div className="text-[10px] font-mono text-emerald-300/90 mt-0.5">{hoveredState.traffic} Live Traffic</div>
+                <>
+                    <div id="three-canvas" ref={mountRef} />
+                    {hoveredNode && (
+                        <div
+                            className="node-telemetry-hud px-3.5 py-2.5 rounded-xl bg-slate-950/95 text-white border border-red-500/60 shadow-[0_8px_30px_rgba(255,51,68,0.45)] animate-fade-in text-left min-w-[210px]"
+                            style={{ left: `${hudPos.x}px`, top: `${hudPos.y}px` }}
+                        >
+                            <div className="flex items-center space-x-1.5 text-xs font-bold text-red-400">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                <span>{hoveredNode.name} Central Hub</span>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Interactive Drag & State Legend Hint */}
-                    <div className="mt-4 flex items-center justify-center space-x-3 text-xs text-slate-600 dark:text-slate-400 font-medium">
-                        <span className="flex items-center space-x-1.5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>17 State Hubs Active</span>
-                        </span>
-                        <span>•</span>
-                        <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">Drag to inspect 3D network</span>
-                    </div>
-                </div>
+                            <div className="text-[11px] text-slate-300 font-medium mt-0.5">{hoveredNode.hub}</div>
+                            <div className="text-[10px] font-mono text-cyan-300 mt-1 flex items-center justify-between">
+                                <span>{hoveredNode.traffic} Traffic</span>
+                                <span className="text-emerald-400 font-bold">● 100% Synced</span>
+                            </div>
+                            <div className="mt-1 pt-1 border-t border-slate-800 text-[9px] font-mono text-slate-400 flex items-center justify-between">
+                                <span>Lat: {hoveredNode.lat.toFixed(2)}°N</span>
+                                <span>Lon: {hoveredNode.lon.toFixed(2)}°E</span>
+                            </div>
+                        </div>
+                    )}
+                </>
             );
         };
 
         // =========================================================================
-        // TYPEWRITER ANIMATION COMPONENT FOR TITLE
+        // TYPEWRITER ANIMATION FOR SYSTEM NAME (Left Overlay)
         // =========================================================================
         const TypewriterHeader = ({ fullText = "Work Management Portal" }) => {
             const [displayedText, setDisplayedText] = useState("");
@@ -861,26 +1148,126 @@
                         setIsDone(true);
                         clearInterval(interval);
                     }
-                }, 60);
+                }, 50);
 
                 return () => clearInterval(interval);
             }, [fullText]);
 
             return (
-                <div className="text-left mb-4 sm:mb-6">
-                    <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-ciril-slate/10 dark:bg-ciril-slate/60 border border-ciril-sand/30 dark:border-ciril-sand/20 text-ciril-grey dark:text-ciril-sand text-[10px] font-mono uppercase tracking-widest mb-2 font-semibold">
-                        <span>CIRIL Enterprise Grid</span>
-                        <span>•</span>
-                        <span className="text-emerald-600 dark:text-emerald-400">Live Sync</span>
+                <div className="text-left max-w-lg mb-6">
+                    {/* Live Status Chip */}
+                    <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900/80 border border-cyan-500/30 text-cyan-300 text-[11px] font-mono uppercase tracking-widest mb-3 font-semibold backdrop-blur-md shadow-md">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span>17 Indian State Hubs Active • Grid Synchronized</span>
                     </div>
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center">
+
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white flex items-center drop-shadow-xl">
                         <span>{displayedText}</span>
-                        <span className="inline-block w-[3px] h-7 sm:h-9 bg-emerald-500 dark:bg-emerald-400 ml-1.5 animate-blink"></span>
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1.5 font-medium leading-relaxed max-w-md">
+                        <span className="inline-block w-[3px] h-8 sm:h-10 bg-cyan-400 ml-1.5 animate-blink"></span>
+                    </h1>
+
+                    <p className="text-sm sm:text-base text-slate-300 mt-3.5 font-medium leading-relaxed drop-shadow-md">
                         Central operations tracking, fleet allocations, and cross-state workflow synchronization.
                     </p>
+
+                    <div className="mt-4 flex items-center space-x-3 text-xs font-mono text-slate-400">
+                        <span className="flex items-center space-x-1.5">
+                            <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                            <span>Photorealistic Earth Shaders</span>
+                        </span>
+                        <span>•</span>
+                        <span className="text-red-400 font-semibold">Zero-Drift Vector Telemetry</span>
+                    </div>
                 </div>
+            );
+        };
+
+        // =========================================================================
+        // ANIME.JS POWERED AUTHORIZE ACCESS BUTTON (Micro-Interactions)
+        // =========================================================================
+        const AnimeAuthorizeButton = ({ onClick, disabled }) => {
+            const btnRef = useRef(null);
+            const arrowRef = useRef(null);
+
+            const handleMouseEnter = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.018,
+                        duration: 250,
+                        easing: 'easeOutCubic'
+                    });
+                    if (arrowRef.current) {
+                        window.anime({
+                            targets: arrowRef.current,
+                            translateX: 4,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                }
+            };
+
+            const handleMouseLeave = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.0,
+                        duration: 250,
+                        easing: 'easeOutCubic'
+                    });
+                    if (arrowRef.current) {
+                        window.anime({
+                            targets: arrowRef.current,
+                            translateX: 0,
+                            duration: 200,
+                            easing: 'easeOutQuad'
+                        });
+                    }
+                }
+            };
+
+            const handleMouseDown = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 0.978,
+                        duration: 120,
+                        easing: 'easeInOutQuad'
+                    });
+                }
+            };
+
+            const handleMouseUp = () => {
+                if (window.anime && btnRef.current) {
+                    window.anime({
+                        targets: btnRef.current,
+                        scale: 1.018,
+                        duration: 150,
+                        easing: 'easeOutCubic'
+                    });
+                }
+            };
+
+            return (
+                <button
+                    ref={btnRef}
+                    type="submit"
+                    disabled={disabled}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    className="btn-authorize-saas group relative w-full min-h-[48px] rounded-xl text-white text-sm font-bold flex items-center justify-center space-x-2 cursor-pointer overflow-hidden shadow-lg select-none"
+                >
+                    {/* Shimmer Light Sweep */}
+                    <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] animate-shimmer pointer-events-none"></div>
+
+                    <span className="relative z-10 font-bold tracking-wide">Authorize Access</span>
+                    <span ref={arrowRef} className="relative z-10 inline-block">
+                        <ArrowRightIcon className="w-4 h-4" />
+                    </span>
+                </button>
             );
         };
 
@@ -895,18 +1282,21 @@
             const [rememberMe, setRememberMe] = useState(true);
             const [isShaking, setIsShaking] = useState(false);
 
+            // 3D Scene Loading Indicator (Skill Requirement: 3D Loading Fallback)
+            const [is3DLoading, setIs3DLoading] = useState(true);
+
             // Theme (Dark / Light)
             const [isDarkMode, setIsDarkMode] = useState(() => {
                 if (typeof window !== 'undefined') {
                     return window.matchMedia('(prefers-color-scheme: dark)').matches;
                 }
-                return false;
+                return true;
             });
 
             // Modals: 'privacy' | 'security' | 'helpdesk' | 'validation' | null
             const [activeModal, setActiveModal] = useState(null);
 
-            // Toasts (Docked at Top-Right)
+            // Toasts (Docked at Top-Right per prompt2.txt)
             const [toasts, setToasts] = useState([]);
 
             // Multi-step Auth sequence
@@ -929,7 +1319,7 @@
                 setToasts(prev => [...prev.slice(-3), { id, title, description, type }]);
                 setTimeout(() => {
                     setToasts(prev => prev.filter(t => t.id !== id));
-                }, 3800);
+                }, 4000);
             }, []);
 
             // Keyboard shortcut (Escape to close modals)
@@ -943,7 +1333,7 @@
                 return () => window.removeEventListener('keydown', handleKeyDown);
             }, []);
 
-            // Realistic Authentication with Metrics Validation & Timing Delay
+            // Realistic Authentication Flow with Delay & Loading Metrics
             const handleLogin = async (e) => {
                 if (e) e.preventDefault();
 
@@ -968,9 +1358,9 @@
                 setLoadingMessage('Opening your dashboard...');
 
                 // Phase 3
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 550));
 
-                // Trigger pleasant success chime automatically (no speaker button needed)
+                // Trigger pleasant success chime automatically (no speaker button)
                 playSuccessChime();
                 setPhase('success');
                 addToast('Access Granted', 'Welcome back to Work Management Portal.', 'success');
@@ -992,77 +1382,82 @@
                 <div className={`min-h-screen w-full relative flex flex-col justify-between transition-colors duration-700 safe-area-top safe-area-bottom overflow-x-hidden ${
                     isDarkMode ? 'dark text-slate-100' : 'text-slate-900'
                 }`}>
-                    {/* Animated Moving Aurora Veil Background (from color.txt) */}
-                    <div className="bg-aurora-canvas">
-                        <div className="aurora-layer-1"></div>
-                        <div className="aurora-layer-2"></div>
-                    </div>
-                    <div className="grid-line-mesh"></div>
+                    {/* ========================================================= */}
+                    {/* THREE.JS JOURNEY EARTH SHADERS BACKGROUND CANVAS          */}
+                    {/* Photorealistic Earth with #4db2ff atmosphere & #bc490b rim*/}
+                    {/* Stationary: NO auto-revolving, India prominently featured */}
+                    {/* 17 State data-movement points directly on the Earth in 3D */}
+                    {/* ========================================================= */}
+                    <NaturalEarthSpaceExperience
+                        isDark={isDarkMode}
+                        onSelectState={(state) => {
+                            addToast(`${state.name} Hub`, `${state.hub} • ${state.traffic} live traffic`, 'info');
+                        }}
+                        onLoaded={() => setIs3DLoading(false)}
+                    />
+
+                    {/* Ambient Cosmic Backdrop Overlay */}
+                    <div className="space-backdrop-overlay"></div>
+
+                    {/* 3D Grid Initialization Progress Chip */}
+                    {is3DLoading && (
+                        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-40 flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-slate-950/85 border border-cyan-500/40 backdrop-blur-xl shadow-2xl text-[11px] font-mono text-cyan-300 pointer-events-none transition-opacity duration-500">
+                            <div className="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+                            <span>CALIBRATING 3D EARTH TELEMETRY...</span>
+                        </div>
+                    )}
 
                     {/* ========================================================= */}
-                    {/* TOP NAVIGATION BAR                                        */}
+                    {/* FLOATING TOP-LEFT BRANDING HEADER                         */}
                     {/* ========================================================= */}
-                    <header className="relative z-20 w-full max-w-7xl mx-auto px-4 xs:px-6 py-4 sm:py-6 flex items-center justify-between">
-                        {/* Top-Left: Logo & System Name (No bleeping green dot, No secure cloud v2.6) */}
-                        <div className="flex items-center space-x-3.5 min-w-0">
+                    <header className="relative z-20 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between pointer-events-none">
+                        <div className="flex items-center space-x-3.5 pointer-events-auto">
                             <img
                                 src="./img/logo.png"
                                 onError={(e) => { e.target.onerror = null; e.target.src = "../img/logo.png"; }}
                                 alt="CIRIL"
-                                className="h-8 sm:h-9 w-auto object-contain shrink-0 transition-transform duration-300 hover:scale-105 drop-shadow-sm"
+                                className="h-9 w-auto object-contain shrink-0 transition-transform duration-300 hover:scale-105 drop-shadow-md"
                             />
-                            <div className="h-5 w-[1px] bg-slate-300 dark:bg-slate-700 shrink-0"></div>
-                            <span className="text-xs sm:text-sm font-bold tracking-wide text-slate-800 dark:text-slate-200 uppercase">
+                            <div className="h-5 w-[1px] bg-slate-400 dark:bg-slate-700 shrink-0"></div>
+                            <span className="text-xs sm:text-sm font-bold tracking-wide text-white uppercase drop-shadow-md">
                                 Work Management Portal
                             </span>
-                        </div>
-
-                        {/* Top-Right: Clean space (buttons removed as instructed) */}
-                        <div className="flex items-center space-x-3">
-                            {/* Empty header right room, toast stack docks below */}
                         </div>
                     </header>
 
                     {/* ========================================================= */}
-                    {/* MAIN TWO-COLUMN SPLIT SCREEN CONTENT                      */}
+                    {/* MAIN IMMERSIVE CONTENT: TYPING BRANDING & RIGHT LOGIN CARD*/}
+                    {/* Overlapping the Earth in space as sketched in sample_page  */}
                     {/* ========================================================= */}
-                    <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 xs:px-6 py-4 sm:py-8 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+                    <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row items-center justify-between gap-8 pointer-events-none">
                         
                         {/* ===================================================== */}
-                        {/* LEFT COLUMN: TYPING TITLE + 3D INDIA GLOBE VIEWPORT   */}
+                        {/* LEFT: BRANDING TITLE & CLEAN FLOATING SYSTEM STATUS   */}
                         {/* ===================================================== */}
-                        <div className="w-full lg:w-7/12 flex flex-col items-center lg:items-start text-center lg:text-left">
-                            {/* Typing Animation for Work Management Portal */}
+                        <div className="w-full lg:w-1/2 flex flex-col items-start justify-center py-4 pointer-events-auto">
                             <TypewriterHeader fullText="Work Management Portal" />
-
-                            {/* 3D Three.js Circular Globe Container with Indian States & Network */}
-                            <ThreeGlobeView
-                                isDark={isDarkMode}
-                                onSelectState={(state) => {
-                                    addToast(`${state.name} Node`, `${state.hub} • Operational traffic connected`, 'info');
-                                }}
-                            />
                         </div>
 
                         {/* ===================================================== */}
-                        {/* RIGHT COLUMN: REFINED MODERN SAAS LOGIN CARD          */}
+                        {/* RIGHT: SLEEK FLOATING GLASSMORPHIC LOGIN PANE         */}
+                        {/* Floating over the Earth in space (sample_page.png)    */}
                         {/* ===================================================== */}
-                        <div className="w-full lg:w-5/12 max-w-[460px] mx-auto lg:mx-0">
+                        <div className="w-full lg:w-[410px] xl:w-[430px] pointer-events-auto my-auto">
                             <div className={`border-beam-card shadow-2xl transition-all duration-300 ${isShaking ? 'animate-shake' : ''}`}>
-                                <div className="glass-card-surface p-6 xs:p-8 sm:p-9 rounded-[28px]">
+                                <div className="glass-card-surface p-7 sm:p-9 rounded-[28px]">
                                     
-                                    {/* Card Header (Removed CIRIL Enterprise Gateway v2.6 pill as instructed) */}
+                                    {/* Card Header */}
                                     <div className="mb-6 text-left">
-                                        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                                        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                                             Welcome back
-                                        </h1>
-                                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed font-medium">
+                                        </h2>
+                                        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed font-medium">
                                             Sign in to manage real estate operations, pipeline & inventory.
                                         </p>
                                     </div>
 
                                     {/* ================================================= */}
-                                    {/* PHASE: IDLE FORM                                 */}
+                                    {/* PHASE: IDLE LOGIN FORM                            */}
                                     {/* ================================================= */}
                                     {phase === 'idle' && (
                                         <form onSubmit={handleLogin} noValidate className="space-y-4">
@@ -1072,7 +1467,7 @@
                                                     Employee ID
                                                 </label>
                                                 <div className="relative group">
-                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
+                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-400 transition-colors pointer-events-none">
                                                         <UserIcon className="w-4 h-4" />
                                                     </div>
                                                     <input
@@ -1080,7 +1475,7 @@
                                                         value={empId}
                                                         onChange={(e) => setEmpId(e.target.value)}
                                                         placeholder="e.g. EMP-8492"
-                                                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all duration-300 min-h-[44px] font-mono"
+                                                        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-300 min-h-[44px] font-mono"
                                                     />
                                                     {empId && (
                                                         <button
@@ -1103,13 +1498,13 @@
                                                     <button
                                                         type="button"
                                                         onClick={() => setActiveModal('helpdesk')}
-                                                        className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors"
+                                                        className="text-xs text-cyan-500 dark:text-cyan-400 hover:underline font-semibold transition-colors"
                                                     >
                                                         Forgot password?
                                                     </button>
                                                 </div>
                                                 <div className="relative group">
-                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none">
+                                                    <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-cyan-400 transition-colors pointer-events-none">
                                                         <LockIcon className="w-4 h-4" />
                                                     </div>
                                                     <input
@@ -1117,7 +1512,7 @@
                                                         value={password}
                                                         onChange={(e) => setPassword(e.target.value)}
                                                         placeholder="••••••••••••"
-                                                        className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition-all duration-300 min-h-[44px] font-mono"
+                                                        className="w-full pl-10 pr-11 py-2.5 rounded-xl border border-slate-200/90 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/40 focus:border-cyan-400 transition-all duration-300 min-h-[44px] font-mono"
                                                     />
                                                     <button
                                                         type="button"
@@ -1130,7 +1525,7 @@
                                                 </div>
                                             </div>
 
-                                            {/* Routine "Remember me" Checkbox (Apple toggle inspired by button.html) */}
+                                            {/* Routine "Remember me" Checkbox (Apple toggle) */}
                                             <div className="flex items-center justify-between pt-1">
                                                 <label className="checkbox-apple-container space-x-3">
                                                     <input
@@ -1146,21 +1541,12 @@
                                                 </label>
                                             </div>
 
-                                            {/* Authorize Access Button (SaaS Animated Effect) */}
+                                            {/* Authorize Access Button (Anime.js SaaS Button) */}
                                             <div className="pt-2">
-                                                <button
-                                                    type="submit"
-                                                    className="btn-authorize-saas group relative w-full min-h-[48px] rounded-xl text-white text-sm font-bold flex items-center justify-center space-x-2 cursor-pointer overflow-hidden"
-                                                >
-                                                    {/* Shimmer Light Sweep */}
-                                                    <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] animate-shimmer pointer-events-none"></div>
-
-                                                    <span className="relative z-10 font-bold tracking-wide">Authorize Access</span>
-                                                    <ArrowRightIcon className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                                                </button>
+                                                <AnimeAuthorizeButton />
                                             </div>
 
-                                            {/* Demo Fill Helper Pill */}
+                                            {/* Quick Test Autofill Helper */}
                                             <div className="pt-3 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-800">
                                                 <span>Quick test fill:</span>
                                                 <button
@@ -1170,7 +1556,7 @@
                                                         setPassword('ciril_ops_2026');
                                                         addToast('Credentials Filled', 'Demo credentials inserted for EMP-8492', 'info');
                                                     }}
-                                                    className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                                    className="font-semibold text-cyan-500 dark:text-cyan-400 hover:underline"
                                                 >
                                                     Autofill Demo
                                                 </button>
@@ -1179,15 +1565,15 @@
                                     )}
 
                                     {/* ================================================= */}
-                                    {/* PHASE: LOADING STATE WITH ASYNC METRICS VALIDATION*/}
+                                    {/* PHASE: LOADING STATE WITH NETWORK DELAY METRICS   */}
                                     {/* ================================================= */}
                                     {phase === 'loading' && (
                                         <div className="py-8 text-center space-y-6 animate-fade-in">
                                             {/* Animated Radar Beacon */}
                                             <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40"></span>
-                                                <span className="animate-pulse absolute inline-flex h-12 w-12 rounded-full bg-emerald-500/20"></span>
-                                                <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-lg">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-40"></span>
+                                                <span className="animate-pulse absolute inline-flex h-12 w-12 rounded-full bg-cyan-500/20"></span>
+                                                <div className="relative z-10 w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-700 text-white flex items-center justify-center shadow-lg">
                                                     <div className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></div>
                                                 </div>
                                             </div>
@@ -1197,23 +1583,23 @@
                                                     {loadingMessage}
                                                 </h3>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                                                    Synchronizing your secure session with CIRIL operational nodes.
+                                                    Connecting to national real estate operational nodes.
                                                 </p>
                                             </div>
 
-                                            {/* Simple visual progress bar */}
+                                            {/* Visual Progress Bar */}
                                             <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                                <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full w-3/4 animate-pulse"></div>
+                                                <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full w-3/4 animate-pulse"></div>
                                             </div>
                                         </div>
                                     )}
 
                                     {/* ================================================= */}
-                                    {/* PHASE: SUCCESS SCREEN (No vulgar cockpit wording)  */}
+                                    {/* PHASE: SUCCESS SCREEN                             */}
                                     {/* ================================================= */}
                                     {phase === 'success' && (
                                         <div className="py-6 text-center space-y-5 animate-fade-in">
-                                            <div className="mx-auto w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                                            <div className="mx-auto w-16 h-16 rounded-3xl bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-200 dark:border-cyan-800 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-[0_0_30px_rgba(77,178,255,0.35)]">
                                                 <CheckCircleIcon className="w-8 h-8" />
                                             </div>
 
@@ -1229,15 +1615,15 @@
                                             {/* Verified Badge */}
                                             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-left">
                                                 <div className="flex items-center space-x-3">
-                                                    <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
+                                                    <div className="w-9 h-9 rounded-xl bg-cyan-600 text-white font-bold flex items-center justify-center text-xs">
                                                         {empId.slice(-2) || 'OK'}
                                                     </div>
                                                     <div>
                                                         <div className="text-xs font-bold text-slate-900 dark:text-white font-mono">{empId}</div>
-                                                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Active Operational Session</div>
+                                                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Operational Session Active</div>
                                                     </div>
                                                 </div>
-                                                <div className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-mono text-[10px] font-bold">
+                                                <div className="px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300 font-mono text-[10px] font-bold">
                                                     VERIFIED
                                                 </div>
                                             </div>
@@ -1263,33 +1649,33 @@
                     </main>
 
                     {/* ========================================================= */}
-                    {/* FOOTER                                                    */}
+                    {/* MINIMALIST COMPLIANCE FOOTER                              */}
                     {/* ========================================================= */}
-                    <footer className="relative z-20 w-full max-w-7xl mx-auto px-4 xs:px-6 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200/80 dark:border-slate-800/80">
-                        <div>
-                            <span>© 2026 CIRIL Real Estate Network. All rights reserved.</span>
+                    <footer className="relative z-20 w-full max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-slate-400 dark:text-slate-400 border-t border-slate-800/60 pointer-events-none">
+                        <div className="pointer-events-auto">
+                            <span>&copy; 2026 CIRIL Real Estate Network. All rights reserved.</span>
                         </div>
-                        <div className="flex items-center space-x-4 font-medium">
+                        <div className="flex items-center space-x-4 font-medium pointer-events-auto">
                             <button
                                 type="button"
                                 onClick={() => setActiveModal('privacy')}
-                                className="hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                                className="hover:text-white transition-colors cursor-pointer"
                             >
                                 Privacy Policy
                             </button>
-                            <span>•</span>
+                            <span>&bull;</span>
                             <button
                                 type="button"
                                 onClick={() => setActiveModal('security')}
-                                className="hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                                className="hover:text-white transition-colors cursor-pointer"
                             >
                                 Security Architecture
                             </button>
-                            <span>•</span>
+                            <span>&bull;</span>
                             <button
                                 type="button"
                                 onClick={() => setActiveModal('helpdesk')}
-                                className="hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-emerald-600 dark:text-emerald-400 font-semibold"
+                                className="hover:text-white transition-colors cursor-pointer text-cyan-400 font-semibold"
                             >
                                 IT Support
                             </button>
@@ -1297,158 +1683,140 @@
                     </footer>
 
                     {/* ========================================================= */}
-                    {/* NIGHT MODE TOGGLE BUTTON (MOVED TO BOTTOM-LEFT WITH TOOLTIP)*/}
+                    {/* THEME TOGGLE BUTTON AT BOTTOM-LEFT (per prompt2.txt)      */}
                     {/* ========================================================= */}
-                    <div className="fixed left-5 bottom-5 z-40 theme-button-wrap flex items-center">
+                    <div className="fixed left-6 bottom-6 z-40 theme-button-wrap flex items-center">
                         <button
                             type="button"
-                            onClick={() => {
-                                setIsDarkMode(!isDarkMode);
-                                addToast('Theme Switched', !isDarkMode ? 'Dark mode enabled' : 'Light mode enabled', 'info');
-                            }}
+                            onClick={() => setIsDarkMode(!isDarkMode)}
                             aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl text-slate-600 dark:text-slate-300 shadow-lg hover:shadow-xl hover:scale-105 transition-all cursor-pointer"
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-2xl border border-slate-700/80 bg-slate-900/85 backdrop-blur-xl text-slate-300 shadow-xl hover:shadow-2xl hover:scale-105 transition-all cursor-pointer"
                         >
                             <div className="transition-transform duration-500 hover:rotate-90">
-                                {isDarkMode ? <SunIcon className="w-5 h-5 text-amber-400" /> : <MoonIcon className="w-5 h-5 text-slate-700" />}
+                                {isDarkMode ? <SunIcon className="w-5 h-5 text-amber-400" /> : <MoonIcon className="w-5 h-5 text-slate-300" />}
                             </div>
                         </button>
-
-                        {/* Hover Tooltip as requested in prompt.txt */}
-                        <div className="theme-tooltip px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-semibold shadow-xl border border-slate-700/50">
-                            {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                        <div className="theme-tooltip px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-xl border border-slate-700/60">
+                            {isDarkMode ? "Switch to Light" : "Switch to Dark"}
                         </div>
                     </div>
 
                     {/* ========================================================= */}
-                    {/* TOAST NOTIFICATION STACK (MOVED TO TOP-RIGHT AS INSTRUCTED)*/}
+                    {/* TOAST STACK AT TOP-RIGHT (per prompt2.txt)                 */}
                     {/* ========================================================= */}
-                    <div className="fixed top-5 right-5 z-50 space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0">
+                    <div className="fixed top-6 right-6 z-50 space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0">
                         {toasts.map(toast => (
                             <div
                                 key={toast.id}
-                                className="pointer-events-auto flex items-start space-x-3 p-3.5 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_12px_35px_rgba(0,0,0,0.15)] text-xs animate-slide-down"
+                                className="pointer-events-auto flex items-start space-x-3 p-4 rounded-2xl bg-slate-950/90 dark:bg-slate-900/95 border border-slate-800 text-white shadow-2xl backdrop-blur-xl animate-slide-down transition-all"
                             >
-                                <div className={`p-1.5 rounded-lg shrink-0 ${
-                                    toast.type === 'success' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400' :
-                                    toast.type === 'warning' ? 'bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400' :
-                                    'bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
-                                }`}>
-                                    {toast.type === 'success' ? <CheckCircleIcon className="w-4 h-4" /> :
-                                     toast.type === 'warning' ? <AlertCircleIcon className="w-4 h-4" /> :
-                                     <ShieldIcon className="w-4 h-4" />}
+                                <div className="shrink-0 mt-0.5">
+                                    {toast.type === 'success' && <CheckCircleIcon className="w-4 h-4 text-emerald-400" />}
+                                    {toast.type === 'warning' && <AlertCircleIcon className="w-4 h-4 text-amber-400" />}
+                                    {toast.type === 'info' && <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block animate-pulse"></span>}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">{toast.title}</h4>
-                                    <p className="text-slate-500 dark:text-slate-400 mt-0.5">{toast.description}</p>
+                                <div className="flex-1 text-left">
+                                    <div className="text-xs font-bold">{toast.title}</div>
+                                    <div className="text-[11px] text-slate-300 mt-0.5 leading-snug">{toast.description}</div>
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     {/* ========================================================= */}
-                    {/* DIALOG MODALS: PRIVACY, SECURITY, IT SUPPORT, VALIDATION  */}
+                    {/* SIMPLIFIED ACCESSIBILITY / HELPDESK MODALS                */}
                     {/* ========================================================= */}
                     {activeModal && (
-                        <div
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in"
-                            onClick={() => setActiveModal(null)}
-                            role="dialog"
-                            aria-modal="true"
-                        >
-                            <div
-                                className="w-full max-w-md rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-white/60 dark:border-slate-700/70 shadow-2xl p-6 sm:p-7 animate-slide-up"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
-                                    <div className="flex items-center space-x-2.5">
-                                        <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
-                                            <ShieldIcon className="w-5 h-5" />
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+                            <div className="relative w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700 text-white p-6 shadow-2xl animate-slide-up text-left">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveModal(null)}
+                                    className="absolute right-4 top-4 p-2 text-slate-400 hover:text-white rounded-full bg-slate-800/60 transition-colors"
+                                >
+                                    <XIcon className="w-4 h-4" />
+                                </button>
+
+                                {activeModal === 'helpdesk' && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 rounded-2xl bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400">
+                                                <ShieldIcon className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-base font-bold">Credential Recovery</h3>
+                                                <p className="text-xs text-slate-400">IT Support & Workspace Provisioning</p>
+                                            </div>
                                         </div>
-                                        <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                                            {activeModal === 'privacy' && 'Privacy Policy'}
-                                            {activeModal === 'security' && 'Security Architecture'}
-                                            {activeModal === 'helpdesk' && 'IT Support & Assistance'}
-                                            {activeModal === 'validation' && 'Credentials Required'}
-                                        </h3>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            For security policy reasons, password resets are processed through your company active directory administrator. Contact your regional coordinator or submit a service ticket.
+                                        </p>
+                                        <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-cyan-300 flex items-center justify-between">
+                                            <span>Support Hotline:</span>
+                                            <span>it-support@ciril.internal</span>
+                                        </div>
                                     </div>
+                                )}
+
+                                {activeModal === 'privacy' && (
+                                    <div className="space-y-4">
+                                        <h3 className="text-base font-bold">Privacy Architecture</h3>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Operations tracking data and real estate portfolio telemetry are strictly partitioned. Session authentications utilize salted token cryptography with automatic session expiry.
+                                        </p>
+                                        <div className="text-[11px] text-slate-400 font-mono">
+                                            Compliance ID: ISO-27001-OPS-2026
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeModal === 'security' && (
+                                    <div className="space-y-4">
+                                        <h3 className="text-base font-bold">Security Protocols</h3>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            All network transmission arcs between state operational hubs operate via encrypted peer-to-peer data pathways with TLS 1.3 verification and redundant failover routing.
+                                        </p>
+                                        <div className="text-[11px] text-slate-400 font-mono">
+                                            Telemetry Network: 17 Hubs Connected
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeModal === 'validation' && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 rounded-2xl bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400">
+                                                <AlertCircleIcon className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-base font-bold">Incomplete Information</h3>
+                                                <p className="text-xs text-slate-400">Required credentials missing</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-xs text-slate-300 leading-relaxed">
+                                            Please provide both your Employee ID and password to access the Work Management Portal. You can use the "Autofill Demo" button for quick verification.
+                                        </p>
+                                    </div>
+                                )}
+
+                                <div className="pt-2">
                                     <button
                                         type="button"
                                         onClick={() => setActiveModal(null)}
-                                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                                        className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-colors cursor-pointer"
                                     >
-                                        <XIcon className="w-4 h-4" />
-                                    </button>
-                                </div>
-
-                                <div className="py-4 text-xs text-slate-600 dark:text-slate-300 space-y-3 leading-relaxed">
-                                    {activeModal === 'privacy' && (
-                                        <>
-                                            <p>CIRIL operates under strict operational confidentiality standards. Your account access logs, IP session signatures, and workflow activity are maintained in secure internal storage.</p>
-                                            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 font-mono text-[11px] space-y-1">
-                                                <div>• Data Encryption: AES-256-GCM</div>
-                                                <div>• Audit Logs: Kept for 90 days for operational safety</div>
-                                                <div>• Third-Party Tracking: None</div>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {activeModal === 'security' && (
-                                        <>
-                                            <p>Our Work Management Portal uses zero-trust identity verification. Access tokens expire after 8 hours of inactivity to safeguard real estate records and transaction ledgers.</p>
-                                            <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 font-mono text-[11px] space-y-1">
-                                                <div>• Protocol: TLS 1.3 End-to-End Encrypted</div>
-                                                <div>• Session Replay Protection: Enabled</div>
-                                                <div>• Multi-State Sync: Encrypted WebSockets</div>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {activeModal === 'helpdesk' && (
-                                        <>
-                                            <p>Need password assistance or account activation? Get in touch with our internal IT operations desk.</p>
-                                            <div className="p-3.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 space-y-1.5 text-[11px]">
-                                                <div className="font-semibold text-emerald-900 dark:text-emerald-200">Support Channels:</div>
-                                                <div>• Internal Slack: <strong>#it-support</strong></div>
-                                                <div>• Desk Extension: <strong>x4900</strong></div>
-                                                <div>• Support Email: <strong>support@ciril.internal</strong></div>
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {activeModal === 'validation' && (
-                                        <>
-                                            <p>Please enter both your <strong>Employee ID</strong> and <strong>Password</strong> to access the Work Management Portal.</p>
-                                            <p>For quick testing, you can click "Autofill Demo" below.</p>
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (activeModal === 'validation') {
-                                                setEmpId('EMP-8492');
-                                                setPassword('ciril_ops_2026');
-                                            }
-                                            setActiveModal(null);
-                                        }}
-                                        className="min-h-[40px] px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors shadow-sm"
-                                    >
-                                        {activeModal === 'validation' ? 'Autofill & Close' : 'Got it'}
+                                        Close
                                     </button>
                                 </div>
                             </div>
                         </div>
                     )}
-
                 </div>
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // Render React Application
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 
