@@ -1,0 +1,18 @@
+Try these reference color palettes:
+
+
+Homepage Colors:
+
+#22272F - black
+#CAC1AB - silver
+#4A4943 - darkslategrey
+#C5C6CB - silver
+#2D312B - darkslategrey
+#71757A - gray
+
+Brand Colors:
+
+#707070 - dimgray
+#202830 - black
+#F8F8F8 - Whitesmoke
+#C09860 - burlywood
