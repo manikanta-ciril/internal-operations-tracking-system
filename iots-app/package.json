@@ -1,0 +1,23 @@
+{
+  "name": "iots-app",
+  "version": "1.0.0",
+  "description": "The IOTS is a web-application based system, which is the acronym of Internal Operations Tracking System, and it's sole purpose is to design the system in such a way that would completely covers all the work, employee, management aspects in the company CIRIL, to keep track of all work and internal operations, this project was introduced.",
+  "homepage": "https://github.com/manikanta-ciril/internal-operations-tracking-system#readme",
+  "bugs": {
+    "url": "https://github.com/manikanta-ciril/internal-operations-tracking-system/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manikanta-ciril/internal-operations-tracking-system.git"
+  },
+  "author": "Deva Manikanta Sala",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1"
+  }
+}
