@@ -1,0 +1,47 @@
+sed on the following:
+
+We currently have 11 roles:
+
+
+
+Chairman
+
+Senior Manager
+
+General Manager
+
+Lead Manager
+
+Executive
+
+IT System Analyst
+
+Business Development Executive (BDE)
+
+Social Media Manager
+
+Graphic Designer
+
+Admin
+
+Super Admin
+
+
+
+The uploaded diagram is incompleted version of the system architecture of the IOTS, only designed the one layer, so based on the layer-1: authentication and authorizatoin layer, layer-2: management layer needs to be altered.. completely based on the above user-roles and key-tasks-lists define most of the user responsibilities, as there is only single manager i.e general manager, her work need to be splitted into other managerial roles: senior manager, general manager, lead manager, and executive role.. so the chairman person's will be defined eventually based on the works as he his role is completely defined under admin dashboard, so the entire system needs to be redesigned so for designing the entire project based and role base access system and the other intelligence-analytical layer:
+
+So basically I defined three roles right? {admin, manager, employee} right based on the key-tasks listed, lets construct it for every role the system needs to reconstructed, so based on that, the following is the remaining things that I have gathered:
+
+Employee Dashboard:
+
+Work Management: {My Task Workspace, Task Queue, Every/Specific Task Details, Task Priority, Due Date Tracking}
+
+Attendance & Availability: {Check-In (at login time), Check-Out (at logoff time), Attendance History, Work Hours (Compute), Availability Status {Busy, OnBreak, Offline, Absent/OnLeave, out of office etc..,.}}
+
+Request & self-service:{Leave Requests, Permission Requests, Request Status,  Requests log, History of logs on manager approval, schedule a request, task clarification (Communicative), resource request}
+
+Notification & Communication:{Task Notification {New task assigned, task reassigned, task overdue etc.}, Deadline Alerts, Manager Feedback (Submission approved, Changes/Certain action request to EMP, Announcements and Escalation alerts {leave decision, request-specifics, and alerts})}
+
+Performance & Activity: {Task Activity Summary, Completion Metrics, Attendance Summary, Activity history, feedback history, etc.}
+
+Profile & Security: {My Profile, Account details, request edit in A/C details, change in password, active sessions, etc.}

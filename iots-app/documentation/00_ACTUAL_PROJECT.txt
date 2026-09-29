@@ -1,0 +1,18 @@
+Project: Internal Operations Tracking System (IOTS)
+
+Users:
+We currently have **11 roles**:
+
+	1. **Chairman**
+	2. **Senior Manager**
+	3. **General Manager**
+	4. **Lead Manager**
+	5. **Executive**
+	6. **IT System Analyst**
+	7. **Business Development Executive (BDE)**
+	8. **Social Media Manager**
+	9. **Graphic Designer**
+	10. **Admin**
+	11. **Super Admin**
+	
+
