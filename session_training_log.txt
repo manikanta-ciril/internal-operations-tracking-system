@@ -1,0 +1,86 @@
+================================================================================
+=== ANTIGRAVITY SESSION TRAINING & CONTEXT DOSSIER ===
+Conversation ID: 92cb7572-74bd-48d5-b9f1-f75b13419768
+Workspace: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\monitoring-portal\internal-operations-tracking-system
+Target Application: CIRIL - Internal Operations Tracking System (IOTS)
+Latest Update: 2026-09-29T07:06:11Z (Turn 85)
+Resume Command: agy --conversation=92cb7572-74bd-48d5-b9f1-f75b13419768
+================================================================================
+
+1. SYSTEM & SESSION OVERVIEW
+--------------------------------------------------------------------------------
+- Purpose: Build, polish, optimize, and modularize the secure authentication portal and telemetry interfaces for CIRIL Internal Operations Tracking System.
+- Primary Source File: login_react.html -> new_login_react.html -> updated_login_react.html -> spline_login_react.html -> iots-app (React modularization).
+- Visual Design System: Strict alignment with color.txt brand tokens:
+  * Brand Dark / Slate Black: #202830 / #22272F
+  * Luxury Accent / Burlywood Gold: #C09860 (Hover: #A8824E / #D4AF37)
+  * Surface Neutral / Whitesmoke: #F8F8F8
+  * Champagne Silver: #CAC1AB / #EDE8DF
+  * Cool Silver: #C5C6CB
+  * Dark Slate Gray: #4A4943
+  * Muted Grays: #71757A / #707070
+
+2. CHRONOLOGICAL MILESTONES & DECISION LOG
+--------------------------------------------------------------------------------
+[Milestone 1 - 2026-09-26 | Turns 1-4]
+- Initial /ui-score evaluation gave 44/100 (F) due to clashing iOS neon green (#4cd964) toggles, unconstrained padding, arbitrary text sizes, and scrambled text animations.
+- Refactored using /ui-skills: integrated color.txt palette, dynamically moving background gradient shimmer, minimal typing effect with disappearing cursor, stabilized logo box (zero layout jitter). Design score raised to 98/100 (A).
+
+[Milestone 2 - 2026-09-26 | Turns 5-10]
+- Added WebGL Simplex-Noise background with continuous color blending, radial vignette glow, and 35mm film grain overlay. Score reached 100/100 (A+).
+- Explored dynamic gradient mesh variation, subsequently reverted per user request to preserve the animated WebGL simplex noise canvas with vignette and film grain.
+
+[Milestone 3 - 2026-09-26 | Turns 11-15]
+- Applied /ui-pattern to extract LoginFormSection and eliminate stark white (#fff) backgrounds in favor of deep glassmorphism (bg-brand-dark/85 backdrop-blur-xl).
+- Redesigned Introduction UI with operational telemetry pill (● SYSTEM ONLINE), frosted branding badge, and 3-column telemetry grid (Hyderabad node, build release v4.12.0, AES-256 TLS).
+
+[Milestone 4 - 2026-09-26 | Turns 18-23]
+- Created new_login_react.html preserving cleaned textual content while adding:
+  1. Empty credentials dialog modal with auto-focus return.
+  2. Multi-scenario testing engine (1. Success, 2. Credentials Failed, 3. Location Mismatch).
+  3. Location permission security gate on initial page load.
+  4. Default Light Mode initialization with seamless Dark Mode toggle.
+  5. Floating bottom-right testing scenarios dock.
+- Fixed Chromium geolocation timeouts by handling error codes (1: denied, 2/3: network fallback) and querying navigator.permissions.query.
+- Upgraded to sub-meter 6-decimal precision GPS tracking with continuous navigator.geolocation.watchPosition, BigDataCloud reverse geocoding, and live radar telemetry card.
+
+[Milestone 5 - 2026-09-28 | Turns 24-29]
+- Created updated_login_react.html implementing testing.tsx cursor-origin radial expansion (OriginButton) across all buttons with cubic-bezier(0.16, 1, 0.3, 1) curves.
+- Authorize Access button updated: UnlockingLock shackle hover animation retained, shade slide wipe removed, arrow chevron constrained strictly within bounds.
+
+[Milestone 6 - 2026-09-28 | Turns 30-65]
+- Synchronized mobile responsive auto-hiding layout and native permission prompt trigger fixes.
+- Placed 6 standardized authentication and SIEM audit plug-in annotations:
+  * Plug-in 1: Client-side input sanitization & rate limiting
+  * Plug-in 2: POST /api/v1/auth/verify
+  * Plug-in 3: POST /api/v1/security/geofence-check
+  * Plug-in 4: Workspace redirect / session hydration
+  * Plug-in 5: SIEM audit OFF_SITE_LOGIN_ACCEPTED
+  * Plug-in 6: SIEM audit OFF_SITE_LOGIN_REJECTED
+- Maintained chat_history.txt audit trail.
+
+[Milestone 7 - 2026-09-29 | Turns 66-77]
+- Verified new_login_react.html and set up React architecture under iots-app/ directory.
+- Created spline_login_react.html integrating interactive 3D Spline scene (@splinetool/viewer) with anamorphic lens flare shaders and GPU lighting.
+- Configured working directory context inside iots-app.
+
+[Milestone 8 - 2026-09-29 | Turns 78-82]
+- Linter evaluation: Recommended Oxlint (npx oxlint@latest) for zero-config, ultra-fast static analysis on React JSX without AST plugin overhead.
+
+[Milestone 9 - 2026-09-29 | Turns 83-85]
+- Created dedicated AGY-Chats logging architecture in both root and iots-app:
+  * Daily Excel-compatible CSV logs (AGY_Chat_Log_YYYY-MM-DD.csv)
+  * Human-readable Markdown logs (AGY_Chat_Log_YYYY-MM-DD.md)
+  * Master index registry (SESSIONS_INDEX.csv)
+  * One-click session resume script (RESUME_SESSION.bat)
+  * Real-time daemon sync script (sync_agy_chats.js) monitoring transcript_full.jsonl continuously.
+
+3. AUDIT METRICS & RECOVERY DATA
+--------------------------------------------------------------------------------
+- Total Recorded Turns: 85 turns
+  * 2026-09-26: 23 turns (Turns 1 - 23)
+  * 2026-09-28: 42 turns (Turns 24 - 65)
+  * 2026-09-29: 20 turns (Turns 66 - 85)
+- Active Conversation ID: 92cb7572-74bd-48d5-b9f1-f75b13419768
+- Session Resume Code: agy --conversation=92cb7572-74bd-48d5-b9f1-f75b13419768
+================================================================================
