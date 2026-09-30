@@ -1,0 +1,980 @@
+<?xml version="1.0" ?>
+<mxfile host="app.diagrams.net" modified="2026-09-30T17:00:00.000Z" agent="CIRIL-Enterprise-Architect" version="24.0.0" type="device">
+  <diagram id="IOTS_Role_Architecture_V2" name="IOTS Role-Specific Enterprise Operations Flowchart">
+    <mxGraphModel dx="3200" dy="2200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="BOX_L1" value="LAYER 1: The Secure Login, Location Verification &amp; Role Routing Layer" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#64748b;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=30;spacingTop=20;fontFamily=Architects Daughter;fontSize=20;fontStyle=1;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="60" y="40" width="3180" height="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_START" value="START" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1590" y="75" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_LOGIN" value="&lt;b&gt;Employee Logs In&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Single Company Portal for All 11 Roles)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="140" width="320" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_CHECK_CRED" value="Check&lt;br&gt;Credentials?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="220" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_INVALID_NOTICE" value="&lt;b&gt;Notice: Wrong Details&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Record Failed Attempt &amp;amp; Protect Account)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="235" width="280" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_CHECK_LOC" value="Verify Physical&lt;br&gt;Location on Map?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="335" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_OFFSITE_NOTICE" value="&lt;b&gt;Mark Session as &amp;quot;Remote / Off-Site&amp;quot;&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Friendly Notice: Working from Home or Client Site)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#f97316;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#9a3412;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="350" width="300" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_AUDIT_LOG_ENTRY" value="&lt;b&gt;Record Login &amp;amp; Location History&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Saves Map Address &amp;amp; Exact Time to Daily Register)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1490" y="450" width="320" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_DECIDE_ROLE" value="Identify Authorized&lt;br&gt;Employee Role?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="535" width="180" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="L1_CALLOUT_MULTI" value="&lt;b&gt;Multi-Role Support:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Employees with dual duties (e.g. Harshitha)&lt;br&gt;switch workspaces with 1-click inside portal.&lt;/font&gt;" style="shape=wedgeCallout;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04;strokeWidth=1;fontFamily=Verdana;fontSize=10;fontStyle=1;fontColor=#854d0e;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="545" width="270" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L1_START" target="L1_LOGIN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L1_LOGIN" target="L1_CHECK_CRED">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_CHECK_CRED" target="L1_INVALID_NOTICE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_3_lbl" value="(Wrong Details)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_3">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_INVALID_NOTICE" target="L1_START">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="95"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E1_4_lbl" value="(Try Again)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_4">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_CHECK_CRED" target="L1_CHECK_LOC">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_5_lbl" value="(Valid Details)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_5">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_CHECK_LOC" target="L1_OFFSITE_NOTICE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_6_lbl" value="(Outside Office)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_6">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_CHECK_LOC" target="L1_AUDIT_LOG_ENTRY">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_7_lbl" value="(In Approved Office)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_7">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_OFFSITE_NOTICE" target="L1_AUDIT_LOG_ENTRY">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="475"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E1_8_lbl" value="(Audit Off-Site)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E1_8">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E1_9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L1_AUDIT_LOG_ENTRY" target="L1_DECIDE_ROLE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="BOX_L2" value="LAYER 2: Management, Operations &amp; Frontline Execution Layer (Role-Specific Workflows)" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#64748b;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=30;spacingTop=20;fontFamily=Architects Daughter;fontSize=20;fontStyle=1;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="60" y="720" width="3180" height="1820" as="geometry"/>
+        </mxCell>
+        <mxCell id="DOM_GOV_BOX" value="&lt;b&gt;GOVERNANCE &amp;amp; SYSTEM ADMINISTRATION DOMAIN&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="100" y="780" width="720" height="1720" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_TECH_HDR" value="&lt;b&gt;1. SUPER ADMIN &amp;amp; IT SYSTEM ANALYST&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(System Rules, Security Control &amp;amp; Technical Health)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#475569;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="830" width="640" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="TECH_ACT_1" value="Configure Master System Rules &amp;amp; Role Permissions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="900" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="TECH_ACT_2" value="Monitor Server Speed, Database Health &amp;amp; Map Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="950" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="TECH_ACT_3" value="Watch for Security Warnings (Sudden Location Jumps, Double Logins)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1000" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="TECH_ACT_4" value="Review Full System Audit Trails &amp;amp; Export Regulatory Reports" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1050" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="TECH_ACT_5" value="1-Click Safety Logoff for Suspicious Sessions with Incident Note" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1100" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_TECH_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_TECH_HDR" target="TECH_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_TECH_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="TECH_ACT_1" target="TECH_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_TECH_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="TECH_ACT_2" target="TECH_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_TECH_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="TECH_ACT_3" target="TECH_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_TECH_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="TECH_ACT_4" target="TECH_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_ADMIN_HDR" value="&lt;b&gt;2. OFFICE ADMIN&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Staff Accounts, Office Locations &amp;amp; Company Notices)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#7c3aed;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#4c1d95;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1190" width="640" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_1" value="Create New Staff Profiles (Employee ID, Branch, Reporting Manager)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1260" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_2" value="Set Office Boundaries on Map (Geofence Distance in Meters)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1310" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_3" value="Define Standard Office Shifts (9:30 AM - 6:30 PM &amp;amp; 15-Min Grace)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1360" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_4" value="Review Daily Attendance &amp;amp; Flag Repeated Late Logins (&gt;3 Times)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1410" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_5" value="Oversee Company-Wide Tasks &amp;amp; Clean Up Abandoned Items" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1460" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ADM_ACT_6" value="Publish Official Company Notices to All Staff or Selected Teams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="1510" width="580" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_ADMIN_HDR" target="ADM_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ADM_ACT_1" target="ADM_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ADM_ACT_2" target="ADM_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ADM_ACT_3" target="ADM_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ADM_ACT_4" target="ADM_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ADM_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ADM_ACT_5" target="ADM_ACT_6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="DOM_MGR_BOX" value="&lt;b&gt;OPERATIONAL &amp;amp; COMMERCIAL MANAGEMENT DOMAIN&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="880" y="780" width="1160" height="1720" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_GM_HDR" value="&lt;b&gt;3. GENERAL MANAGER (Staff: Ipsheeta)&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Board Governance, Accounts &amp;amp; Finance, Legal &amp;amp; Expansion)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0e7ff;strokeColor=#4338ca;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#312e81;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="830" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="GM_ACT_1" value="Coordinate Board Meetings, Agendas &amp;amp; Track Agreed Decisions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="900" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="GM_ACT_2" value="Track Fee Invoices, Member Royalty Remittances (7.5%) &amp;amp; Expenses" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="950" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="GM_ACT_3" value="Ensure Legal Agreements, NDAs &amp;amp; Regulatory Filings are on Schedule" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1000" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="GM_ACT_4" value="Lead Expansion Presentations to New Brokerage Member Candidates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1050" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="GM_ACT_5" value="Oversee Annual &amp;amp; Zonal Real Estate Conferences &amp;amp; Resolve Senior Disputes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1100" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GM_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_GM_HDR" target="GM_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GM_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="GM_ACT_1" target="GM_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GM_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="GM_ACT_2" target="GM_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GM_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="GM_ACT_3" target="GM_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_GM_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="GM_ACT_4" target="GM_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_SRMGR_HDR" value="&lt;b&gt;4. SENIOR MANAGER&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Cross-Team Workload Balancing &amp;amp; SLA Delivery Assurance)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#1d4ed8;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#1e3a8a;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="830" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="SRMGR_ACT_1" value="Compare Workload Distribution Across Operations, BD &amp;amp; Creative" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="900" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SRMGR_ACT_2" value="Early Warning Check: Identify Teams at Risk of Missing Deadlines" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="950" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SRMGR_ACT_3" value="Evaluate Major Extension Requests (&gt;3 Days) Escalated by Lead Managers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1000" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SRMGR_ACT_4" value="Rebalance Staffing Resources Between Overloaded &amp;amp; Free Teams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1050" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SRMGR_ACT_5" value="Escalate Unresolvable Commercial Blockers to General Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1100" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SR_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_SRMGR_HDR" target="SRMGR_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SR_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SRMGR_ACT_1" target="SRMGR_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SR_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SRMGR_ACT_2" target="SRMGR_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SR_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SRMGR_ACT_3" target="SRMGR_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SR_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SRMGR_ACT_4" target="SRMGR_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_LEADMGR_HDR" value="&lt;b&gt;5. LEAD MANAGER (Staff: Manasa) – DIRECT TEAM COMMAND &amp;amp; TASK ENGINE&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Daily Work Allocation, Workload Radar, QA Quality Reviews &amp;amp; Overdue Resolution)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#0369a1;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="920" y="1190" width="1080" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TEAM_RADAR" value="&lt;b&gt;Live Team Radar &amp;amp; Availability:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;View Available, Busy, On Break, or On Leave Staff&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1270" width="320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_DEAL_SPLIT" value="&lt;b&gt;Commercial Deals &amp;amp; Royalty Verification:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Verify 30/70 Fee Split &amp;amp; 7.5% CIRIL Royalty&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1335" width="320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_LEAVE_APP" value="&lt;b&gt;Review Leave &amp;amp; Permission Requests:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;1-Click Approve or Decline with Note&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1400" width="320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_CREATE" value="&lt;b&gt;1. Create Task:&lt;/b&gt; Set Scope, Deliverables &amp;amp; Clear Acceptance Criteria" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1270" width="680" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_SLA" value="&lt;b&gt;2. Set Target Deadline &amp;amp; Priority Level:&lt;/b&gt; Low, Normal, High, or Urgent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1330" width="680" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_CAP" value="&lt;b&gt;3. Check Employee Workload Capacity:&lt;/b&gt; Prevent Loading Overburdened Staff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1390" width="680" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_ASSIGN" value="&lt;b&gt;4. Assign to Employee:&lt;/b&gt; Real-Time Notification &amp;amp; Workspace Handover" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1450" width="680" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_STATUS_CHK" value="Task State?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="1515" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_TASK_QUEUED" value="Task Queued in Staff Workspace&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Awaiting Employee Start)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1615" width="230" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_OD_ALERT" value="&lt;b&gt;Deadline Passed (OVERDUE Alarm)&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;System Demands Mandatory Manager Action&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1680" width="320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_OD_DECIDE" value="Overdue&lt;br&gt;Intervention?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="1750" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_OD_EXTEND" value="Grant Deadline Extension&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Requires Mandatory Business Reason)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1845" width="320" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_OD_REASSIGN" value="Reassign to Available Staff&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Handover Context &amp;amp; New Deadline)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#f97316;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#9a3412;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="940" y="1905" width="320" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_QA_INSPECT" value="&lt;b&gt;Review Finished Deliverables&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Inspects Uploaded Files, Reports, or Spreadsheets)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1680" width="480" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_QA_DECIDE" value="Deliverables Meet&lt;br&gt;Standards?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="1750" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_QA_REVISE" value="&lt;b&gt;Return for Corrections:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Provide Itemized Change Notes (Revision Cycle)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#f97316;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#9a3412;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="1845" width="300" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="LM_QA_APPROVE" value="&lt;b&gt;Approve &amp;amp; Close Task:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Credit 100-Point Monthly Performance Points&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="1845" width="310" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_LEADMGR_HDR" target="LM_TASK_CREATE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_T1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_LEADMGR_HDR" target="LM_TEAM_RADAR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_T2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_TEAM_RADAR" target="LM_DEAL_SPLIT">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_T3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_DEAL_SPLIT" target="LM_LEAVE_APP">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_TASK_CREATE" target="LM_TASK_SLA">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_TASK_SLA" target="LM_TASK_CAP">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_TASK_CAP" target="LM_TASK_ASSIGN">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_TASK_ASSIGN" target="LM_TASK_STATUS_CHK">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_ST_Q" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_TASK_STATUS_CHK" target="LM_TASK_QUEUED">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_ST_Q_lbl" value="(Assigned)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_ST_Q">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_OD_TRIG" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_TASK_STATUS_CHK" target="LM_OD_ALERT">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="1575"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_LM_OD_TRIG_lbl" value="(Overdue)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_OD_TRIG">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_OD_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_OD_ALERT" target="LM_OD_DECIDE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_OD_EXT" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_OD_DECIDE" target="LM_OD_EXTEND">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_OD_EXT_lbl" value="(Extend)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_OD_EXT">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_OD_REASS" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_OD_DECIDE" target="LM_OD_REASSIGN">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="1785"/>
+              <mxPoint x="910" y="1925"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_LM_OD_REASS_lbl" value="(Reassign)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_OD_REASS">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_QA_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="LM_QA_INSPECT" target="LM_QA_DECIDE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_QA_NO" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_QA_DECIDE" target="LM_QA_REVISE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_QA_NO_lbl" value="(Needs Work)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_QA_NO">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_QA_YES" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_QA_DECIDE" target="LM_QA_APPROVE">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_QA_YES_lbl" value="(Approved)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_QA_YES">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="DOM_EXEC_BOX" value="&lt;b&gt;FRONTLINE OPERATIONS &amp;amp; EXECUTION SPECIALISTS DOMAIN&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="2100" y="780" width="1120" height="1720" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_EXEC_HDR" value="&lt;b&gt;6. OPERATIONAL EXECUTIVE&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Task Delivery, Daily Progress Updates &amp;amp; Time Tracking)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ccfbf1;strokeColor=#0f766e;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#134e4a;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2140" y="830" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="EXEC_ACT_1" value="Open Priority Queue &amp;amp; Review Assignment Brief" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="900" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="EXEC_ACT_2" value="&lt;b&gt;Execute Work &amp;amp; Record Daily Activity:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Update Progress Slider (0-100%), Log Notes &amp;amp; Hours&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="950" width="480" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="EXEC_ACT_3" value="Upload Completed Deliverables &amp;amp; Evidence Files" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1010" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="EXEC_DONE_CHK" value="Work Ready&lt;br&gt;for Review?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2310" y="1060" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_EXEC_HDR" target="EXEC_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="EXEC_ACT_1" target="EXEC_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="EXEC_ACT_2" target="EXEC_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="EXEC_ACT_3" target="EXEC_DONE_CHK">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_NO" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EXEC_DONE_CHK" target="EXEC_ACT_2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2570" y="1095"/>
+              <mxPoint x="2570" y="972"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_EX_NO_lbl" value="(Keep Working)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_EX_NO">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_EX_SUBMIT_QA" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EXEC_DONE_CHK" target="LM_QA_INSPECT">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2050" y="1095"/>
+              <mxPoint x="2050" y="1702"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_EX_SUBMIT_QA_lbl" value="(Submit for QA)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_EX_SUBMIT_QA">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_BDE_HDR" value="&lt;b&gt;7. BUSINESS DEVELOPMENT EXECUTIVE (Staff: Bhavani)&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Alliance Expansion Outreach, Broker Prospecting &amp;amp; Portals)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2680" y="830" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="BDE_ACT_1" value="Prospect Research from Official Real Estate Registers &amp;amp; Google" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="900" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="BDE_ACT_2" value="Operate Commercial Portals (Upturnly &amp;amp; 99acres Listing Hubs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="950" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="BDE_ACT_3" value="Execute Daily Cold Calls &amp;amp; WhatsApp Intro Sequences" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1000" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="BDE_ACT_4" value="Maintain Follow-Up Schedule &amp;amp; Book Intro Presentation Meetings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1050" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="BDE_ACT_5" value="Handover Qualified Prospective Members to General Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1100" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_BDE_HDR" target="BDE_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="BDE_ACT_1" target="BDE_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="BDE_ACT_2" target="BDE_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="BDE_ACT_3" target="BDE_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="BDE_ACT_4" target="BDE_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_BD_TO_GM" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="BDE_ACT_5" target="GM_ACT_4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2660" y="1117"/>
+              <mxPoint x="2050" y="1117"/>
+              <mxPoint x="2050" y="1067"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_BD_TO_GM_lbl" value="(Prospect Handover)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_BD_TO_GM">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_SM_HDR" value="&lt;b&gt;8. SOCIAL MEDIA MANAGER (Staff: Harshitha)&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Content Pipeline, Quarterly Reports Proofreading &amp;amp; Office Calls)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce7f3;strokeColor=#db2777;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#831843;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2140" y="1190" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="SM_ACT_1" value="Manage Content Pipeline: Brief → Draft → Review → Approved → Published" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1260" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SM_ACT_2" value="Schedule Monthly Content Calendar (LinkedIn, YouTube, Instagram)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1310" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SM_ACT_3" value="Proofread Quarterly Market Research Publications for Accuracy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1360" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SM_ACT_4" value="Coordinate Zone-Wise Office Client Review Calls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1410" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="SM_ACT_5" value="Request Creative Banners &amp;amp; Thumbnails from Graphic Designer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1460" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_SM_HDR" target="SM_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SM_ACT_1" target="SM_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SM_ACT_2" target="SM_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SM_ACT_3" target="SM_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="SM_ACT_4" target="SM_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="ROLE_DES_HDR" value="&lt;b&gt;9. GRAPHIC DESIGNER&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Brand Collaterals, Multi-Version Asset Vault &amp;amp; Conference Kits)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fae8ff;strokeColor=#a21caf;strokeWidth=2;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#701a75;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2680" y="1190" width="520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="DES_ACT_1" value="Receive Creative Brief with Requirements &amp;amp; Due Date" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1260" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="DES_ACT_2" value="Produce Iterative Drafts in Version Vault (v1.0, v1.1, v2.0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1310" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="DES_ACT_3" value="Design Conference Banners, Nameplates &amp;amp; Badges for Print Vendors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1360" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="DES_ACT_4" value="Format Quarterly Research Reports into Institutional Decks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1410" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="DES_ACT_5" value="Submit Visual Assets for Lead Manager Review &amp;amp; Client Release" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1460" width="480" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DES_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ROLE_DES_HDR" target="DES_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DES_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="DES_ACT_1" target="DES_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DES_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="DES_ACT_2" target="DES_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DES_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="DES_ACT_3" target="DES_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_DES_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="DES_ACT_4" target="DES_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_TO_DES" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="SM_ACT_5" target="DES_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_SM_TO_DES_lbl" value="(Design Request)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_SM_TO_DES">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="BLOCK_SUB_BOX" value="&lt;b&gt;ROOFBLOCK &amp;amp; ISSUE ESCALATION HANDLING (All Frontline Staff)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="2140" y="1570" width="1040" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_ENCOUNTER" value="Roadblock /&lt;br&gt;Issue Found?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2310" y="1630" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_TICKET" value="&lt;b&gt;Raise Issue Ticket:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Work is Paused; Alert Sent Directly to Lead Manager&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="1730" width="320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_SEVERITY" value="Assign Severity: Low, Medium, High, or Urgent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="1805" width="320" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_RES_CHK" value="Issue Resolution&lt;br&gt;Pathway?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2310" y="1870" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_CLEARED" value="&lt;b&gt;Lead Manager Resolves Blocker:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Roadblock Cleared → Staff Resumes Work&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="1965" width="230" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="ISSUE_ESCALATED" value="&lt;b&gt;Escalate to Senior Manager:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Vendor or Inter-Department Bottleneck&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2430" y="1965" width="240" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="REASSIGN_TARGET" value="&lt;b&gt;Reassignment Receiver:&lt;/b&gt; New Employee Accepts Task with Context Memo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffedd5;strokeColor=#f97316;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#9a3412;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2700" y="1730" width="460" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EXEC_ACT_2" target="ISSUE_ENCOUNTER">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_YES" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_ENCOUNTER" target="ISSUE_TICKET">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_YES_lbl" value="(Yes: Roadblock)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ISSUE_YES">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_NO" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_ENCOUNTER" target="EXEC_ACT_2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2120" y="1665"/>
+              <mxPoint x="2120" y="972"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ISSUE_NO_lbl" value="(No Issues)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ISSUE_NO">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ISSUE_TICKET" target="ISSUE_SEVERITY">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="ISSUE_SEVERITY" target="ISSUE_RES_CHK">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_OK" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_RES_CHK" target="ISSUE_CLEARED">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_OK_lbl" value="(Resolved)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ISSUE_OK">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_ESCL" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_RES_CHK" target="ISSUE_ESCALATED">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_ESCL_lbl" value="(Escalate)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ISSUE_ESCL">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ISSUE_RESUME" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_CLEARED" target="EXEC_ACT_2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2275" y="1140"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ISSUE_RESUME_lbl" value="(Resume Work)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ISSUE_RESUME">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ESCL_TO_SRMGR" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_ESCALATED" target="SRMGR_ACT_5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2550" y="1160"/>
+              <mxPoint x="1740" y="1160"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ESCL_TO_SRMGR_lbl" value="(Escalation)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ESCL_TO_SRMGR">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_TO_REASS" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_OD_REASSIGN" target="REASSIGN_TARGET">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2050" y="1925"/>
+              <mxPoint x="2050" y="1752"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_LM_TO_REASS_lbl" value="(Handover to Available Staff)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_TO_REASS">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_REASS_TO_EXEC" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="REASSIGN_TARGET" target="EXEC_ACT_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2930" y="917"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_REASS_TO_EXEC_lbl" value="(Starts Work as New Owner)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_REASS_TO_EXEC">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_LM_REV_TO_EX" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_QA_REVISE" target="EXEC_ACT_2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2050" y="1867"/>
+              <mxPoint x="2050" y="1140"/>
+              <mxPoint x="2520" y="1140"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_LM_REV_TO_EX_lbl" value="(Resubmit after Corrections)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_LM_REV_TO_EX">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ROUTE_TECH" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_DECIDE_ROLE" target="ROLE_TECH_HDR">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="575"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ROUTE_TECH_lbl" value="(Super Admin / IT Analyst)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ROUTE_TECH">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ROUTE_ADMIN" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_DECIDE_ROLE" target="ROLE_ADMIN_HDR">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="100" y="595"/>
+              <mxPoint x="100" y="1215"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ROUTE_ADMIN_lbl" value="(Office Admin)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ROUTE_ADMIN">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ROUTE_MGR" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_DECIDE_ROLE" target="ROLE_LEADMGR_HDR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ROUTE_MGR_lbl" value="(Managers)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ROUTE_MGR">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_ROUTE_EXEC" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_DECIDE_ROLE" target="ROLE_EXEC_HDR">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2400" y="575"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_ROUTE_EXEC_lbl" value="(Execution Staff)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_ROUTE_EXEC">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="BOX_L3" value="LAYER 3: The Intelligence, Analytics &amp; Employee Reward Layer (Leadership &amp; Recognition)" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#64748b;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=30;spacingTop=20;fontFamily=Architects Daughter;fontSize=20;fontStyle=1;fontColor=#334155;" vertex="1" parent="1">
+          <mxGeometry x="60" y="2600" width="3180" height="1080" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_BOX" value="&lt;b&gt;1. OPERATIONAL ANALYTICS &amp;amp; PREDICTIVE CENTER&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="100" y="2660" width="720" height="980" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_1" value="&lt;b&gt;Work Delivery Speed &amp;amp; SLA Tracking:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Measures average turnaround time and on-time completion rates&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="2730" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_2" value="&lt;b&gt;Workload Balance &amp;amp; Burnout Prevention Radar:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Alerts when an employee logs &gt;10 hours/day or capacity &gt;100%&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="2800" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_3" value="&lt;b&gt;Staff Attendance &amp;amp; Office vs. Remote Patterns:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Tracks punctuality index and off-site work frequency&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="2870" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_4" value="&lt;b&gt;Commercial Trends &amp;amp; Growth Analysis:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Quarter-over-Quarter comparison of deal closings and royalty pool&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="2940" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_5" value="&lt;b&gt;3-Level Risk Warning Engine:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Low (informational), Medium (manager action), Critical (senior alert)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="140" y="3010" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_ANA_6" value="&lt;b&gt;Early Deadline Warning Alarms:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Warns managers before deadlines are missed based on past delivery speed&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="3080" width="640" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_A1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_ANA_1" target="L3_ANA_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_A2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_ANA_2" target="L3_ANA_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_A3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_ANA_3" target="L3_ANA_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_A4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_ANA_4" target="L3_ANA_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_A5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_ANA_5" target="L3_ANA_6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REP_BOX" value="&lt;b&gt;2. AUTOMATED SCHEDULED REPORTING ENGINE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="880" y="2660" width="760" height="980" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REP_DAILY" value="&lt;b&gt;Daily Summary Report (Sent at 6:30 PM):&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Tasks completed today, open roadblocks, and priority tasks for tomorrow.&lt;br&gt;Delivered to Frontline Staff &amp;amp; Lead Managers.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="2730" width="680" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REP_WEEKLY" value="&lt;b&gt;Weekly Team Scorecard (Sent Every Monday at 9:00 AM):&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Team on-time delivery rates, workload balance, and open issues.&lt;br&gt;Delivered to Senior Managers &amp;amp; General Manager.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="2815" width="680" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REP_MONTHLY" value="&lt;b&gt;Monthly Executive Briefing (Sent on 1st of Month):&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Total company deal closings, 7.5% royalty health &amp;amp; award candidates.&lt;br&gt;Delivered to Chairman &amp;amp; Board of Directors.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="2900" width="680" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REP_DISPATCH" value="&lt;b&gt;Multi-Channel Automatic Delivery:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Available in personal dashboard, exportable PDF, and email alerts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#14532d;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="920" y="2985" width="680" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_R1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REP_DAILY" target="L3_REP_WEEKLY">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_R2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REP_WEEKLY" target="L3_REP_MONTHLY">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_R3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REP_MONTHLY" target="L3_REP_DISPATCH">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_BOX" value="&lt;b&gt;3. EMPLOYEE PERFORMANCE REWARD &amp;amp; RECOGNITION&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="1680" y="2660" width="760" height="980" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_HDR" value="&lt;b&gt;100-POINT OBJECTIVE SCORING FORMULA&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef08a;strokeColor=#ca8a04;strokeWidth=2.5;fontFamily=Verdana;fontSize=14;fontStyle=1;fontColor=#713f12;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="2720" width="680" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_MATH" value="&lt;b&gt;Automated Math Evaluation at Month End:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Completion Speed (35) + On-Time Delivery (30) + First-Time Quality (15) +&lt;br&gt;Attendance &amp;amp; Location (10) + Initiative &amp;amp; Blocker Solving (10)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="2780" width="680" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_TIER" value="&lt;b&gt;Performance Tier Ranking:&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Gold Tier (90-100 pts) | Silver (80-89) | Bronze (70-79) | Needs Coaching (&amp;lt;70)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="2850" width="680" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_STAR" value="&lt;b&gt;Monthly Honor: &amp;quot;Star Performer of the Month&amp;quot;&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Awarded to Gold Tier achievers: Digital Profile Badge + Spot Cash Bonus&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef08a;strokeColor=#ca8a04;strokeWidth=2.5;fontFamily=Verdana;fontSize=14;fontStyle=1;fontColor=#713f12;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="2915" width="680" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_3MO_CHK" value="3 Consecutive&lt;br&gt;Gold Months?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontStyle=1;fontColor=#78350f;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1970" y="2985" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_RESET" value="Streak Counter: 1 or 2 Months&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(Score dip in Month 3 resets counter to zero)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="3080" width="310" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_REW_CHAIR_HONOR" value="&lt;b&gt;CHAIRMAN'S QUARTERLY EXCELLENCE AWARD&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Permanent Gold Star Profile Medallion, Substantial Cash Incentive,&lt;br&gt;and Physical Trophy presented at Annual Conference&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef08a;strokeColor=#ca8a04;strokeWidth=2.5;fontFamily=Verdana;fontSize=14;fontStyle=1;fontColor=#713f12;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2070" y="3080" width="330" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REW_HDR" target="L3_REW_MATH">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REW_MATH" target="L3_REW_TIER">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REW_TIER" target="L3_REW_STAR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W3_lbl" value="(Score &gt;= 90: Gold)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L3_W3">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_REW_STAR" target="L3_REW_3MO_CHK">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W_NO" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L3_REW_3MO_CHK" target="L3_REW_RESET">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W_NO_lbl" value="(&lt;3 Months)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L3_W_NO">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W_YES" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L3_REW_3MO_CHK" target="L3_REW_CHAIR_HONOR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_W_YES_lbl" value="(3 Consec. Gold Months)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L3_W_YES">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_CHAIR_BOX" value="&lt;b&gt;4. CHAIRMAN – APEX EXECUTIVE INTERFACE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=4 4;fillColor=#f8fafc;strokeColor=#cbd5e1;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=15;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="2480" y="2660" width="720" height="980" as="geometry"/>
+        </mxCell>
+        <mxCell id="L3_CHAIR_HDR" value="&lt;b&gt;ROLE 10: CHAIRMAN (Apex Executive Leadership)&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;(360-Degree Bird's-Eye View, Commercial Revenue &amp;amp; Strategic Interventions)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#b91c1c;strokeWidth=2.5;fontFamily=Verdana;fontSize=14;fontStyle=1;fontColor=#7f1d1d;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2520" y="2720" width="640" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_1" value="&lt;b&gt;360-Degree Company Pulse:&lt;/b&gt; Real-time operational health across all branches" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="2790" width="600" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_2" value="&lt;b&gt;Commercial Deals &amp;amp; 7.5% Royalty Radar:&lt;/b&gt; Live tracking of revenue collections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="2845" width="600" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_3" value="&lt;b&gt;&amp;quot;Requires Attention&amp;quot; Alerts:&lt;/b&gt; Overdue tasks &gt;48h &amp;amp; unresolved blockers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="2900" width="600" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_4" value="&lt;b&gt;Workforce Location &amp;amp; Safety Review:&lt;/b&gt; Check remote work trends &amp;amp; travel flags" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="2955" width="600" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_5" value="&lt;b&gt;Personal Sign-Off on Quarterly Excellence Awards:&lt;/b&gt; Formally approves candidates" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef08a;strokeColor=#ca8a04;strokeWidth=2.5;fontFamily=Verdana;fontSize=14;fontStyle=1;fontColor=#713f12;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="3010" width="600" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_6" value="&lt;b&gt;Broadcast Strategic Directives:&lt;/b&gt; Company-wide Chairman Announcements" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#94a3b8;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#0f172a;align=center;verticalAlign=middle;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="3070" width="600" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="CHAIR_ACT_7" value="&lt;b&gt;Strategic Operational Intervention:&lt;/b&gt; High-impact directives back to General Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;strokeWidth=1.5;fontFamily=Verdana;fontSize=11;fontColor=#991b1b;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="2540" y="3125" width="600" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="L3_CHAIR_HDR" target="CHAIR_ACT_1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_1" target="CHAIR_ACT_2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_2" target="CHAIR_ACT_3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_3" target="CHAIR_ACT_4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_4" target="CHAIR_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_5" target="CHAIR_ACT_6">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CH_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;" edge="1" parent="1" source="CHAIR_ACT_6" target="CHAIR_ACT_7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_TO_SIGN" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L3_REW_CHAIR_HONOR" target="CHAIR_ACT_5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_TO_SIGN_lbl" value="(Executive Approval Dossier)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L3_TO_SIGN">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_CHAIR_TO_MGR" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#475569;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="CHAIR_ACT_7" target="ROLE_GM_HDR">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2450" y="3145"/>
+              <mxPoint x="2450" y="2550"/>
+              <mxPoint x="1180" y="2550"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_CHAIR_TO_MGR_lbl" value="(Strategic Directives to Management)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_CHAIR_TO_MGR">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L2_QA_TO_L3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=4 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#0284c7;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_QA_APPROVE" target="L3_REW_MATH">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1485" y="2560"/>
+              <mxPoint x="2060" y="2560"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_L2_QA_TO_L3_lbl" value="(Approved Task Telemetry)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L2_QA_TO_L3">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L2_ATT_TO_L3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=4 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#0284c7;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ADM_ACT_4" target="L3_ANA_3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="2560"/>
+              <mxPoint x="460" y="2870"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_L2_ATT_TO_L3_lbl" value="(Attendance Telemetry)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L2_ATT_TO_L3">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_L3_REP_TO_CHAIR" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=4 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#0284c7;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L3_REP_MONTHLY" target="CHAIR_ACT_1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1640" y="2927"/>
+              <mxPoint x="1660" y="2927"/>
+              <mxPoint x="1660" y="2807"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_L3_REP_TO_CHAIR_lbl" value="(Monthly Alliance Briefing)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_L3_REP_TO_CHAIR">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="MASTER_AUDIT_LOG" value="&lt;b&gt;[LOCK] STORE CHANGES IN MASTER ACTIVITY LOG&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;1&quot;&gt;Tamper-Proof, Unalterable Audit Ledger Recording Every Login, Task Event, Approval, Reassignment &amp;amp; Award&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;strokeWidth=2.5;fontFamily=Verdana;fontSize=13;fontStyle=1;fontColor=#f8fafc;align=center;verticalAlign=middle;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="3740" width="800" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1_AUDIT_LOG_ENTRY" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="475"/>
+              <mxPoint x="80" y="3700"/>
+              <mxPoint x="1330" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_1_lbl" value="(Login &amp; Location Logged)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_1">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ADM_ACT_1" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="1277"/>
+              <mxPoint x="120" y="3700"/>
+              <mxPoint x="1410" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_2_lbl" value="(User Account Created/Modified)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_2">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_OD_REASSIGN" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="2550"/>
+              <mxPoint x="1100" y="3700"/>
+              <mxPoint x="1530" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_3_lbl" value="(Task Reassigned Audit)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_3">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="LM_QA_APPROVE" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1485" y="3700"/>
+              <mxPoint x="1650" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_4_lbl" value="(Task Approved &amp; Points Credited)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_4">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.65;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="ISSUE_ESCALATED" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2550" y="2550"/>
+              <mxPoint x="2470" y="2550"/>
+              <mxPoint x="2470" y="3700"/>
+              <mxPoint x="1770" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_5_lbl" value="(Blocker Escalation Recorded)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_5">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="E_AUD_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=6 4;endArrow=blockThin;endSize=8;startSize=8;endFill=1;strokeWidth=1.5;strokeColor=#64748b;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CHAIR_ACT_5" target="MASTER_AUDIT_LOG">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2840" y="3700"/>
+              <mxPoint x="1930" y="3700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="E_AUD_6_lbl" value="(Chairman Award Signed &amp; Logged)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=Architects Daughter;fontSize=11;fontStyle=1;fontColor=#334155;backgroundColor=#ffffff;" vertex="1" connectable="0" parent="E_AUD_6">
+          <mxGeometry x="-0.1" y="0" relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

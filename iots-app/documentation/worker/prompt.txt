@@ -275,7 +275,8 @@ Actually the IOTS system that I am developing is for CIRIL, it's entire working 
   Read the files:
     1. CIRIL_CRM_System_Operational_and_Revenue_Report.pdf
     2. Read Actual-FlowChart.drawio, just get inspiration on how it should be
-    3. And, update the dashboards and role-specific capabilities to work and collaborate on the system
+    3. Read Key Tasks List - Ciril Staff - 23092026.xlsx file to get the basic idea of BDE's work, and Harishitha work is multi-role, so assess her responsibilities and decide on roles from the above list, read both sheets 1 and 2, in sheet 2 ipsheetha madam has been asst gen.manager, so she will handle all the Sen.Mgr, Gen.Mgr, Lead.Mgr, Executive roles..
+    4. And, update the dashboards and role-specific capabilities to work and collaborate on the system
     4. iots-prompts.txt, that holds the detailed stitch prompts on how the ui should look, but to add this file it is not for ui desiging but to give you idea on project complexity.
   
 
