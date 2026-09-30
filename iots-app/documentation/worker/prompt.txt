@@ -64,26 +64,10 @@ Intelligence and Analytical Layer (Reports layers):
 
 
 Actually the IOTS system that I am developing is for CIRIL, it's entire working is defined in following markdown format:
-Considering "Creating a new Word document" as the primary instruction, the task now involves generating a deta...
-
-● Bash(Get-ChildItem -Path "C:\Users\ciril" -Filter "docx-js.md" -Recurse -ErrorAction SilentlyContinue | Select-
-O...)
-● Read(~/.gemini/antigravity-cli/skills/docx-official/docx-js.md)
-● Bash(node -v; npm list -g docx)
-● Bash(python --version; npm install docx --no-save) (ctrl+o to expand)
-
-▸ Thought for 34s, 2.0k tokens
-  Now, I will integrate these financial details into the zonal breakdown, clarifying how each zone contributes t...
-
-● Edit(~/OneDrive/Desktop/Manikanta-Files/CRM/generate_report.js)
-● Bash(node generate_report.js)
-● Bash(Get-Item "CIRIL_CRM_System_Operational_and_Revenue_Report.docx" | Select-Object Name, Le...) (ctrl+o to
-expand)
-
    CIRIL Enterprise CRM: Operational Architecture & Commercial Revenue Report                                    
                                                                                                                  
   The official executive report has been compiled and saved to your workspace as a Word document:                
-  📄 **CIRIL_CRM_System_Operational_and_Revenue_Report.docx**                                                    
+  📄 **CIRIL_CRM_System_Operational_and_Revenue_Report.pdf**                                                    
                                                                                                                  
   Below is the complete, in-depth architectural and operational breakdown of how CIRIL operates, coordinates     
   zoned members, and generates revenue.                                                                          
@@ -275,13 +259,27 @@ expand)
   commercial transactions with zero balance-sheet real estate exposure.                                          
                                                                                                                  
   (The full document with complete styling, tables, and section hierarchies is available at                      
-  CIRIL_CRM_System_Operational_and_Revenue_Report.docx). 
+  CIRIL_CRM_System_Operational_and_Revenue_Report.pdf). 
 
   
-  And based on the above story, I have also attached a pdf file completely explaining the firm's working, so based on all these files redesign role based, things and metrics.. also note there should also any employee reward system
+  And based on the above story, I have also attached a pdf file completely explaining the firm's working, so based on all these files, redesign role based, things and metrics.. also note there should be also any employee reward system
   that should get considered upon monthly, and quarterly upon good performance on three consequtive months.
 
-  So write an entire system, and define each and every detail of the system, add minuite to bird eye view details, like it should be enterprise level - ready system.
+  So write an entire system documentation, and define each and every detail of the system, add minuite to bird eye view details, like it should be enterprise level - ready system.
 
   there is prompts of each user's dashboards in the uploaded .txt file: iots-prompt.txt okay, so based on all these factors develop an enterprise level documented aspects of user's and their responsibilities and their functionalities etc..
   note that, chairman should receive every detail, and location tracking auditing is also the major aspect, and reward-system aspect too.
+
+  It should be an enterprise level software working detailed encyclopedia, that explains every detail of how the system works.
+
+  Read the files:
+    1. CIRIL_CRM_System_Operational_and_Revenue_Report.pdf
+    2. Read Actual-FlowChart.drawio, just get inspiration on how it should be
+    3. And, update the dashboards and role-specific capabilities to work and collaborate on the system
+    4. iots-prompts.txt, that holds the detailed stitch prompts on how the ui should look, but to add this file it is not for ui desiging but to give you idea on project complexity.
+  
+
+  so based on these metrics just work on the project documentation, okay? it should be non-technical and in simple english and laymen perspective system, remember IT analysts, Super Admin are both will have same privileges,
+  a single employee can also has multiple roles too..
+
+  So now get into work.
