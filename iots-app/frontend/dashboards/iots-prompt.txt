@@ -1,0 +1,1757 @@
+*CIRIL - Internal Operations Tracking System*
+*STITCH PROMPT:1*
+Design a complete enterprise-grade internal web application called:
+
+INTERNAL OPERATIONS TRACKING SYSTEM
+
+This is an internal organizational operations platform, NOT a public SaaS product, NOT a marketing website, and NOT a generic employee management template.
+
+The product is used by an organization to securely authenticate users, control access, manage operational work, execute tasks, monitor attendance and availability, handle requests and escalations, maintain traceable work history, and transform operational data into management intelligence and analytical insights.
+
+The system is organized conceptually into three major layers:
+
+1. AUTHENTICATION & AUTHORIZATION LAYER
+2. MANAGEMENT LAYER
+3. INTELLIGENCE & ANALYTICAL LAYER
+
+==================================================
+1. AUTHENTICATION & AUTHORIZATION
+==================================================
+
+There is NO public registration page.
+
+All user accounts are created manually inside the system by authorized administrative users.
+
+The account creation process creates an internal user profile and associates:
+- employee identity
+- designation
+- organizational location
+- team/department where applicable
+- access level
+- system role
+- account status
+- permitted permissions
+
+The login screen is COMMON to every user.
+
+Do NOT create separate login pages for Chairman, Manager, Employee, Admin, etc.
+
+The login process visually represents:
+
+User opens system
+→ enters credentials
+→ credentials are validated
+→ location/session context is validated
+→ login activity is recorded
+→ system determines effective role and permissions
+→ user is routed to the appropriate role-specific dashboard
+
+Do NOT ask the user to choose their role on the login page.
+
+The system determines role and authorization from the user's account configuration.
+
+If a user has multiple authorized roles/designations, provide a subtle post-login workspace/role context switcher rather than putting role selection on the login page.
+
+Unknown or unusual login locations should be represented as an operational security condition, not as a frightening error screen.
+
+==================================================
+2. ACCESS MODEL
+==================================================
+
+Use two broad access bands:
+
+HIGHER-LEVEL ACCESS
+LIMITED ACCESS
+
+However, do not visually imply that Limited Access means "unimportant".
+
+Actual authority depends on:
+- role
+- data scope
+- permitted actions
+- organizational responsibility
+- authorization rules
+
+Use role-based access control concepts.
+
+The interface should hide or disable controls that the current role is not authorized to use.
+
+==================================================
+3. ORGANIZATIONAL ROLES
+==================================================
+
+Design role-specific interfaces for:
+
+1. Chairman
+2. Senior Manager
+3. General Manager
+4. Lead Manager
+5. Executive
+6. IT System Analyst
+7. Business Development Executive
+8. Social Media Manager
+9. Graphic Designer
+10. Admin
+11. Super Admin
+
+Do not make these eleven dashboards look like eleven unrelated products.
+
+Use one consistent application shell and design system, while changing:
+- navigation
+- widgets
+- metrics
+- actions
+- data visibility
+- approval capabilities
+- management capabilities
+- technical controls
+
+according to role.
+
+==================================================
+4. MANAGEMENT MODEL
+==================================================
+
+Management responsibilities are separated from employee execution.
+
+Managers manage:
+- tasks
+- priorities
+- deadlines
+- employee workload
+- team availability
+- leave/roster
+- performance
+- blockers
+- escalations
+- quality review
+- approvals
+- operational targets
+
+Employees execute assigned work, update progress, record work activity, submit work, and raise issues.
+
+Administrative users manage organizational/system-level operations within their authorization scope.
+
+Do not turn every role into an administrator.
+
+==================================================
+5. TASK LIFECYCLE
+==================================================
+
+Tasks follow a controlled operational lifecycle.
+
+Core reporting states include:
+
+ASSIGNED
+PENDING
+OVERDUE
+REASSIGNED
+COMPLETED
+
+Do not treat REASSIGNED as a final state.
+
+Task execution may contain operational micro-states such as:
+- In Progress
+- Blocked
+- Waiting for Review
+- Approval / Review
+- Issue Resolved
+- Done / Closed
+
+The interface must distinguish:
+- task status
+- task execution state
+- work activity
+- review outcome
+- audit history
+
+==================================================
+6. EMPLOYEE WORK EXECUTION
+==================================================
+
+Employee task execution should support:
+
+- task acknowledgement
+- starting work
+- progress updates
+- work notes
+- time/effort entries
+- supporting documents/evidence
+- blocker reporting
+- issue tickets
+- manager intervention
+- escalation when unresolved
+- submission for review
+- correction cycle
+- resubmission
+- final approval
+- closure
+
+Manager rejection must not simply terminate the task.
+
+If changes are requested:
+Manager feedback
+→ Employee returns to task execution
+→ Work is corrected
+→ Work is resubmitted
+→ Manager reviews again
+
+==================================================
+7. OVERDUE LOGIC
+==================================================
+
+Overdue is an exception state.
+
+Do NOT make:
+
+Overdue
+→ Continue Working
+
+the only path.
+
+Instead visually support:
+
+Overdue
+→ Manager reviews overdue task
+→ Manager intervention / resolution
+→ Continue / extend deadline / reassign / escalate
+→ Task returns to the operational workflow
+
+Use appropriate warning/attention states without making the interface visually alarming.
+
+==================================================
+8. RECORD WORK ACTIVITY
+==================================================
+
+The employee can record:
+
+Progress Update
+Work Notes
+Time-Spent / Effort Entry
+Supporting Documents / Evidence
+
+These are activity records, not independent task statuses.
+
+The system should visually show that multiple work-activity records can exist during the same task state.
+
+Activity history should be chronological.
+
+==================================================
+9. AUDITABILITY
+==================================================
+
+Important operational actions should be traceable.
+
+Provide a reusable audit/history component capable of showing:
+
+- actor
+- timestamp
+- action
+- previous value
+- new value
+- reason/comment where applicable
+- related task/user/request
+- system-generated vs user-generated event
+
+Audit history is primarily presented as read-only evidence.
+
+Do not make audit logs look like ordinary editable data tables.
+
+==================================================
+10. INTELLIGENCE & ANALYTICAL LAYER
+==================================================
+
+The third layer is called exactly:
+
+INTELLIGENCE & ANALYTICAL LAYER
+
+It analyzes operational information generated by the system.
+
+It may provide:
+
+- performance analytics
+- task analytics
+- workload analytics
+- attendance/workforce analytics
+- trend and pattern analysis
+- exception and risk analysis
+- predictive insights where supported
+- automated reports
+- management insights
+
+Do not turn this into meaningless decorative charts.
+
+Every chart should answer a business question.
+
+Examples:
+- Are tasks being completed on time?
+- Where are bottlenecks?
+- Is workload uneven?
+- Which work is repeatedly overdue?
+- Which tasks are repeatedly reassigned?
+- How is team performance changing?
+- Which issues require management attention?
+
+==================================================
+11. COMMON ENTERPRISE UI SHELL
+==================================================
+
+Create a consistent desktop-first enterprise workspace.
+
+Use:
+
+- left navigation sidebar
+- compact global header
+- organization/system identity
+- current user and role
+- current branch/location
+- availability indicator
+- global notifications
+- global search
+- breadcrumbs
+- contextual actions
+- responsive content grid
+
+Recommended layout:
+- 12-column desktop grid
+- desktop-first design around 1440px
+- responsive tablet/mobile adaptation
+- consistent spacing system
+- accessible typography
+- strong visual hierarchy
+- dense but readable information presentation
+
+Use a professional enterprise visual language:
+- restrained
+- precise
+- modern
+- data-oriented
+- trustworthy
+- calm
+- operational
+
+Avoid:
+- marketing-style hero sections
+- huge decorative illustrations
+- excessive gradients
+- excessive glassmorphism
+- oversized empty cards
+- childish dashboard widgets
+- unnecessary 3D charts
+- excessive rounded containers
+- visually noisy neon aesthetics
+
+Use Material/enterprise UI principles as a foundation but create a distinctive internal-operations identity rather than making the product look like a Google clone.
+
+Use semantic status indicators consistently for:
+- normal
+- pending
+- warning
+- overdue
+- blocked
+- success
+- critical
+
+Ensure status meaning is not conveyed by color alone.
+
+==================================================
+12. DATA-DENSE BUT EXECUTIVE-FRIENDLY
+==================================================
+
+The product must satisfy two audiences:
+
+Senior management needs fast understanding.
+
+Operational users need detailed controls.
+
+Therefore:
+- executives receive high-level summaries first
+- managers receive actionable operational detail
+- employees receive task-focused execution tools
+- administrators receive controlled configuration tools
+- technical roles receive diagnostics and system information
+
+Use progressive disclosure.
+
+Do not put every function on the first screen.
+
+==================================================
+13. INTERACTION DESIGN
+==================================================
+
+Use:
+- drawers for quick inspection
+- modals for focused confirmations
+- side panels for contextual details
+- tabs for related information
+- expandable audit history
+- filterable tables
+- saved views where useful
+- clear empty states
+- confirmation for destructive/high-impact actions
+- inline validation
+- toast notifications for completed actions
+- persistent status visibility
+
+Tables should support:
+- search
+- filters
+- sorting
+- pagination
+- column visibility
+- export where authorized
+
+==================================================
+14. IMPORTANT UX PRINCIPLE
+==================================================
+
+The design should look "complex underneath, simple on top."
+
+A Chairman should understand the dashboard within seconds.
+
+A Manager should be able to operate their team without opening ten screens.
+
+An Employee should immediately know:
+- what requires attention
+- what task they are working on
+- what is due
+- what was requested from them
+- what they need to submit
+
+Create a cohesive enterprise product, not a collection of generic AI-generated dashboards.
+
+
+*Internal Operations Tracking System: Login Page*
+Using the established Internal Operations Tracking System design system, create the COMMON LOGIN EXPERIENCE used by every role.
+
+Create a professional enterprise login screen.
+
+There is NO REGISTRATION option anywhere on this screen.
+
+The user already has an account created internally by an authorized administrator.
+
+Include:
+- system logo/name
+- "Internal Operations Tracking System"
+- username / employee ID field
+- password field
+- password visibility control
+- sign-in button
+- controlled password recovery/help mechanism that directs the user to the authorized administrative process rather than self-registration
+- subtle security/privacy statement
+
+Do NOT include:
+- Create Account
+- Sign Up
+- Public registration
+- social login
+- unnecessary marketing copy
+
+Show realistic interaction states:
+1. empty login
+2. invalid credentials
+3. successful credentials
+4. location verification in progress
+5. recognized office/approved location
+6. unknown or unusual location flagged for review
+7. successful authorization
+8. account disabled/restricted
+
+After successful authentication, the system silently determines:
+- user identity
+- effective role
+- access level
+- location context
+- permissions
+
+Do not ask the user to choose Chairman/Manager/Employee on this page.
+
+Make the page feel secure, serious, corporate and trustworthy.
+
+Use the same visual language that will be used throughout the dashboards.
+
+
+*CHAIR MAN DASHBOARD*
+Create the Chairman Dashboard for the Internal Operations Tracking System.
+
+The Chairman is a higher-level business authority.
+
+This is an executive oversight dashboard, NOT an administration console.
+
+Primary purpose:
+Give the Chairman a fast, organization-wide understanding of operational health without requiring them to manage routine work.
+
+Navigation should emphasize:
+
+Overview
+Operational Performance
+Global Work
+Escalations
+People Overview
+Analytics & Insights
+Reports
+Announcements
+Audit Summary
+Profile / Security
+
+Top-level dashboard should show:
+
+- organization operational health
+- active work count
+- completed work
+- pending work
+- overdue work
+- critical escalations
+- team/department performance
+- workload distribution
+- attendance/availability summary
+- target achievement
+- major operational exceptions
+- recent management actions
+
+Create an executive insight panel:
+"Requires Attention"
+
+Examples:
+- overdue work
+- repeated task reassignment
+- unresolved blockers
+- unusual attendance patterns
+- declining performance trend
+- high workload concentration
+
+Create an "Organizational Pulse" analytical section with:
+- task completion trend
+- SLA/on-time trend
+- workload trend
+- attendance trend
+- target achievement trend
+
+Create a "Global Work Monitor" table:
+Task
+Owner
+Team
+Priority
+Due Date
+Status
+Risk/Attention
+Last Activity
+
+Allow the Chairman to inspect work and intervene only where their authorization permits.
+
+Make interventions visibly important and require confirmation.
+
+Do NOT fill the Chairman dashboard with:
+- routine password resets
+- everyday task creation
+- low-level user management
+- technical diagnostics
+
+The visual hierarchy should make the Chairman feel like an executive decision-maker looking at the organization's operational cockpit.
+
+
+*SENIOR MANAGER DASHBOARD*
+Create the Senior Manager Dashboard.
+
+The Senior Manager has higher-level operational oversight across multiple teams or functional areas.
+
+Purpose:
+Monitor performance, workload, escalations and execution quality across the Manager layer.
+
+Primary navigation:
+
+Overview
+Teams
+Operational Work
+Performance
+Workload
+Escalations
+Approvals
+Analytics
+Reports
+Notifications
+
+Main dashboard:
+
+- active teams
+- team productivity
+- tasks at risk
+- overdue work
+- pending approvals
+- escalated blockers
+- workload imbalance
+- target achievement
+- team attendance/availability summary
+
+Create a Team Comparison section showing:
+team workload
+completion rate
+on-time completion
+overdue work
+reassignment frequency
+open issues
+
+Create an Escalation Center:
+severity
+issue
+affected team
+responsible manager
+age
+current action
+escalation level
+
+Create a Performance Trend panel.
+
+Create an Approval Queue for decisions requiring Senior Manager authority.
+
+The dashboard should be operational and analytical, not purely executive and not technical.
+
+Provide drill-down from summary metrics into team-level operational records.
+
+
+
+*GENERAL MANAGER DASHBOARD*
+Create the General Manager Dashboard.
+
+The General Manager requires broad business/branch operational visibility and decision support.
+
+The dashboard should sit between executive oversight and day-to-day team operations.
+
+Primary navigation:
+
+Business Overview
+Teams & Departments
+Targets
+Operational Work
+Performance
+Approvals
+Escalations
+Analytics
+Reports
+Communication
+
+Main dashboard should emphasize:
+
+- overall operational target achievement
+- department/team performance
+- active work
+- overdue workload
+- workload distribution
+- productivity trend
+- attendance/availability health
+- unresolved operational issues
+- pending managerial actions
+
+Create:
+1. Business Performance Overview
+2. Target Monitoring
+3. Department Performance
+4. Operational Exceptions
+5. Workload Distribution
+6. Escalation Summary
+7. Analytical Insights
+
+Provide drill-down paths from business metrics to the actual operational records.
+
+Do not make this dashboard a copy of the Chairman dashboard.
+
+Chairman:
+organization-level oversight and major decisions.
+
+General Manager:
+broader operational/business management and coordination.
+
+Make these differences visible through navigation, metrics and actions.
+
+
+*LEAD MANAGER DASHBOARD*
+Create the Lead Manager Dashboard for the Internal Operations Tracking System.
+
+This is the primary team-operations workspace.
+
+The Lead Manager directly manages assigned employees, operational work and team performance.
+
+Primary navigation:
+
+Dashboard
+Task Management
+Team
+Workload
+Live Targets
+Attendance & Leave
+Blockers & Escalations
+Approvals / QA
+Performance
+Reports
+Communication
+Notifications
+
+The home dashboard should show:
+
+- team availability
+- active tasks
+- pending work
+- overdue tasks
+- tasks awaiting review
+- blocked tasks
+- today's targets
+- workload distribution
+- leave requests
+- pending interventions
+- team performance indicators
+
+Create a "Live Team Status" panel showing:
+Employee
+Role
+Availability
+Current Task
+Task Status
+Priority
+Due Time
+Current Workload
+
+Availability states may include:
+Available
+Busy
+On Break
+In Meeting
+In Training
+Do Not Disturb
+Working Remotely
+On Leave
+Absent
+Offline
+
+Create a "Manager Action Center":
+- tasks requiring review
+- overdue tasks
+- blockers requiring intervention
+- leave requests
+- reassignment decisions
+- change requests
+- escalations
+
+Task Management must support this conceptual workflow:
+
+Create Task
+→ Define task and deliverables
+→ Set priority
+→ Set due date / SLA
+→ Assess employee bandwidth
+→ Assign employee
+→ Notify employee
+→ Monitor execution
+→ Handle overdue/blocker conditions
+→ Review submission
+→ Approve or request changes
+→ Complete and close
+→ audit action
+
+Do not make overdue a passive status.
+
+Create an Overdue Intervention section.
+
+Reassignment must be a controlled workflow:
+select task
+→ inspect reason
+→ choose new employee
+→ record reassignment reason
+→ notify new owner
+→ preserve reassignment history
+
+Create Team Workload visualization.
+
+Create Live Target Monitoring.
+
+Create Leave & Roster Management.
+
+Create Blocker / Escalation Center.
+
+Every high-impact managerial action should show a contextual audit/history drawer.
+
+Make this dashboard the most operationally rich dashboard in the management layer.
+
+
+
+*EXECUTIVE DASHBOARD*
+Create the Executive Dashboard.
+
+This is a limited-access employee workspace focused on personal execution and assigned responsibilities.
+
+The user should immediately understand:
+
+"What do I need to work on?"
+"What is due?"
+"What needs my attention?"
+"What have I completed?"
+"Am I blocked on anything?"
+
+Primary navigation:
+
+My Dashboard
+My Tasks
+Task Execution
+Work Activity
+Issues / Blockers
+Requests
+Attendance
+Notifications
+My Performance
+Profile
+
+Dashboard sections:
+
+- today's priorities
+- active tasks
+- due today
+- upcoming deadlines
+- overdue personal tasks
+- waiting for review
+- requested changes
+- blocked tasks
+- current availability
+- today's work activity
+- personal performance summary
+
+Provide a "Continue Work" action for active tasks.
+
+Show task cards/table with:
+task title
+priority
+due date
+status
+progress
+last update
+next action
+
+Make the task execution interface more prominent than analytics.
+
+Do not show team management controls.
+Do not show employee reassignment controls.
+Do not show administrative configuration.
+
+
+
+*EXECUTIVE DASHBOARD*
+Create the Executive Dashboard.
+
+This is a limited-access employee workspace focused on personal execution and assigned responsibilities.
+
+The user should immediately understand:
+
+"What do I need to work on?"
+"What is due?"
+"What needs my attention?"
+"What have I completed?"
+"Am I blocked on anything?"
+
+Primary navigation:
+
+My Dashboard
+My Tasks
+Task Execution
+Work Activity
+Issues / Blockers
+Requests
+Attendance
+Notifications
+My Performance
+Profile
+
+Dashboard sections:
+
+- today's priorities
+- active tasks
+- due today
+- upcoming deadlines
+- overdue personal tasks
+- waiting for review
+- requested changes
+- blocked tasks
+- current availability
+- today's work activity
+- personal performance summary
+
+Provide a "Continue Work" action for active tasks.
+
+Show task cards/table with:
+task title
+priority
+due date
+status
+progress
+last update
+next action
+
+Make the task execution interface more prominent than analytics.
+
+Do not show team management controls.
+Do not show employee reassignment controls.
+Do not show administrative configuration.
+
+
+*IT SYSTEM ANALYST DASHBOARD*
+Create the IT System Analyst Dashboard.
+
+This is a technically privileged operational workspace.
+
+The IT System Analyst monitors and supports the health, reliability and technical operation of the Internal Operations Tracking System.
+
+Do not make this dashboard a generic employee dashboard with a few technical cards.
+
+Primary navigation:
+
+Technical Overview
+System Health
+Services / APIs
+Incidents
+Authentication & Sessions
+Access Support
+Audit & Security
+Deployments / Changes
+Technical Reports
+
+Main dashboard:
+
+- application health
+- service availability
+- API health
+- database/connectivity status
+- active incidents
+- unresolved technical issues
+- authentication anomalies
+- recent system changes
+- failed operations
+- technical workload
+
+Create a System Health section with service status:
+service
+state
+last check
+response time
+issue count
+
+Create an Incident Center:
+incident ID
+severity
+affected service
+opened
+owner
+status
+resolution progress
+
+Create Authentication & Session monitoring:
+successful sessions
+failed authentication
+unusual location/session events
+recent privileged events
+
+Create an Audit Explorer with read-only historical investigation.
+
+Technical controls should be visually separated from business management controls.
+
+The IT analyst must not automatically receive business decision authority merely because the role is technically privileged.
+
+Where a system action requires higher authorization, visibly show:
+"Authorization Required"
+
+Make the interface technical, precise and diagnostic.
+
+
+
+*BDE DASHBOARD*
+Create the Business Development Executive Dashboard.
+
+This is a limited-access operational dashboard for business-development work.
+
+The dashboard should emphasize target execution, assigned work, activity logging and follow-up discipline.
+
+Primary navigation:
+
+Dashboard
+My Tasks
+Targets
+Lead / Activity Work
+Follow-ups
+Work Activity
+Issues
+Attendance
+Notifications
+Performance
+Profile
+
+Main metrics:
+
+- today's target
+- completed target
+- remaining target
+- active tasks
+- overdue tasks
+- follow-ups due
+- completed activities
+- personal performance trend
+
+Create a Target Progress module:
+daily target
+completed
+remaining
+progress
+deadline
+
+Create an Activity Workspace for recording work performed.
+
+Create a Follow-up Queue:
+priority
+contact/opportunity
+next action
+due time
+status
+
+Create blocker reporting.
+
+Use the common task lifecycle and work-activity model:
+progress updates
+work notes
+time/effort
+supporting evidence
+task submission
+
+Do not expose team-management tools or administrative controls.
+
+
+
+*SOCIAL MEDIA MANAGER DASHBOARD*
+Create the Social Media Manager Dashboard.
+
+Design this as an operational content-management workspace inside the Internal Operations Tracking System, not as a consumer social-media app.
+
+Primary navigation:
+
+Dashboard
+Content Pipeline
+Campaigns
+Assigned Tasks
+Content Calendar
+Reviews & Approvals
+Work Activity
+Analytics
+Issues
+Notifications
+Profile
+
+Main dashboard:
+
+- content awaiting creation
+- content in progress
+- content awaiting review
+- changes requested
+- approved content
+- overdue content
+- upcoming publishing deadlines
+- active campaigns
+
+Create a visual content pipeline:
+
+Brief
+→ Drafting
+→ Internal Review
+→ Changes Requested
+→ Resubmission
+→ Approved
+→ Completed / Published
+
+Each item should show:
+owner
+campaign
+platform
+deadline
+status
+revision count
+last update
+
+Create a Content Calendar.
+
+Create a Review Workspace where manager feedback is clearly attached to the relevant content item.
+
+Track work activity:
+progress updates
+work notes
+effort
+supporting files
+
+Create analytics focused on:
+delivery timeliness
+revision frequency
+campaign workload
+content completion trend
+
+Do not turn this into a public-facing social media dashboard.
+
+
+*GRAPHIC DESIGNER DASHBOARD*
+Create the Graphic Designer Dashboard.
+
+This should function as a professional internal creative workbench.
+
+Primary navigation:
+
+Dashboard
+My Tasks
+Creative Queue
+Design Briefs
+Files & Versions
+Reviews
+Work Activity
+Issues
+Attendance
+Performance
+Notifications
+Profile
+
+Home dashboard:
+
+- active design tasks
+- due today
+- upcoming deadlines
+- awaiting review
+- revision requested
+- approved designs
+- overdue designs
+- current workload
+
+Create a Creative Queue with:
+priority
+brief
+client/project
+deadline
+status
+revision count
+
+Create a Design Brief view:
+objective
+requirements
+deliverables
+reference assets
+deadline
+assigned manager
+
+Create version-aware file presentation:
+Version 1
+Version 2
+Version 3
+
+Show who uploaded each version and when.
+
+Review workflow:
+Draft
+→ Submit for Review
+→ Manager Feedback
+→ Changes Requested
+→ Revised Version
+→ Resubmit
+→ Approved
+
+Make file evidence and version history highly visible.
+
+Include Record Work Activity:
+progress update
+work note
+time/effort
+supporting document
+
+Do not provide task reassignment, team management or system administration.
+
+
+
+*GRAPHIC DESIGNER DASHBOARD*
+Create the Graphic Designer Dashboard.
+
+This should function as a professional internal creative workbench.
+
+Primary navigation:
+
+Dashboard
+My Tasks
+Creative Queue
+Design Briefs
+Files & Versions
+Reviews
+Work Activity
+Issues
+Attendance
+Performance
+Notifications
+Profile
+
+Home dashboard:
+
+- active design tasks
+- due today
+- upcoming deadlines
+- awaiting review
+- revision requested
+- approved designs
+- overdue designs
+- current workload
+
+Create a Creative Queue with:
+priority
+brief
+client/project
+deadline
+status
+revision count
+
+Create a Design Brief view:
+objective
+requirements
+deliverables
+reference assets
+deadline
+assigned manager
+
+Create version-aware file presentation:
+Version 1
+Version 2
+Version 3
+
+Show who uploaded each version and when.
+
+Review workflow:
+Draft
+→ Submit for Review
+→ Manager Feedback
+→ Changes Requested
+→ Revised Version
+→ Resubmit
+→ Approved
+
+Make file evidence and version history highly visible.
+
+Include Record Work Activity:
+progress update
+work note
+time/effort
+supporting document
+
+Do not provide task reassignment, team management or system administration.
+
+
+*ADMIN DASHBOARD*
+Create the ADMIN DASHBOARD.
+
+This is a LIMITED ADMINISTRATIVE workspace for routine organizational and system administration.
+
+Primary navigation:
+
+Dashboard
+User Management
+Location & Attendance
+Global Task Management
+System Settings
+Security & Audit
+Announcements
+Reports
+
+Dashboard summary:
+
+- active users
+- pending account actions
+- attendance exceptions
+- location flags
+- active organizational work
+- overdue organizational work
+- pending administrative requests
+- recent audit events
+
+USER MANAGEMENT
+
+Create a professional user-management table:
+employee ID
+name
+designation
+role
+access level
+location
+team
+account status
+last activity
+
+Provide controlled actions:
+Create User
+View Profile
+Edit User
+Activate / Deactivate
+Reset Credentials where authorized
+
+Create User should be a structured form:
+identity
+designation
+organizational location
+team
+system role
+access level
+account status
+
+Do NOT include public registration.
+
+LOCATION & ATTENDANCE
+
+Show:
+office locations
+attendance records
+availability
+location exceptions
+attendance flags
+
+GLOBAL TASK MANAGEMENT
+
+Allow authorized administrative oversight of organization-wide work.
+
+Show:
+task
+team
+owner
+priority
+deadline
+status
+risk
+last activity
+
+Support authorized:
+view
+edit
+cancel
+intervention
+approval
+cleanup/archive where permitted
+
+Every high-impact action requires confirmation and creates an audit event.
+
+SYSTEM SETTINGS
+
+Keep these controlled and limited.
+
+Include:
+designations
+report schedules
+notification templates
+approved operational settings
+
+SECURITY & AUDIT
+
+Read-only by default.
+
+Provide:
+activity log
+modification history
+login history
+role/permission changes
+system actions
+
+Do NOT allow normal audit records to be edited.
+
+ANNOUNCEMENTS
+
+Create:
+draft
+choose audience
+preview
+publish
+
+Audiences may include:
+all users
+specific roles
+specific teams
+
+Make the Admin workspace powerful but clearly below the platform governance authority of Super Admin.
+
+*INTELLIGENCE AND ANALYTICAL dashboard*
+
+Create the INTELLIGENCE & ANALYTICAL CENTER for the Internal Operations Tracking System.
+
+This is not another operational dashboard.
+
+Its purpose is to transform operational data into management intelligence.
+
+Use information generated from:
+- tasks
+- task states
+- deadlines
+- work activity
+- time/effort
+- supporting evidence
+- attendance
+- availability
+- requests
+- blockers
+- escalations
+- approvals
+- reassignment history
+- audit activity
+
+Organize the analytics center into:
+
+1. Performance Analytics
+2. Task & Workload Analytics
+3. Attendance & Workforce Analytics
+4. Trend & Pattern Analysis
+5. Exception & Risk Analysis
+6. Predictive Insights
+7. Automated Reporting
+
+TOP AREA
+
+Create an "Operational Intelligence Summary":
+
+Overall operational health
+Tasks at risk
+Overdue trend
+Workload imbalance
+Escalation trend
+Target achievement
+Attendance health
+
+TASK ANALYTICS
+
+Show:
+completion rate
+on-time rate
+pending rate
+overdue rate
+reassignment frequency
+average completion duration
+
+WORKLOAD ANALYTICS
+
+Show:
+workload by team
+workload by employee
+capacity vs assigned work
+concentration of active work
+potential overload
+
+PERFORMANCE ANALYTICS
+
+Show:
+performance trends
+target attainment
+completion quality
+review cycles
+revision frequency
+
+EXCEPTION & RISK
+
+Show:
+overdue clusters
+repeated reassignment
+repeated blockers
+unresolved escalations
+abnormal operational patterns
+
+TREND ANALYSIS
+
+Provide time-range controls:
+Today
+7 Days
+30 Days
+Quarter
+
+Allow comparison with a previous period.
+
+PREDICTIVE INSIGHTS
+
+Only show predictive information as an analytical signal.
+
+Examples:
+Potential deadline risk
+Potential workload overload
+Potential recurring bottleneck
+
+Do not fabricate scientific certainty.
+
+AUTOMATED REPORTS
+
+Show:
+report type
+frequency
+audience
+last generated
+next generation
+
+Reports should be role-scoped.
+
+Chairman:
+executive summaries
+
+Management:
+team/department operational reports
+
+Employee:
+personal work summary
+
+Use charts deliberately.
+
+Every visualization must answer a business question.
+Avoid decorative charts.
+
+
+
+*Manual account creation*
+Design the "Create Internal User Profile" screen.
+
+This is NOT a registration page.
+
+It is an authorized administrative workflow used to create an employee's account and profile inside the Internal Operations Tracking System.
+
+Create a structured multi-section form:
+
+SECTION 1 — Identity
+Employee ID
+Full Name
+Official Email
+Contact Information
+
+SECTION 2 — Organizational Information
+Designation
+Department / Team
+Location / Branch
+Reporting Manager
+
+SECTION 3 — Authorization
+System Role
+Access Level
+Data Scope
+Permitted Actions
+
+SECTION 4 — Account
+Username / Employee ID
+Temporary Password / Credential Setup
+Account Status
+Activation Date
+
+SECTION 5 — Review
+Show a permission summary before account creation.
+
+Example:
+
+User:
+John Doe
+
+Designation:
+Graphic Designer
+
+Access:
+Limited
+
+Scope:
+Assigned Work / Personal Records
+
+Allowed:
+View Tasks
+Update Progress
+Upload Evidence
+Submit Work
+
+Not Allowed:
+Assign Tasks
+Approve Work
+Manage Users
+Modify System Settings
+
+Final flow:
+
+Enter details
+→ Validate
+→ Review permissions
+→ Confirm account creation
+→ Generate account
+→ Record administrative action in audit history
+
+Make it feel like controlled enterprise provisioning, not a simple signup form.
+
+
+
+*Common task detail screen*
+Create a professional TASK DETAIL workspace for the Internal Operations Tracking System.
+
+Header:
+Task ID
+Task Title
+Priority
+Current Status
+Due Date
+SLA indicator
+Assigned Employee
+Assigned Manager
+
+Sections:
+
+1. Task Overview
+Description
+Deliverables
+Instructions
+Priority
+Deadline
+
+2. Current Execution State
+Assigned
+Pending
+Overdue
+Reassigned
+Completed
+
+Also show operational micro-state:
+In Progress
+Blocked
+Waiting for Review
+Approval
+Issue Resolved
+Done / Closed
+
+3. Progress
+Current percentage
+latest update
+progress history
+
+4. Work Activity
+Progress Updates
+Work Notes
+Time/Effort Entries
+Supporting Documents
+
+5. Issues / Blockers
+Issue description
+severity
+reported by
+date
+manager action
+resolution
+escalation state
+
+6. Submission / Review
+submission timestamp
+review status
+manager feedback
+requested changes
+resubmission history
+
+7. Audit History
+chronological immutable activity history
+
+Use a split layout where the task summary remains visible while the user explores detailed history.
+
+Differentiate Employee and Manager controls using authorization:
+Employee:
+execute/update/submit/report issue
+
+Manager:
+assign/reassign/review/approve/request changes/intervene
+
+Do not show unauthorized actions.
+
+
+
+*Common AUDIT-History Components*
+Design a reusable enterprise AUDIT HISTORY component.
+
+This component will be embedded in:
+- tasks
+- user profiles
+- permissions
+- attendance
+- requests
+- system settings
+- administrative actions
+
+Show events chronologically.
+
+Each event should display:
+
+Actor
+Role
+Timestamp
+Action
+Object/resource
+Previous value
+New value
+Reason/comment
+Source:
+User Action / System Action
+
+Examples:
+
+Employee:
+Status changed
+Pending → Waiting for Review
+
+Employee:
+Progress updated
+65% → 80%
+
+Manager:
+Feedback added
+
+Manager:
+Task reassigned
+Employee A → Employee B
+
+Admin:
+User activated
+
+Super Admin:
+Permission changed
+
+System:
+Task automatically marked Overdue
+
+Make the component read-only.
+
+Allow filters:
+date
+actor
+action type
+resource
+
+Do not visually suggest that audit records can be edited.
+
+
+
+*Refinement Prompt:*
+Review the current Internal Operations Tracking System design as a senior enterprise product designer.
+
+Do NOT redesign everything from scratch.
+
+Audit the current screens for:
+
+1. Role clarity
+2. Information hierarchy
+3. Navigation consistency
+4. Excessive visual density
+5. Excessive whitespace
+6. Inconsistent status terminology
+7. Missing workflow states
+8. Missing audit visibility
+9. Incorrect privilege exposure
+10. Weak management decision points
+11. Poor task execution UX
+12. Poor accessibility
+13. Inconsistent table/filter behavior
+14. Inconsistent modal/drawer behavior
+15. Inconsistent typography and spacing
+
+Preserve the existing design language.
+
+Make the product:
+- cleaner
+- more enterprise-grade
+- more consistent
+- easier to understand
+- more information-dense where operationally necessary
+- more visually calm
+
+Do not add decorative UI merely to make the screen look impressive.
+
+Every component must have a functional purpose.
+
+Ensure Chairman, Senior Manager, General Manager, Lead Manager, Executive, IT System Analyst, BDE, Social Media Manager, Graphic Designer, Admin and Super Admin have clearly differentiated experiences while remaining part of the same product.

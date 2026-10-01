@@ -1,0 +1,60 @@
+*SENIOR MANAGER DASHBOARD*
+Create the Senior Manager Dashboard.
+
+The Senior Manager has higher-level operational oversight across multiple teams or functional areas.
+
+Purpose:
+Monitor performance, workload, escalations and execution quality across the Manager layer.
+
+Primary navigation:
+
+Overview
+Teams
+Operational Work
+Performance
+Workload
+Escalations
+Approvals
+Analytics
+Reports
+Notifications
+
+Main dashboard:
+
+- active teams
+- team productivity
+- tasks at risk
+- overdue work
+- pending approvals
+- escalated blockers
+- workload imbalance
+- target achievement
+- team attendance/availability summary
+
+Create a Team Comparison section showing:
+team workload
+completion rate
+on-time completion
+overdue work
+reassignment frequency
+open issues
+
+Create an Escalation Center:
+severity
+issue
+affected team
+responsible manager
+age
+current action
+escalation level
+
+Create a Performance Trend panel.
+
+Create an Approval Queue for decisions requiring Senior Manager authority.
+
+The dashboard should be operational and analytical, not purely executive and not technical.
+
+Provide drill-down from summary metrics into team-level operational records.
+
+
+
