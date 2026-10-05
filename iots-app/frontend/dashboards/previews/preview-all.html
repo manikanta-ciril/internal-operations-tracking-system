@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IOTS Dashboards Preview</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { margin: 0; padding: 0; overflow: hidden; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #4A4943; border-radius: 20px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-type="module">
+    // Mock lucide-react components dynamically
+    const Icons = new Proxy({}, {
+      get: function(target, prop) {
+        if (prop === '__esModule') return false;
+        // Convert PascalCase to kebab-case for lucide icons (including numbers like CheckCircle2 -> check-circle-2)
+        const iconName = prop
+          .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+          .replace(/([a-zA-Z])([0-9]+)/g, '$1-$2')
+          .toLowerCase();
+        
+        return ({ size, className }) => {
+          const ref = React.useRef(null);
+          React.useEffect(() => {
+            if (ref.current) {
+              ref.current.innerHTML = '';
+              const svg = lucide.icons[iconName]?.toSvg({ width: size || 24, height: size || 24, class: className });
+              if(svg) ref.current.innerHTML = svg;
+              else console.warn(`Icon ${iconName} not found in lucide.`);
+            }
+          }, [size, className]);
+          return <span ref={ref} className="inline-flex items-center justify-center"></span>;
+        };
+      }
+    });
+
+    window.Icons = Icons;
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const componentsList = [
+      'ChairmanDashboard',
+      'SeniorManagerDashboard',
+      'GeneralManagerDashboard',
+      'LeadManagerDashboard',
+      'ExecutiveDashboard',
+      'ITSystemAnalystDashboard',
+      'BusinessDevelopmentExecutiveDashboard',
+      'SocialMediaManagerDashboard',
+      'GraphicDesignerDashboard',
+      'AdminDashboard',
+      'SuperAdminDashboard'
+    ];
+
+    const App = () => {
+      const [view, setView] = useState('ChairmanDashboard');
+      const [Component, setComponent] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        let isMounted = true;
+        const loadComponent = async () => {
+          setLoading(true);
+          setError(null);
+          try {
+            const res = await fetch(`../components/${view}.jsx`);
+            if (!res.ok) throw new Error(`Failed to load ${view}.jsx (Status: ${res.status})`);
+            
+            let text = await res.text();
+            
+            // Transform imports to use window objects
+            text = text.replace(/import\s+React\s*,\s*{([^}]+)}\s+from\s+['"]react['"];?/g, 'const { $1 } = React;');
+            text = text.replace(/import\s+React\s+from\s+['"]react['"];?/g, '');
+            text = text.replace(/import\s+{([^}]+)}\s+from\s+['"]lucide-react['"];?/g, 'const { $1 } = window.Icons;');
+            
+            // Remove alias imports like 'Image as ImageIcon' and replace with const { Image: ImageIcon } = window.Icons
+            text = text.replace(/const {([^}]+)} = window\.Icons;/g, (match, p1) => {
+               const mapped = p1.split(',').map(item => {
+                 let trimmed = item.trim();
+                 if (trimmed.includes(' as ')) {
+                   const parts = trimmed.split(' as ');
+                   return `${parts[0].trim()}: ${parts[1].trim()}`;
+                 }
+                 return trimmed;
+               }).join(', ');
+               return `const { ${mapped} } = window.Icons;`;
+            });
+            
+            // Replace export default
+            text = text.replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, 'window.__LoadedComponent = $1;');
+
+            const compiled = Babel.transform(text, { presets: ['react', 'env'] }).code;
+            
+            // Execute the compiled code
+            // We use an IIFE to keep variables locally scoped, except for window.__LoadedComponent
+            const executeFunc = new Function(compiled);
+            executeFunc();
+
+            if (isMounted) {
+              setComponent(() => window.__LoadedComponent);
+            }
+          } catch (err) {
+            console.error(err);
+            if (isMounted) setError(err.message);
+          } finally {
+            if (isMounted) setLoading(false);
+          }
+        };
+
+        loadComponent();
+
+        return () => { isMounted = false; };
+      }, [view]);
+
+      return (
+        <div className="h-screen w-screen flex flex-col overflow-hidden bg-[#202830]">
+          <div className="h-auto bg-[#202830] flex flex-wrap items-center px-4 py-2 border-b border-[#4A4943] text-white gap-2 flex-shrink-0">
+            <span className="font-bold text-sm text-[#C09860] mr-2">IOTS Preview Switcher:</span>
+            {componentsList.map(v => {
+              const displayName = v.replace('Dashboard', '');
+              return (
+                <button 
+                  key={v} 
+                  onClick={() => setView(v)}
+                  className={`px-3 py-1 text-xs rounded transition-colors ${view === v ? 'bg-[#C09860] text-[#202830] font-bold shadow' : 'bg-[#2D312B] hover:bg-[#4A4943] text-[#F8F8F8]'}`}
+                >
+                  {displayName}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex-1 relative bg-[#F8F8F8]">
+            {loading && <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-50 text-[#C09860] font-medium">Loading {view}...</div>}
+            {error && <div className="absolute inset-0 flex items-center justify-center bg-white z-50 text-red-600 font-medium p-8 text-center">{error}</div>}
+            {!loading && !error && Component && <Component />}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
