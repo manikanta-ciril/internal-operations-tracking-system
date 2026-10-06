@@ -43,14 +43,13 @@ Primarily I divided this entire project into three sections:
 	1. Authentication and Authorization Layer
 	2. Management Layer
 	3. Intelligence and Analytics Layer
-
+---------------------------------------------------------------------------
 
 	1. Authentication and Authorization Layer:
 		- It is already designed in Actual-FlowChart.drawio in all
 		  aspects, suggest if any additions require.
 	2. Management Layer:
-		Your Task: Reconstruct the entire management layer based on
-these following facts:
+		Your Task: Reconstruct the entire management layer based on these following facts:
 		- There are not 3 users as mentioned in the Diagram:
 		  {Actual-Flowchart.drawio}
 		- The following are the list of characters that are involved
@@ -94,4 +93,5 @@ these following facts:
 		
 		Consider the 
 			- chat_gpt_chats.pdf(only for reference okay! Don't study it's quite large and might burn tokens a lot), 
-			- under path: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\iots-app\documentation\worker\Descriptive-Doc\ study the file <claude.docx>
+			- under path: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\iots-app\documentation\worker\Descriptive-Doc\ study the file claude_version.docx
+			
