@@ -94,4 +94,4 @@ these following facts:
 		
 		Consider the 
 			- chat_gpt_chats.pdf(only for reference okay! Don't study it's quite large and might burn tokens a lot), 
-			- under path: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\iots-app\documentation\worker\Descriptive-Doc\ study the file
+			- under path: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\iots-app\documentation\worker\Descriptive-Doc\ study the file <claude.docx>
