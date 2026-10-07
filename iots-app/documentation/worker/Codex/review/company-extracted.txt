@@ -1,0 +1,479 @@
+=== PDF PAGE 1 ===
+CIRIL CRM — Complete System Documentation    |    Page 1 
+    
+CIRIL CRM 
+Complete System Architecture, Business Operations & Revenue Intelligence Manual 
+  
+For AI Models, Developers & System Architects 
+Version 1.0  —  October 2026        Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 2 ===
+CIRIL CRM — Complete System Documentation    |    Page 2 
+   Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 3 ===
+CIRIL CRM — Complete System Documentation    |    Page 3 
+Section 1 — What is CIRIL? 
+CIRIL is a structured, collaborative commercial real estate brokerage network operating across 
+India. It is not a single brokerage firm in the traditional sense. Instead, CIRIL functions as a 
+franchise umbrella and transaction clearing-house that coordinates multiple independent member 
+companies — each a separate real estate brokerage — under one networked platform.
+ The word 'CRM' in CIRIL CRM stands for the custom-built software platform that manages the 
+complete lifecycle of every real estate transaction that occurs within this network. The software is 
+the operational backbone of the business.
+ 
+1.1 The Core Business Idea 
+Most commercial real estate transactions fail or are delayed because the broker who has the client 
+(buyer or tenant) is geographically or informationally separate from the broker who has the right 
+property. CIRIL solves this problem by creating a shared ecosystem:
+ •�� A broker in Pune who has a client looking for a warehouse in Chennai is connected to a 
+CIRIL partner broker in Chennai who has inventory.
+ •�� The two brokers co-operate. The deal closes. The commission is split. CIRIL takes a royalty 
+from both parties.
+ •�� The entire process — from lead entry to final payment — is managed inside the CRM. 
+1.2 Who are the Actors in the System? 
+ 
+Actor / Role Responsibility Super Admin (roleId = 1) CIRIL's own master administrator. Has visibility over all leads, 
+all member companies, all brokerage and royalty data network-wide. 
+Zone Manager (roleId = 2) Oversees a specific geographic zone. Can see all leads within 
+their zone. 
+Member Company Admin Head of a CIRIL partner company. Creates users within their 
+org, manages their own leads and network assignments. 
+Broker / Agent (User) Day-to-day operator. Creates leads, assigns leads, negotiates 
+deals, creates proposals. 
+Research Team Feeds market intelligence data (rental trends, major deals, land 
+prices) into the Research module.  
+1.3 Geographic Hierarchy 
+The system enforces a strict, multi-level geographic hierarchy that governs how leads are scoped and 
+routed. Every lead is tagged to a location in this hierarchy:
+ •�� Zone — The broadest level (e.g., South India, West India). •�� State — Contained within a Zone. •�� City — Contained within a State. This hierarchy means a Zonal Manager can filter the lead pipeline for his entire zone, while a 
+member company is typically scoped to one or more cities.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 4 ===
+CIRIL CRM — Complete System Documentation    |    Page 4 
+Section 2 — What is a Lead? The Core Data Entity 
+In CIRIL, a Lead is the most important entity in the entire system. It is the formal record of a client's 
+real estate requirement. A lead is NOT a property listing — it is the CLIENT who needs the property.
+ 
+2.1 Anatomy of a Lead 
+A Lead in CIRIL is a composite entity assembled from FOUR separate database tables that are 
+always joined together when querying:
+  
+Database Table Data It Contains leads The core record. Stores status flags, assignment metadata (user_id, 
+assigned_to, assigned_orgid, assigned_user_id), negotiation document references (LOI file, Lease file), and all timestamps. 
+client_details Who is the client? Stores client name, company name, contact info, 
+document type (Aadhar, PAN, etc.), client type (individual or company). 
+requirements_details What does the client need? Stores the vertical, transaction type, area range, 
+budget, city, zone, and all vertical-specific technical parameters. 
+financial_details How is the commission structured? Stores giver share %, receiver share %, 
+giver and receiver names, their contact details, and brokerage status flags.  
+2.2 Lead Statuses — The State Machine 
+Every lead moves through a numbered status pipeline. Understanding these statuses is critical to 
+understanding how revenue is recognized:
+  
+Statu
+s ID 
+Status Name Meaning 1 New / Open Lead just created. No action taken. 2 Processing Lead is being worked on by a broker. 3 Assigned Lead has been shared/assigned to another member company. 4 Negotiation Active deal negotiations are ongoing. Broker uploads LOI, Lease 
+Agreement. 
+5 Rejected Lead was rejected by the receiving broker. 6 Deal Done The deal is closed. Brokerage calculation is triggered. 7 Brokerage Accepted Both parties (giver and receiver) have accepted the calculated 
+brokerage split. 
+8 Royalty Paid CIRIL's royalty has been confirmed as paid. FINAL state. 
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 5 ===
+CIRIL CRM — Complete System Documentation    |    Page 5 
+Section 3 — The Lead Giver & Lead Receiver: The 
+Heart of CIRIL 
+The most important conceptual distinction in the entire CIRIL model is the difference between the 
+Lead Giver and the Lead Receiver. Every financial calculation in the system flows from this 
+relationship.
+ 
+3.1 The Lead Giver (LG) 
+LEAD GIVER 
+The broker or member company who originated the lead — i.e., the person 
+who found the client and brought them into the CIRIL network. The Lead Giver owns the client relationship.  
+In the database, the Lead Giver is identified by the leads.user_id field — the user who created the 
+lead record. Their financial terms are stored in financial_details under financial_giver_share (their 
+percentage of the total brokerage) and fields like financial_giver_name, financial_giver_phoneno.
+ Scenario: Rajesh, a broker at CIRIL Mumbai, gets approached by TCS who wants 50,000 sq. ft. of 
+office space in Bengaluru. Rajesh does not have Bengaluru inventory. He creates the lead in CIRIL 
+CRM. Rajesh is now the Lead Giver.
+ 
+3.2 The Lead Receiver (LR) 
+LEAD RECEIVER 
+The broker or member company who receives the assigned lead from the giver 
+and takes responsibility for finding and closing the property transaction in their territory.  
+In the database, the Lead Receiver is identified by the leads.assigned_to field (company) and 
+leads.assigned_user_id (individual broker). Their financial terms are stored in financial_details 
+under financial_receiver_share (their percentage of the total brokerage).
+ Scenario: Priya, a broker at CIRIL Bengaluru, receives Rajesh's TCS lead. She searches her 
+inventory, presents properties, manages site visits, and negotiates the lease. Priya is the Lead 
+Receiver.
+ 
+3.3 The Assignment Workflow in Code 
+When a lead is assigned via the AssignleadController, the system updates three critical fields: •�� leads.assigned_to → set to the receiver's member company name/ID •�� leads.assigned_orgid → set to the receiver's organization ID (orgId) •�� leads.is_assigned → set to 1 (true) The receiver then sees this lead in their dashboard under 'Assign Lead'. They must explicitly click 
+Accept Lead (acceptLead method) to confirm their participation, which updates leads.accepted = 1 
+and records leads.accepted_datetime.
+ •�� If the receiver rejects the lead, they call storeRejectLeadRemarks, which stores rejection 
+remarks and resets the lead.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 6 ===
+CIRIL CRM — Complete System Documentation    |    Page 6 
+Section 4 — Revenue Engine: How CIRIL Makes 
+Money 
+CIRIL generates its revenue exclusively through Royalties — a fixed percentage cut taken from both 
+the Lead Giver's share and the Lead Receiver's share of every successfully concluded deal's 
+brokerage fee. The actual brokerage is split between LG and LR. CIRIL takes 7.5% from each party's 
+share.
+ The entire calculation is hard-coded in BrokerageController.php (getBrokerage method, line 202) 
+and is fully automated — the system computes it the moment a deal reaches negotiation status.
+ 
+4.1 Step 1 — Calculate the Base Deal Value (Transaction Value) 
+The base value depends on whether the transaction is a Lease (monthly rent) or a Sale (outright 
+purchase):
+  LEASE 
+Total Value = Rent Rate per sq. ft. per month × Area (sq. ft.) 
+ SALE 
+Total Value = Outright Rate per sq. ft. × Area (sq. ft.) 
+4.2 Step 2 — Calculate Total Brokerage 
+The brokerage due from the client is calculated differently for lease vs. sale:  
+LEASE: Total Brokerage = Total Value × (Lease Days / 30) 
+ 
+SALE:  Total Brokerage = 1% × Total Value 
+ 
+The 'Lease Days' is the agreed number of days of rent that constitute the brokerage fee (a 
+commercial real estate convention in India — typically 30-90 days of rent).
+ 
+4.3 Step 3 — Split the Brokerage Between LG and LR 
+The brokerage split is agreed upon upfront when the lead is created and stored in the 
+FinancialDetail record. The fields financial_giver_share and financial_receiver_share contain the 
+agreed percentage for each party. If either is set to 'others', the system reads 
+financial_giver_share_others or financial_receiver_share_others for a custom percentage.
+  
+LG Share (Rs.) = (financial_giver_share / 100) × Total 
+Brokerage  
+LR Share (Rs.) = (financial_receiver_share / 100) × Total 
+Brokerage 
+4.4 Step 4 — CIRIL Royalty Calculation (The Revenue Formula) 
+Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 7 ===
+CIRIL CRM — Complete System Documentation    |    Page 7 
+This is CIRIL's revenue. CIRIL charges 7.5% of the LG's share AND 7.5% of the LR's share as a 
+royalty. This is the hard-coded business rule extracted directly from BrokerageController.php line 
+202:
+  
+CIRIL Royalty = ROUND( (7.5/100 × LG Share) + (7.5/100 × LR 
+Share) )  
+This is effectively 7.5% of the total brokerage (since LG% + LR% = 100%), but it is calculated 
+per-party so that each broker understands exactly how much they owe CIRIL.
+ 
+4.5 Full Worked Example — A Lease Deal 
+Scenario: TCS signs a lease for 50,000 sq. ft. of office space in Bengaluru. Details:  Transaction Type : Lease 
+Area             : 50,000 sq. ft. Rent Rate        : Rs. 80 per sq. ft. per month Lease Days       : 30 days (1 month's rent as brokerage) LG Share         : 40%  (Rajesh, Mumbai) LR Share         : 60%  (Priya, Bengaluru) ───────────────────────────────────────────────────────── >> Step 1:  Total Value      = 80 × 50,000            = Rs. 40,00,000 >> Step 2:  Total Brokerage  = 40,00,000 × (30/30)    = Rs. 40,00,000 >> Step 3:  LG Share (40%)   = 0.40 × 40,00,000       = Rs. 16,00,000            LR Share (60%)   = 0.60 × 40,00,000       = Rs. 24,00,000 >> Step 4:  CIRIL Royalty    = (7.5% × 16,00,000) + (7.5% × 24,00,000)                             = Rs. 1,20,000 + Rs. 1,80,000            CIRIL Royalty    = Rs. 3,00,000 ───────────────────────────────────────────────────────── >> Rajesh Net               = Rs. 16,00,000 - Rs. 1,20,000  = Rs. 14,80,000 >> Priya Net                = Rs. 24,00,000 - Rs. 1,80,000  = Rs. 22,20,000 >> CIRIL Revenue            = Rs. 3,00,000 (7.5% from each party) 
+4.6 Full Worked Example — A Sale/Outright Deal 
+Scenario: A land parcel of 2 acres sold for Rs. 1,200 per sq. ft. (approx. 87,120 sq. ft.) at a standard 
+1% brokerage. LG/LR split is 50/50.
+  Transaction Type : Sale (Outright) 
+Area             : 87,120 sq. ft.  (2 acres) Outright Rate    : Rs. 1,200 per sq. ft. LG Share         : 50% LR Share         : 50% ───────────────────────────────────────────────────────── >> Step 1:  Total Value      = 1,200 × 87,120          = Rs. 10,45,44,000 
+Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 8 ===
+CIRIL CRM — Complete System Documentation    |    Page 8 >> Step 2:  Total Brokerage  = 1% × 10,45,44,000       = Rs. 10,45,440 >> Step 3:  LG Share (50%)   = 0.50 × 10,45,440        = Rs. 5,22,720            LR Share (50%)   = 0.50 × 10,45,440        = Rs. 5,22,720 >> Step 4:  CIRIL Royalty    = (7.5% × 5,22,720) + (7.5% × 5,22,720)                             = Rs. 39,204 + Rs. 39,204            CIRIL Royalty    = Rs. 78,408 ───────────────────────────────────────────────────────── >> LG Net                   = Rs. 5,22,720 - Rs. 39,204  = Rs. 4,83,516 >> LR Net                   = Rs. 5,22,720 - Rs. 39,204  = Rs. 4,83,516 >> CIRIL Revenue            = Rs. 78,408  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 9 ===
+CIRIL CRM — Complete System Documentation    |    Page 9 
+Section 5 — The Complete Deal Lifecycle (End to 
+End) 
+Every rupee of CIRIL's revenue follows this exact sequence. The CRM enforces this pipeline through 
+status codes and controller logic.
+ 
+Phase 1 — Lead Creation (LeadController@createLead) 
+The broker (Lead Giver) opens the 'Create Lead' form. This is the most data-intensive step in the 
+system. The form collects data that populates ALL FOUR lead tables simultaneously:
+ •�� Client Details: Company name, person name, mobile, email, client type 
+(individual/company), document type and file upload.
+ •�� Requirements Details: Vertical selection (Office / Retail / Land / Warehouse / Investment / 
+Hotels) → triggers a dynamic sub-form with vertical-specific fields.
+ •�� Financial Details: The giver and receiver's expected shares, giver's brokerage terms — filled 
+at creation based on negotiated terms.
+ This design means a lead is never a partial record — all four tables must have data for a lead to be 
+valid.
+ 
+Phase 2 — Vertical-Specific Data Entry 
+Once a vertical is selected, the requirements form dynamically loads unique fields for that property 
+type. This is managed by VerticalType and VerticalSubType models and the CustomFieldsController. 
+Key examples:
+  
+Vertical Unique Required Fields Office Space Carpet area, office type (pre-leased/vacant), completion date, power backup, 
+car parking count. 
+Retail Height from floor (from/to), floor level (from/to), retail status, completion 
+date. 
+Logistic & Warehouse 
+(LW) 
+Height from (ft), height to (ft), floor type, open area (from/to), covered area 
+(from/to), power type (single/three phase), roofing type, LW status. 
+Land Frontage width (from/to), road width (from/to), power availability, power 
+type, land status (agricultural/non-agricultural). 
+Investment Constructed area (from/to), lead area (from/to), investment type 
+(pre-launch/ready), pre-property details, investment location. 
+Hotels Number of keys (from/to), agreement type (management/lease/sale). 
+Phase 3 — Lead Assignment (AssignleadController) 
+Once the LG cannot fulfill the requirement alone, they assign the lead through the network. The 
+system:
+ Searches for member companies in the target city using the geographic hierarchy (Zone → State → 
+City).
+ Updates leads.assigned_to, leads.assigned_orgid, leads.is_assigned = 1. Fires a SendNotificationsEvent which creates a real-time notification for the receiver. Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 10 ===
+CIRIL CRM — Complete System Documentation    |    Page 10 
+The LR sees the lead on their 'Assign Lead' dashboard with Accept / Reject options. On accept: leads.accepted = 1 is written. The deal is now active for both parties.  
+Phase 4 — Negotiation (LeadController@negotiation) 
+The LR is now in active negotiation with the client. They update the negotiation_status_id field with 
+progress codes. Most critically, when a deal is nearly closed, they upload two legal documents 
+directly via the CRM:
+ •�� LOI (Letter of Intent) — stored in leads.negotiation_loi_file •�� Final Lease/Sale Agreement — stored in leads.negotiation_lease_file The system tracks negotiation status through IDs 1-7. Status ID 7 means 'Deal Concluded' and 
+triggers the move to brokerage.
+ 
+Phase 5 — Proposal Generation 
+(BrokerageController@addproposel / adddetailedproposel) 
+Before or during negotiation, brokers can generate formal client proposals. The system supports two 
+types:
+ •�� First-Cut Proposal (type='F'): A quick preliminary proposal. For Land vertical, generates a 
+PowerPoint (.pptx) file using PHPPresentation library. For all others, generates an Excel 
+(.xls) file using PhpSpreadsheet. Both include the CIRIL logo.
+ •�� Detailed Proposal (type='D'): Full property analysis with image uploads for land sites. Same 
+file format logic applies.
+ Proposal files are saved to the /proposels/ directory and referenced in the proposels table with 
+lead_id and type fields.
+ 
+Phase 6 — Brokerage Calculation 
+(BrokerageController@getBrokerage) 
+When leads.lead_status reaches 4 (Negotiation/Deal Done) AND leads.negotiation_status_id 
+reaches 7, the BrokerageController automatically calculates the full financial breakdown and writes 
+it to the brokerage table. The brokerage record contains:
+ •�� lead_id, clientType (lease/sale), area, rate (rentRate or outrightRate) •�� total (base deal value), totalBrokerage, LGshare (Rs.), LRshare (Rs.) •�� cirilRoyalty (Rs.) — CIRIL's revenue from this deal •�� status — empty until accepted, then 'accepted' •�� royality — 0 until royalty payment confirmed, then 1 
+Phase 7 — Brokerage Acceptance 
+(BrokerageController@brokerageStatus) 
+The LR (the receiver who will collect and distribute the brokerage) formally accepts the calculated 
+split. This sets leads.lead_status = 7 ('Brokerage Accepted'). At this point both parties are legally 
+committed to the calculated split, and CIRIL's royalty obligation is triggered.
+ 
+Phase 8 — Royalty Confirmation 
+(RoyaltyController@royalityStatus) 
+This is the final financial step and CIRIL's revenue recognition event. When the Super Admin 
+confirms that royalty has been paid:
+ Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 11 ===
+CIRIL CRM — Complete System Documentation    |    Page 11 
+leads.lead_status is updated to 8 ('Royalty Paid'). leads.leadStatus = 3 (closed). A new entry is inserted into lead_statuses confirming the vertical and organization. brokerage.royality is set to 1, permanently marking this deal as completed. The system sends a 'Lead Concluded' email to the Admin, the Lead Giver, and the Lead Receiver 
+(CC'd) with full deal details.
+ A real-time notification is fired via SendNotificationsEvent. The Royalty Payment Status endpoint (royalitypaymentstatus) also allows recording individual 
+payment dates and remarks in the payments table for financial audit tracking.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 12 ===
+CIRIL CRM — Complete System Documentation    |    Page 12 
+Section 6 — Technical Architecture Deep Dive 6.1 Technology Stack 
+ 
+Component Technology Backend Framework Laravel 9.x (PHP 8.0+) ORM / Query Eloquent ORM + Raw DB Facades (Laravel) Frontend Rendering Blade Template Engine (Server-Side Rendering) Asset Bundling Vite 3.x with laravel-vite-plugin Database MySQL / MariaDB (Relational) Authentication Laravel Sanctum (Session + Token based) Email Laravel Mail (SMTP, configurable via settings UI) File Generation PhpSpreadsheet (XLS), PhpPresentation (PPTX) Events / Notifications Laravel Events + Broadcasting (SendNotificationsEvent) 
+6.2 MVC Architecture & Controller Map 
+The application follows strict MVC. All controllers are namespaced under App\Http\Controllers and 
+grouped by domain:
+  
+Controller Responsibility Auth\AuthController Login, Logout, Register, Forgot/Reset Password, Email 
+Verification 
+Dashboard\DashboardController Main dashboard aggregation, Mail credential settings page Leads\LeadController Full lead CRUD, assignment, negotiation status, remarks 
+history 
+Leads\AssignleadController Lead acceptance, rejection with remarks, preview Leads\BrokerageController Proposal generation, brokerage calculation, proposal 
+downloads (XLS/PPTX) 
+Leads\RoyaltyController Royalty list view, royalty status update, payment status 
+recording 
+Reports\ReportController Aggregate reports filtered by date, city, vertical, zone Roles\RolesController Role CRUD and permission assignment Roles\PermissionsController Permission CRUD per module Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 13 ===
+CIRIL CRM — Complete System Documentation    |    Page 13 
+Controller Responsibility Roles\PrivilegesController Privilege assignment to roles for fine-grained access control Settings\AddressController Zone/Country/State/City/Vertical CRUD and global settings Users\UsersController User CRUD, profile management, zone/state lookups Users\memberCompanyController Member company CRUD (partner organizations) CustomFields\CustomFieldsControl
+ler 
+Dynamic custom fields per vertical for add/edit lead forms ResearchReportController Research data entry for market trends, major deals, upcoming 
+projects 
+IndividualMiningController Individual data mining record management NotificationsController Mark as read, clear all, view all notifications 
+6.3 Database Schema — Key Tables 
+ 
+Table Name Purpose leads Core lead record. Contains all status flags and foreign key linkages. client_details Who the client is. Linked by lead_id. requirements_details What the client needs. Contains all vertical-specific data. PK: 
+requirement_id. 
+financial_details The financial/commission agreement. PK: financialdetail_id. brokerage Computed brokerage output. One record per lead. Contains LGshare, 
+LRshare, cirilRoyalty, royality flag. 
+proposels Stores generated proposal file references. Type='F' (first-cut), Type='D' 
+(detailed). 
+payments Royalty payment log. Stores payment_date, payment_status, 
+payment_remarks per lead. 
+lead_statuses Audit log of every status change, tagging the vertical and orgId 
+involved. 
+lead_statuses_history / 
+lead_remarks_history 
+Full history of remarks/comments added throughout negotiation. users All user accounts. Contains orgId, roleId, zoneId linkages. companies Member company records. Linked to users by orgId. roles / permissions / 
+modules / privileges 
+Full RBAC tables. Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 14 ===
+CIRIL CRM — Complete System Documentation    |    Page 14 
+Table Name Purpose zones / countries / states / 
+cities / verticals 
+Geographic and vertical master data. research_reports / 
+research_land_trends / research_major_deals / research_rental_trends 
+Market intelligence data tables. 
+6.4 Authentication & Authorization (RBAC) 
+Every route in web.php is protected by two middleware layers: •�� api — Ensures the request goes through the API middleware stack (CSRF, session). •�� auth — Ensures the user is logged in (Laravel Sanctum session check). •�� role — A custom middleware that checks the user's roleId and orgId against the module's 
+required permission level. This is what prevents a broker from seeing another company's 
+leads.
+ The Admin (roleId = 1) is the only user who can see ALL leads across ALL companies network-wide. 
+All other roles are scoped to their orgId or assigned leads.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 15 ===
+CIRIL CRM — Complete System Documentation    |    Page 15 
+Section 7 — The Research & Intelligence Engine 
+Beyond transaction management, CIRIL operates an internal market intelligence function that gives 
+its brokers a competitive edge when pitching to clients. This is managed by the 
+ResearchReportController and its associated models.
+ 
+7.1 Research Verticals Supported 
+•�� Commercial / Office — Tracks rental trends, major deals in each city, upcoming commercial 
+projects.
+ •�� Land — Tracks land pricing trends, major land transactions, township/project 
+developments.
+ •�� Warehouse & Logistics — Tracks warehouse rental trends, major warehouse leasing deals. 
+7.2 Data Models in the Research Engine 
+ 
+Model Data Tracked ResearchReport Master research report entry. Links to a vertical and period. ResearchRentaltrend Quarter-by-quarter rental rate data per micro-market/city. ResearchMajorDeal Records of significant leasing or sale deals with tenant, area, 
+building. 
+ResearchMajorUpcoming Pipeline of upcoming commercial projects expected to enter the 
+market. 
+ResearchLandModel Land-specific report entry. ResearchLandtrend Land price trends per location per period. ResearchMajorDeal (Land) Major land purchase transactions. ResearchrentalwarehouseMod
+el 
+Warehouse rental trend data. Researchmajordealswarehous
+eModel 
+Major warehouse leasing transactions. 
+7.3 How Research Drives Revenue 
+When a broker creates a Detailed Proposal for a client, the system can pull current rental trends and 
+major deal benchmarks from the research module to populate the proposal with real market data. 
+This makes CIRIL proposals significantly more credible than generic broker documents, increasing 
+deal closure rates — which directly increases CIRIL's royalty income.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 16 ===
+CIRIL CRM — Complete System Documentation    |    Page 16 
+Section 8 — Notifications & Real-Time Event System 
+The CIRIL CRM includes a real-time notification system that keeps all parties informed as lead 
+statuses change. This system uses Laravel's event broadcasting pattern.
+ 
+8.1 The SendNotificationsEvent 
+Every significant action in the system fires a SendNotificationsEvent. This event carries a payload 
+with lead_id, url (the deep link to navigate to the relevant screen), and type (the category of 
+notification). Key notification types:
+  
+Notification Type When It Fires first-cut-proposal Fired when a First-Cut Proposal is generated and available for 
+download. 
+royality-update Fired when royalty status is confirmed by the admin. lead-assigned Fired when a lead is assigned to a receiver company. lead-accepted Fired when the receiver formally accepts the lead. lead-rejected Fired when a receiver rejects an assigned lead. 
+8.2 Notification Storage 
+Notifications are persisted in the notifications table (mapped to the NotificationsModel). The 
+NotificationsController provides three actions: mark_as_read (individual), clear_all (bulk), and 
+view all (paginated list). This means even if a user is offline when an event fires, they see the 
+notification on next login.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 17 ===
+CIRIL CRM — Complete System Documentation    |    Page 17 
+Section 9 — Reporting & Analytics Engine 
+The CIRIL CRM provides a multi-dimensional reporting module that allows management to analyze 
+the deal pipeline and network performance. The ReportController and ReportController2 serve 
+these reports.
+ 
+9.1 Report Dimensions 
+•�� Time-Filtered Report — View all leads in a date range. Default view for day-to-day 
+monitoring.
+ •�� City-Wise Report — Aggregate deal volume and value per city. Uses reportCityFilter for 
+interactive drilling.
+ •�� Vertical-Wise Report — Performance broken down by Office, Retail, Land, Warehouse, etc. •�� Zonal Report — High-level aggregate for zone managers showing performance across their 
+entire zone.
+ 
+9.2 Admin vs. Member Company Reporting 
+Role-based scoping applies to reports too: •�� Admin (roleId = 1) sees network-wide aggregates — total deals closed, total royalty earned, 
+best-performing cities, top member companies.
+ •�� Zone Managers see their zone's performance. •�� Member Companies see only their own leads and their share of brokerage.  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 18 ===
+CIRIL CRM — Complete System Documentation    |    Page 18 
+Section 10 — Guidelines, Brand Standards & 
+Additional Modules 
+10.1 Guidelines Module (GuideLinesController) 
+CIRIL maintains operational guidelines accessible within the CRM: •�� Stationary Specification — Guidelines for how member companies must use CIRIL brand 
+elements (logos, letterheads, business cards) on physical stationery.
+ •�� Invoice Generation — Standard invoice template guidelines for billing clients for brokerage. •�� Data Mining Guide — Instructions on how to prospect and mine data for new client leads. •�� Property Listing Guide — Standards for how properties should be listed and described in 
+proposals.
+ 
+10.2 Individual Data Mining (IndividualMiningController) 
+Brokers can log individual prospect contacts they are personally mining — people who have not yet 
+committed to a formal lead. This acts as a pre-lead pipeline that brokers can convert into full leads 
+when the prospect is ready. The model IndividualMining stores name, contact, property interest, 
+and status.
+ 
+10.3 Miscellaneous Approvals (MiscApprovalsController) 
+Brokers can request approval to operate in additional 'Verticals' beyond their base assignment. For 
+example, a broker primarily doing Office deals may request approval to also handle Warehouse 
+leads. These requests are managed through the verticals approval workflow, where the Admin 
+approves or denies the expansion of a broker's vertical scope.
+ 
+10.4 Release Notes Module (ReleasenoteController) 
+The CRM includes a formal Release Notes module where the CIRIL tech team publishes changelogs 
+for new features and fixes. This is accessible to all users and serves as an in-app changelog for the 
+platform itself.
+  Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 19 ===
+CIRIL CRM — Complete System Documentation    |    Page 19 
+Section 11 — System Summary for AI Models 
+For any AI model, developer, or agent working with this codebase, the following mental model is 
+critical:
+ 
+11.1 The Golden Mental Model 
+ THINK OF IT AS 
+CIRIL CRM is a Commission-Splitting Real Estate Network where every 
+transaction generates a 7.5% royalty for CIRIL from each party involved. The software enforces the entire pipeline from client intake to payment confirmation.  
+Every feature in the codebase maps to one of these core needs: 
+•�� Intake — Lead creation and vertical-specific data capture. •�� Routing — Assignment of leads across the geographic network. •�� Tracking — Negotiation status, document uploads, remarks history. •�� Revenue Calculation — The brokerage engine with the hardcoded 7.5% CIRIL royalty. •�� Revenue Recognition — Royalty confirmation, email notification, final payment logging. •�� Intelligence — Research reports to improve proposal quality and deal closure rates. •�� Governance — RBAC ensuring every user sees only what they are entitled to see. 
+11.2 Key Code Locations for AI Reference 
+ 
+Concept Location in Codebase Royalty Formula (7.5%) app/Http/Controllers/Leads/BrokerageController.php, Line 
+~202 
+Brokerage Calculation Logic BrokerageController@getBrokerage — full lease vs. sale branch 
+logic 
+Lead Assignment app/Http/Controllers/Leads/AssignleadController.php Final Royalty Trigger app/Http/Controllers/Leads/RoyaltyController@royalityStatu
+s 
+Lead Status Pipeline app/Models/Lead.php fields: lead_status, leadStatus, 
+negotiation_status_id 
+Financial Data app/Models/FinancialDetail.php — giver_share, 
+receiver_share fields 
+Custom Fields per Vertical app/Http/Controllers/CustomFields/CustomFieldsController.
+php 
+All Routes routes/web.php — fully documented route groups by domain RBAC app/Http/Controllers/Roles/ — Roles, Permissions, Modules, 
+Privileges controllers 
+Research Data app/Http/Controllers/ResearchReportController.php Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 
+
+=== PDF PAGE 20 ===
+CIRIL CRM — Complete System Documentation    |    Page 20 
+11.3 What CIRIL Is NOT 
+•�� It is NOT a property listing portal. There is no 'properties' table. The system manages client 
+requirements and deal progress, not property inventory.
+ •�� It is NOT a single-company CRM. It is explicitly multi-tenant, with each member company 
+having its own isolated data view enforced by RBAC.
+ •�� It is NOT an SPA (Single Page Application). Every page is a server-rendered Blade template. 
+JavaScript is used for interactivity within pages but routing is server-side.
+   
+— End of Document — 
+CIRIL CRM System Documentation v1.0  |  Confidential 
+Confidential — For Internal and AI Reference Use Only — CIRIL Network © 2026 

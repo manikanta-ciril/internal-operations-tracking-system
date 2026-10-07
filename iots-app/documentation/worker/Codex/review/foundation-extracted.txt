@@ -1,0 +1,309 @@
+﻿ 
+ 
+ 
+ 
+START
+  User Logs into the System  
+Validate Credentials
+ (   Valid)  
+ (Inv   alid)  
+  Notify: Invalid Credentials  
+Validate Location
+  (   Known)   
+ (Unknown) 
+  Mark the session as "Remote/Off-site"  
+  Audit log-in and location co-ordinates  
+Decide User Role
+ Decides role based on User Credentials 
+   ADMIN - DASHBOARD   
+  MANAGER - DASHBOARD  
+  EMPLOYEE - DASHBOARD  
+  Authentication & Authorization Laye  r  
+  (Role: Admin   )   
+  (Role: Manager   )   
+  (Role: Employee   )   
+  User Management  
+  Location & Attendance      Control    
+   Global Task Management   
+  System Settings  
+   Announcement Dashboard   
+   Security & Audit Viewer   
+ Set office location coordinates 
+ 
+ 
+ Define standard working hours 
+ 
+ Monitor daily attendace records 
+ 
+ Review/Resolve off-site/flagged logins 
+ 
+ Monitor all tasks 
+ 
+ 
+ Select specific task for intervention 
+ 
+ Edit details, reassign, or cancel task 
+ 
+ Force-approve completed work 
+ 
+ Create a NEW user 
+ 
+ 
+ Set NEW user roles and permissions 
+ 
+ Activate/deactive certain user account 
+ 
+ Reset password for certain user 
+ 
+ Create new notice or message 
+ 
+ 
+ Select message for user, role-based, all. 
+ 
+ Set message display duration 
+ 
+ Publish to dashboards 
+ 
+ Access secure system logs 
+ 
+ 
+ Apply filters by date, user, or task-status 
+ 
+ Review user activity, and login histories 
+ 
+ Monitor task modification history 
+ 
+ Access System registry 
+ 
+ 
+ Create new roles and designations 
+ 
+ Manage automated report settings 
+ 
+ Update system notification templates 
+ 
+ 
+ 
+ Export Specific Security Reports 
+ Store changes in audit log 
+ 
+   Management Layer   
+  Task Management & Workflow  
+ 
+ Create a task 
+ 
+ 
+ Set Priority, and   due date 
+ 
+ Assign the task to employee 
+ 
+ Notify Employee 
+Task Status
+ 
+ 
+ 
+  (Assigned)  
+  (Pending/In Progress)  
+ 
+ Employee works and updates about task 
+ 
+Task Completed?
+ 
+ 
+  (Yes)  
+  (No)  
+Reassign Task?
+ Manager reviews task 
+ 
+Approved?
+ 
+ 
+  (Yes)  
+  (No)  
+ Complete and close task 
+ 
+ Provide Feedback / Corrections 
+ 
+ 
+  (Yes)  
+ Choose a new   Employee  
+ 
+  (No)  
+ 
+ Manager reviews the task 
+ 
+Resolution?
+ 
+ 
+  (Extend)  
+  (Reassign)  
+ Check Employee Workload 
+ 
+  (Overdue)  
+  Team Management  
+ View Team Members 
+ 
+ 
+ View Employee profiles 
+ 
+ View Current Assignments for each Employee 
+ 
+ View workload & availabilty of each Employee 
+ 
+ Track Employee work progress 
+ 
+ 
+ 
+  Performance Monitoring  
+ Monitor task completion rate of an Employee 
+ 
+ 
+ Review overdue tasks 
+ 
+ Track deadlines 
+ 
+ Identify performance issues 
+ 
+ Give feedback 
+ 
+ 
+ 
+  Workload Management  
+ View Employee Workload 
+ 
+ 
+ Identify Overloaded Employees 
+ 
+ Check Employee Availability 
+ 
+ Balance Task Distribution 
+ 
+ Reassign the Task if required 
+ 
+  Attendance Management  
+ View Employee's Attendance 
+ 
+ 
+ Review unknown location's / late / absent records 
+ 
+ View late requests 
+ 
+ Approve / Reject Leave 
+ 
+ Adjust workload if required 
+ 
+
+
+
+ 
+  Team Communication  
+ Send team announcements 
+ 
+ 
+ Send employee specific message 
+ 
+  Share task instructions  
+ 
+ Send deadline remainders (Automated) 
+ 
+ Receive updates from Employees 
+ 
+ 
+ 
+  Feedback & Evaluation  
+ Feedback from employee 
+ 
+ 
+ Review Employee Work 
+ 
+  Provide Feedback to employee  
+ 
+ Audit Evaluation 
+ 
+ Monitor Improvment 
+ 
+  Issues Management  
+ Identify Issue 
+ 
+ 
+ Assess Severity 
+ 
+ Audit the details 
+ 
+ Monitor Improvment 
+ 
+Resolution?
+
+ Manager Review 
+ 
+ (Yes) 
+ Resolve 
+ 
+ (No) 
+ Escalate to Higher Authority 
+
+ 
+ 
+ 
+
+   Work Management   
+ 
+ 
+ Tasks Dashboard / Queue 
+ 
+ Get Task details 
+ 
+ Task Execution 
+ 
+ Task Submission 
+ 
+ Receive updates from Employees 
+ Get's/Set's Task progress in process 
+ 
+ Upload's relevent evidence/files 
+ 
+ Raise issue-ticket if required 
+Issue?
+ 
+ 
+ (No) 
+ 
+Manager Intervention?
+
+ (Yes) 
+ Raise Issue-Ticket 
+
+ (Yes) 
+ Assign Issue Severity 
+
+ (No) 
+Manager Intervention?
+ 
+START
+  User Logs into the System  
+Validate Credentials
+ (   Valid)  
+ (Inv   alid)  
+  Notify: Invalid Credentials  
+Validate Location
+  (   Known)   
+ (Unknown) 
+  Mark the session as "Remote/Off-site"  
+  Audit log-in and location co-ordinates  
+ (User: Admin) 
+ (User: Employee) 
+ (User: Manager) 
+Decide User Role
+  Decides role based on User Credentials  
+   ADMIN - DASHBOARD   
+   MANAGER - DASHBOARD   
+   EMPLOYEE - DASHBOARD   
+   User Management   
+   Global Task        Management    
+   Location & Attendance       Control    
+   Announcement Dashboard   
+   System Settings   
+   Security & Audit Viewer   
+   Create a New User    Set NEW user roles and permissions    Activate / Deactivate certain user account(s)    Reset password for certain user(s)   
+   Monitor all tasks    Select Specific task for intervention    Edit details, reassign, or cancel task    Force approve completed work   
+   Set office location coordinates    Define standard working hours    Monitor daily attendance records    Review off-site/flagged logins   
