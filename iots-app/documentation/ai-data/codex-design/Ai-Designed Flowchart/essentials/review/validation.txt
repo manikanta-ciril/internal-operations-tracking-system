@@ -1,6 +1,0 @@
-﻿PASS: XML parses.
-PASS: 14 pages.
-PASS: IDs are unique within each page.
-PASS: All connectors reference existing nodes and have geometry.
-PASS: All internal page links have valid destinations.
-VISUAL REVIEW: All 14 pages rendered and inspected; role-map hierarchy arrows removed; overview and escalation routing corrected.

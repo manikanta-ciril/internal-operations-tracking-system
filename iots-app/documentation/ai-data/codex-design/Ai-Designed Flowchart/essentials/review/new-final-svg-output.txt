@@ -1,2 +1,0 @@
-
-new_final-version.drawio -> new_final-version.drawio.svg
