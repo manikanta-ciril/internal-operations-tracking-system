@@ -1,0 +1,1404 @@
+Hi ChatGPT,
+
+The Company workflow and entire information which is structured completely
+under a document, called: ciril_crm_detail.pdf
+
+File Path:
+C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\monitoring-portal\internal-operations-tracking-system\iots-app\documentation\worker\ciril_crm_detail.pdf
+
+So study and embrace the detail documentation of the company and train
+yourself on the data, for the programmatic logic you view the entire code
+
+under the directory, the code and database design and mappings exist:
+C:\Users\ciril\OneDrive\Desktop\CRM\Update\public_html\ -> for complete code,
+C:\Users\ciril\OneDrive\Desktop\CRM\cirilcrm_ciril.sql -> for it's database.
+
+-------------
+Key task:
+-------------
+I am an IT analyst at CIRIL-HYD branch, HYD branch is the complete operations
+operator of CIRIL. So I was got assigned with the project, and I named it as:
+Internal Operations Tracking System (IOTS).
+
+The Entire branch of HYD's ciril office's work and all the other technical and
+non technical aspects are need to be recorded and tracked under this
+underlying application, it's like a completely tracking system for the
+operations that a certain user (employee) perform on making the firm
+functional under all aspects, for the company like: CIRIL, like mentioned in
+the above file: ciril_crm_detail.pdf
+
+So now for this system-design the first step is to work on flowchart design of
+the system, whereas the flowchart should so simple and easily understandable
+on single glance for the stakeholder (chairman).
+
+So, upon moving forward, I primarily:
+	- took inspiration from: <file_path:TODO>
+	- and designed the
+	  C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\monitoring-portal\internal-operations-tracking-system\iots-app\documentation\worker\Flowchart\Actual-FlowChart.drawio,
+thinking that there are going to be only three users {Admin, Manager,
+Employee}, I designed it.
+
+
+Primarily I divided this entire project into three sections:
+	1. Authentication and Authorization Layer
+	2. Management Layer
+	3. Intelligence and Analytics Layer
+---------------------------------------------------------------------------
+
+	1. Authentication and Authorization Layer:
+		- It is already designed in Actual-FlowChart.drawio in all
+		  aspects, suggest if any additions require.
+	2. Management Layer:
+		Your Task: Reconstruct the entire management layer based on these following facts:
+		- There are not 3 users as mentioned in the Diagram:
+		  {Actual-Flowchart.drawio}
+		- The following are the list of characters that are involved
+		  in the office:
+			- Chairman
+			- Senior Manager
+			- General Manager
+			- Lead Manager 
+			- Executive
+			- IT System Analyst
+			- Business Development Executive (BDE)
+			- Social Media Manager ---| 
+									{Merged as: Creatives Communication Associate}
+			- Graphic Designer -------|
+			- Admin
+			- Super Admin
+
+		- Primarily::Based on the file ciril_crm_detail.pdf
+
+			- There are only:
+				- (One) Chairman
+				- (Three) Business Development Executives
+				- (One) Social Media Manager
+				- (One) Graphic Designer
+				- (Two) IT System Analyst
+				- (One) General Manager i.e considered as Asst. General Manager
+
+			- The following are the made up system essential characters:
+				- Senior Manager
+				- General Manager
+				- Lead Manager
+				- Super Admin
+				- Admin
+
+		So the dashboards specific to the role, should be dynamically can be adjusted, and updated evenly.
+		- The other fact is, as the primary design is in Actual-FlowChart.drawio, is mainly focuses on three characters: {Admin (it is for chairman, and it analysts, this is the role splitted again into two i.e super-admin, admin), Manager (in this I primarily thought, it would be for general manager itself), Employee}
+		- So now as per the info, it indicates the second and third layers which is in primarily designed version i.e Admin-Manager-Employee version includes the functionalities in Construct.txt file under,
+		  path: C:\Users\ciril\OneDrive\Desktop\Manikanta-Files\Git\monitoring-portal\internal-operations-tracking-system\iots-app\documentation\worker\
+		
+		Now based on the all above details, I already designed foundational-structure for IOTS, that involving three users (Admin, Manager, Employee) as mentioned.
+		So based on these facts:
+		
+		Consider the 
+			- chat_gpt_chats.pdf(only for reference okay! Don't study it's quite large and might burn tokens a lot), 
+			- study the following data:
+				
+				1. Chairman: Vijay Sir
+						- Receives complete bird’s-eye operational intelligence across the entire employee network.
+						- Monitors high-level commercial deal flow and royalty collections (7.5% royalty health).
+						- Inspects company-wide attendance and location (attendance) audit summaries, tracking remote/unknown location trends.
+						- Reviews the Executive “Requires Attention” Interface: overdue task clusters, repeated task reassignments, and unresolved departmental blockers.
+						- Reviews Quarterly Reward & Recognition Standings and personally signs off on the 3-consecutive-month excellence commendations.
+						- Can publish enterprise-wide Announcements.
+						- Can export all kinds of reports, in the format of particular-appraisal format.		
+						- Cannot reset routine employee passwords or perform everyday task reassignment.
+
+				2. Super Admin
+						- System Functional Note: Super Admin and IT System Analyst have equal platform privileges. The Super Admin focuses on administrative governance; the IT Analyst focuses on technical infrastructure.
+						- Manages master organisational configurations, department definitions, and role definitions.
+						- Configures Role-Based Access Control (RBAC) permission sets.
+						- Holds authority to deactivate or alter high-level accounts.
+						- Inspects full, immutable system audit logs.
+						- Manages data export covenants and compliance frameworks.
+
+				3. Admin
+						- Structured User Provisioning: Manually creates internal user profiles (Employee ID, Designation, Department, Office Location, System Role, Reporting Manager). There is no public registration.
+						- Location & Geofence Perimeter Management: Configures approved office GPS coordinates and allowable radius boundaries.
+						- Attendance Auditing: Reviews location exceptions, off-site attendance flags, and unexcused late arrivals.
+						- Global Task Oversight: Monitors organisational work queues to identify abandoned tasks or perform archival cleanups.
+						- Company Announcements: Drafts and publishes official communications to specific teams or the entire organisation.
+
+				4. IT System Analyst
+							Possesses equal system privileges with Super Admin. Tailored for real-time technical monitoring and diagnostic intervention.
+						- Application & Service Health: Monitors server uptime, database response latency, and frontend performance.
+						- External API Integrations: Tracks status and rate-limits of external services (BigDataCloud geocoding, mail servers, storage).
+						- Authentication & Security Auditing: Analyses anomalous login attempts, sudden location jumps, and session timeouts.
+						- Technical Incident Response: Logs and resolves platform bugs, database deadlocks, or webhook delivery failures.
+						- Deployment Tracking: Logs system version updates, environment variable changes, and schema migrations.
+						- Cannot arbitrarily approve business decisions (e.g., cannot approve commercial fee splits or employee annual leave).
+
+				5. General Manager
+						- Overall Operations Management: Handle and oversee the day-to-day operations of the organization, ensuring smooth and timely execution of all activities.
+						- Board Coordination & Governance: Coordinate with the Board of Directors for Board meetings, prepare agendas and minutes, maintain records, and ensure timely execution and follow-up of decisions taken by the Board.
+						- Accounts & Finance Coordination: Coordinate with the Accounts team for processing and tracking invoices, payments, expenses, and other financial requirements.
+						- Audit & Statutory Compliance: Coordinate with the Auditor and relevant internal teams for timely completion of statutory compliances, audits, filings, and related documentation.
+						- Conference & Event Management: Plan and organize the Annual Conference and Zonal Conferences, including coordination with hotels, vendors, members, speakers, and internal teams to ensure smooth execution.
+						- Legal Coordination: Coordinate with the Legal team for preparation, review, execution, and maintenance of membership agreements, contracts, NDAs, and other legal documentation.
+						- Membership Expansion: Conduct virtual meetings and discussions with prospective members, present the organization's membership proposition, and support the membership team in expanding the network.
+						- Team Monitoring & Coordination: Monitor the team's day-to-day work, track progress on key activities, provide necessary guidance, and ensure timely completion of assigned tasks.
+						- Cross-Functional Coordination: Coordinate with all member offices for any information they require, or for any escalation - to ensure effective communication, timely follow-ups, and smooth execution of organizational activities.
+
+				6. Senior Manager:
+						- Cross-Team Workload Balancing: Monitors workload distribution across operational, BD, and creative teams.
+						- SLA & Deadline Risk Mitigation: Identifies tasks at risk of missing client or member deadlines across multiple verticals.
+						- Manager Approval Queue: Evaluates high-impact decisions escalated by Lead Managers.
+						- Performance Comparison: Analyses comparative productivity trends between teams.
+
+				7. Lead Manager / Operations Manager (CIRIL: Manasa)
+						- Member Office Coordination for Deals & Royalty: Coordinates with member offices regarding concluded deals and follows up on related royalty payments.
+						- Website Updates Coordination: Coordinates with Bitra for updates and changes required on the company website.
+						- Printing & Stationery Coordination: Coordinates with printers for stationery, market reports, and other required printed materials.
+						- Vertical Call Management: Handles and coordinates vertical calls for Retail, Logistics & Warehousing (L&W), Land, and Hotel verticals.
+						- Client Call Handling: Handles and coordinates client calls relating to Retail, Hotel, Logistics & Warehousing (L&W), and Land verticals.
+						- Market Report Data Collection: Coordinates with member offices to collect the required data for preparation of market reports.
+						- Listing & Enquiry Management: Uploads listings to the Office Space portal, shares enquiries generated through the listing portal with the respective member offices, and follows up on the status of those leads.
+						- Quarterly Lead Exchange Preparation: Prepares quarterly lead exchange details for member offices across the Retail, Logistics & Warehousing (L&W), and Land verticals.
+						- Quarterly Business Statistics & Member Performance: Prepares and shares quarterly business statistics and member performance ratings with all member offices.
+						- Zonal Conference Preparation: Prepares raw presentations based on business statistics for zonal conferences.
+						- Annual Conference Coordination: Coordinates with printers for annual conference requirements, including ID cards, nameplates, stationery, and other printed materials.
+						- Membership Agreement & Fee Coordination: Coordinates with member offices to ensure timely completion of membership agreement signatures and payment of annual membership fees.
+
+				8. Executive
+						- Focused on executing specific operational work with zero distractions. Executes assigned tasks, records progress, logs time, uploads supporting evidence, raises blocker tickets, and incorporates manager feedback in revision cycles.
+						- Business Development Executive (CIRIL: Bhavani)
+						- Key Responsibilities (derived from Key Tasks List):
+						- Daily cold calls and structured email outreach to prospective commercial brokerage firms.
+						- Researches and compiles verified broker contacts from RERA portals, commercial directories, and Google.
+						- Operates Upturnly lead generation portal and 99acres commercial portal.
+						- Executes professional WhatsApp campaigns introducing CIRIL’s network.
+						- Maintains a rigorous follow-up queue, logging every call outcome and meeting schedule.
+
+				9. Creatives Communication Associate (CIRIL: Harshitha)
+							Note: Harshitha operates a multi-role profile—she serves as the Social Media Manager for brand campaigns while simultaneously acting as an Executive handling Office Vertical client calls and proofreading quarterly market reports.
+
+						- End-to-End Social Media Management across LinkedIn, Instagram, YouTube, and corporate channels.
+						- Market Report Proofreading: Validates quarterly research publications for accuracy and brand alignment.
+						- Office Vertical Calls Support: Coordinates zone-wise Office Vertical calls and client updates.
+						- Conference Presentation Collaterals: Collaborates with the Graphic Designer for keynote slides and digital archives.
+						- Content Pipeline Tracking: Drives content items through Brief → Drafting → Internal Review → Changes Requested → Approved → Published.
+						- Transforms raw data, presentations, and branding concepts into polished, institutional-grade visual assets. Delivers iterative design drafts with strict versioning (v1.0, v1.1, v2.0). Designs conference collaterals, ID badges, banners, and formats quarterly market research reports.
+			
+			- So based on the above role-specifics, the system needs to be as scalable as possible, and it should support multiple role assignments as well, like the interface will get added up with role based sectional divisions.
+			- - Multi-Role Capability & Workspace Context Switching
+						- In lean organisations like CIRIL, professionals frequently hold dual responsibilities. The IOTS platform handles this elegantly:
+						- Unified Authentication: The user logs in once with their master corporate credentials.
+						- Account Profile Evaluation: The system detects all authorised system roles.
+						- Default Landing: The user lands on their primary role dashboard.
+						- Instant Context Switcher: A prominent dropdown in the global navigation bar allows the user to switch between authorised workspaces in a single click.
+						- Session & Audit Segregation: Every audit log entry captures both the employee’s identity and the active role context under which the action was performed.
+
+		So based on the above facts, moving ahead
+
+	Your primary task is to design a complete end to end simple system flowchart that would completely define the operations management, just to give the stakeholder an operational view, okay?
+	
+	Study the following files:
+		- ciril_crm_detail.pdf (how the company works, and generates the revenue etc.)
+		- claude_version.docx (this is the operational documentation designed by Claude, but the thing is consider the above responsibilites rather than data mentioned one in claude: under 2.2 section)
+		- chat_gpt_chats.pdf (only referential, not go to this first!)
+		- Use the ..\Flowchart\Actual-Flowchart.drawio to get a view functional flowchart design and how friendly it is for a non-technical stakeholder etc.
+		- Read the Construct.txt, that would completely explain the 3-roles based system layout for the Actual-Flowchart.drawio but it needs to be expanded for the above mentioned roles, and should align with
+		  the companies work-flow and the purpose of the system, and functionalities scopes defined under Construct.txt.
+		- Just get the initial idea of referential-flowchart.jpeg for getting the idea of the system completely.
+
+			Severely:
+			============================================================
+			CIRIL IOTS — END-TO-END OPERATIONAL FLOWCHART RECONSTRUCTION
+			MASTER TASK SPECIFICATION
+			============================================================
+
+			ROLE
+			----
+
+			You are acting as a Senior Enterprise Systems Architect, Business Process
+			Architect, and Information Systems Analyst.
+
+			Your task is to study the provided CIRIL company documentation, the existing
+			flowchart foundation, the earlier three-role functional model, and the actual
+			role-specific responsibilities, and then reconstruct the COMPLETE END-TO-END
+			CIRIL Internal Operations Tracking System (IOTS) operational flowchart.
+
+			This is NOT a generic flowchart-generation task.
+
+			This is an architectural reconstruction and refinement task.
+
+			You must understand the existing design first, preserve its useful structure,
+			identify what is incomplete or outdated, and then produce an improved operational
+			flowchart that represents how CIRIL actually operates through the IOTS platform.
+
+			The final result must be:
+
+			- Operationally meaningful
+			- Logically complete
+			- Role-aware
+			- Scalable
+			- Easy to understand at a single glance
+			- Appropriate for presentation to a Chairman / non-technical stakeholder
+			- Detailed enough to demonstrate genuine systems understanding
+			- Structurally aligned with the existing Draw.io architecture
+			- Free from unnecessary technical jargon
+			- Complex underneath, simple on top
+
+
+			============================================================
+			1. PRIMARY OBJECTIVE
+			============================================================
+
+			Design a complete end-to-end operational flowchart for:
+
+			CIRIL INTERNAL OPERATIONS TRACKING SYSTEM (IOTS)
+
+			The flowchart must explain, at a stakeholder level:
+
+			1. How a user enters the system
+			2. How identity and access are validated
+			3. How location context is handled
+			4. How the system determines authorized role/workspace context
+			5. How the user is routed into the appropriate operational workspace
+			6. What each role can actually do
+			7. How work is created, assigned, executed, monitored, reviewed, corrected,
+			   approved, completed, or escalated
+			8. How operational exceptions are handled
+			9. How attendance, availability, requests, communication, and coordination
+			   participate in the operational workflow
+			10. How commercial and organizational activities are represented where relevant
+			11. How operational information is collected for analytics
+			12. How the Intelligence & Analytical Layer converts operational records into
+			    reports, trends, exceptions, risk indicators, and management insight
+
+			The flowchart must communicate the complete operational story of the system,
+			not merely display dashboards or menus.
+
+
+			============================================================
+			2. SOURCE FILES — STUDY ORDER AND PURPOSE
+			============================================================
+
+			Study and use the following files.
+
+			IMPORTANT:
+			Do not treat every file as equally authoritative.
+
+			Use the files according to the priority and purpose defined below.
+
+
+			------------------------------------------------------------
+			SOURCE 1 — COMPANY / BUSINESS FOUNDATION
+			------------------------------------------------------------
+
+			File:
+
+			ciril_crm_detail.pdf
+
+			Purpose:
+
+			This is the primary business-domain reference.
+
+			Use it to understand:
+
+			- How CIRIL operates
+			- How the organization functions
+			- Member-office relationships
+			- Commercial operations
+			- Business workflows
+			- Revenue-related activities
+			- Royalty-related activities
+			- Lead / transaction context
+			- Member-office coordination
+			- Company structure
+			- Actual business processes
+
+			Do NOT invent company processes that are not supported by the documentation.
+
+
+			------------------------------------------------------------
+			SOURCE 2 — EXISTING FLOWCHART FOUNDATION
+			------------------------------------------------------------
+
+			File:
+
+			Actual-FlowChart.drawio
+
+			Purpose:
+
+			This is the primary VISUAL AND STRUCTURAL FOUNDATION.
+
+			Study this file carefully before constructing anything new.
+
+			Understand:
+
+			- Existing layer boundaries
+			- Existing authentication flow
+			- Existing shape usage
+			- Existing routing logic
+			- Existing Admin / Manager / Employee structure
+			- Existing branch structure
+			- Existing task flow
+			- Existing visual hierarchy
+			- Existing orthogonal connector strategy
+			- Existing level of detail
+			- Existing placement philosophy
+
+			IMPORTANT:
+
+			Do NOT discard the existing architecture and redraw an unrelated system from
+			scratch.
+
+			Treat Actual-FlowChart.drawio as the foundational architecture that must be
+			refined, expanded, corrected, and completed.
+
+
+			------------------------------------------------------------
+			SOURCE 3 — FUNCTIONAL CONSTRUCTION REFERENCE
+			------------------------------------------------------------
+
+			File:
+
+			Construct.txt
+
+			Purpose:
+
+			This file contains the earlier functional construction of the three-role system:
+
+			- Admin
+			- Manager
+			- Employee
+
+			Study it to understand:
+
+			- The original Management Layer concept
+			- Admin functional branches
+			- Manager functional branches
+			- Employee functional branches
+			- Task-management logic
+			- Work-execution logic
+			- Attendance concepts
+			- Request concepts
+			- Issue/blocker handling
+			- Review and correction cycles
+			- Role-specific operational scope
+			- The intended simplicity of the functional flow
+
+			IMPORTANT:
+
+			Construct.txt represents the FOUNDATIONAL FUNCTIONAL MODEL.
+
+			It must NOT remain frozen as a three-user architecture.
+
+			Instead:
+
+			REUSE THE FUNCTIONAL LOGIC
+			+
+			EXPAND IT INTO THE ACTUAL ROLE STRUCTURE
+			+
+			RETAIN THE ORIGINAL ARCHITECTURAL INTENT.
+
+
+			------------------------------------------------------------
+			SOURCE 4 — OPERATIONAL DOCUMENTATION
+			------------------------------------------------------------
+
+			File:
+
+			claude_version.docx
+
+			Purpose:
+
+			Use this as supporting operational documentation.
+
+			IMPORTANT:
+
+			Where this document conflicts with the explicit role responsibilities supplied in
+			this task specification, use the explicitly supplied responsibilities as the
+			authoritative source for those responsibilities.
+
+			Do not blindly copy every dashboard or KRA described in this document.
+
+			Use it to understand:
+
+			- Operational terminology
+			- Workflow depth
+			- Task lifecycle
+			- Attendance
+			- Requests
+			- Analytical concepts
+			- Role-based behavior
+			- Audit principles
+			- General IOTS architecture
+
+
+			------------------------------------------------------------
+			SOURCE 5 — REFERENTIAL VISUAL
+			------------------------------------------------------------
+
+			File:
+
+			referential-flowchart.jpeg
+
+			or, if the exact filename differs in the provided workspace:
+
+			the corresponding referential flowchart image supplied for this task.
+
+			Purpose:
+
+			Use this ONLY as a visual/reference aid for understanding how the system concept
+			is intended to be represented.
+
+			Study:
+
+			- Overall visual simplicity
+			- Flow orientation
+			- Process grouping
+			- Stakeholder readability
+			- Relationship between major functions
+
+			Do NOT copy its content blindly.
+
+
+			------------------------------------------------------------
+			SOURCE 6 — OPTIONAL HISTORICAL REFERENCE
+			------------------------------------------------------------
+
+			File:
+
+			chat_gpt_chats.pdf
+
+			IMPORTANT:
+
+			This is NOT the primary source.
+
+			Do NOT begin with this file.
+
+			Do NOT spend unnecessary effort studying the entire file.
+
+			Only consult it when:
+
+			- A historical design decision needs clarification
+			- A previous architectural decision is necessary to understand the current
+			  structure
+			- The other sources leave a specific ambiguity
+
+			Treat it as historical/reference material only.
+
+
+			============================================================
+			3. CORE ARCHITECTURAL PRINCIPLE
+			============================================================
+
+			The original design used three conceptual operational characters:
+
+			ADMIN
+			MANAGER
+			EMPLOYEE
+
+			These are NOT the final organizational roles.
+
+			They are architectural interface categories.
+
+			Interpret them as:
+
+			ADMIN
+			→ System-level control, administration, governance, security, global oversight
+
+			MANAGER
+			→ Team-level management, coordination, allocation, review, intervention,
+			  performance management
+
+			EMPLOYEE
+			→ Individual-level execution, work delivery, activity recording, requests,
+			  attendance, and task completion
+
+
+			The architecture later expanded into the following actual organizational/system
+			roles:
+
+			1. Chairman
+			2. Senior Manager
+			3. General Manager
+			4. Lead Manager
+			5. Executive
+			6. IT System Analyst
+			7. Business Development Executive (BDE)
+			8. Creatives Communication Associate
+			9. Admin
+			10. Super Admin
+
+			The previous Social Media Manager and Graphic Designer functions are represented
+			within the "Creatives Communication Associate" profile where applicable.
+
+			IMPORTANT:
+
+			DO NOT replace the three conceptual lanes with 10 unrelated top-level lanes.
+
+			Instead, map the actual roles into the appropriate functional architecture.
+
+			The system should conceptually represent:
+
+			IOTS
+			  ↓
+			Authentication & Authorization
+			  ↓
+			Authorized Role / Workspace Context
+			  ↓
+			Administrative / Management / Execution Functions
+			  ↓
+			Operational Records
+			  ↓
+			Intelligence & Analytical Layer
+
+
+			============================================================
+			4. CURRENT ORGANIZATIONAL REALITY
+			============================================================
+
+			Use the supplied company context.
+
+			Current operational roles/personnel include:
+
+			- One Chairman
+			- Three Business Development Executives
+			- One Social Media Manager
+			- One Graphic Designer
+			- Two IT System Analysts
+			- One General Manager / Assistant General Manager context
+
+			Additional system-essential roles introduced for organizational governance and
+			workflow management include:
+
+			- Senior Manager
+			- General Manager
+			- Lead Manager
+			- Super Admin
+			- Admin
+
+			The system must therefore support role scalability and role assignment independent
+			of hard-coded single-user assumptions.
+
+
+			============================================================
+			5. MULTI-ROLE REQUIREMENT
+			============================================================
+
+			The platform MUST support users having more than one authorized role.
+
+			Implement this conceptually as:
+
+			User Identity
+			    ↓
+			Authorized Roles
+			    ↓
+			Primary Role
+			    ↓
+			Default Workspace
+
+			and:
+
+			Authorized Roles
+			    ↓
+			Role / Workspace Context Switcher
+			    ↓
+			Alternate Authorized Workspace
+
+			Rules:
+
+			- One corporate login
+			- No duplicate accounts required for each role
+			- User identity remains consistent
+			- Workspace changes according to active role context
+			- Permissions must change with the active role context
+			- Audit records must record both:
+			  - user identity
+			  - active role context
+
+			Example:
+
+			One person may have:
+
+			Creatives Communication Associate
+			+
+			Executive
+
+			The system must allow both functional workspaces without requiring a separate
+			account.
+
+
+			============================================================
+			6. GLOBAL APPLICATION ENTRY FLOW
+			============================================================
+
+			Preserve and refine the existing Authentication & Authorization Layer in:
+
+			Actual-FlowChart.drawio
+
+			Base flow:
+
+			START
+			  ↓
+			User Logs Into System
+			  ↓
+			Validate Credentials
+			  ↓
+			Credentials Valid?
+			  ├── NO
+			  │    ↓
+			  │  Show Invalid Login Message
+			  │    ↓
+			  │  Return to Login
+			  │
+			  └── YES
+			       ↓
+			     Validate Location
+			       ↓
+			     Location Recognized?
+			       ├── YES
+			       │    ↓
+			       │  Continue
+			       │
+			       └── NO
+			            ↓
+			          Mark Session as Remote / Off-Site
+			            ↓
+			          Continue
+
+			Both paths must proceed to:
+
+			Audit Login + Location Context
+			        ↓
+			Determine Authorized Role(s)
+			        ↓
+			Determine Active Workspace
+			        ↓
+			Route User to Appropriate Workspace
+
+
+			IMPORTANT:
+
+			Do not unnecessarily redesign the authentication layer.
+
+			Assess whether any small structural improvement is needed, but retain the existing
+			foundation unless there is a clear logical reason to change it.
+
+
+			============================================================
+			7. THREE FOUNDATIONAL SYSTEM LAYERS
+			============================================================
+
+			The final architecture must visibly contain these three major sections:
+
+			============================================================
+			LAYER 1
+			AUTHENTICATION AND AUTHORIZATION
+			============================================================
+
+			Purpose:
+
+			Secure entry, identity validation, location context, role authorization, and
+			workspace routing.
+
+
+			============================================================
+			LAYER 2
+			MANAGEMENT LAYER
+			============================================================
+
+			Purpose:
+
+			The actual operational work of the organization.
+
+			This includes:
+
+			- Administrative functions
+			- Management functions
+			- Employee/execution functions
+			- Work allocation
+			- Work execution
+			- Attendance
+			- Requests
+			- Coordination
+			- Communication
+			- Exception handling
+			- Approval
+			- Escalation
+			- Operational records
+
+
+			============================================================
+			LAYER 3
+			INTELLIGENCE AND ANALYTICAL LAYER
+			============================================================
+
+			Purpose:
+
+			Convert operational records into:
+
+			- Performance metrics
+			- Workload intelligence
+			- Attendance trends
+			- Exceptions
+			- Risks
+			- Historical trends
+			- Daily reports
+			- Weekly reports
+			- Monthly reports
+			- Role-based reports
+			- Team analytics
+			- Management insights
+
+			This layer should be visually distinct from the operational workflow.
+
+
+			============================================================
+			8. MANAGEMENT LAYER — ADMIN FUNCTIONALITY
+			============================================================
+
+			The Admin architectural lane is based on the foundational six-branch concept.
+
+			Preserve these major branches where structurally appropriate:
+
+			1. User Management
+			2. Location & Attendance Control
+			3. Global Task Management
+			4. System Settings
+			5. Security & Audit Viewer
+			6. Global Announcements
+
+			Use clean, linear subflows.
+
+			------------------------------------------------------------
+			8.1 USER MANAGEMENT
+			------------------------------------------------------------
+
+			Flow:
+
+			User Management
+			    ↓
+			Create New User
+			    ↓
+			Enter User Details
+			    ↓
+			Assign Designation / Role
+			    ↓
+			Assign Permissions
+			    ↓
+			Assign Department / Office / Reporting Manager
+			    ↓
+			Activate Account
+			    ↓
+			Record Change in Audit
+
+			Support:
+
+			- Account activation
+			- Account deactivation
+			- Authorized password reset
+			- Role/permission adjustment
+			- User-profile maintenance
+
+
+			------------------------------------------------------------
+			8.2 LOCATION & ATTENDANCE CONTROL
+			------------------------------------------------------------
+
+			Flow:
+
+			Location & Attendance Control
+			    ↓
+			Configure Office Location
+			    ↓
+			Define Working-Hour Rules
+			    ↓
+			Monitor Attendance Records
+			    ↓
+			Review Location / Attendance Exceptions
+			    ↓
+			Record Resolution / Outcome
+			    ↓
+			Audit Change
+
+
+			------------------------------------------------------------
+			8.3 GLOBAL TASK MANAGEMENT
+			------------------------------------------------------------
+
+			Purpose:
+
+			Global oversight, not ordinary day-to-day assignment.
+
+			Flow:
+
+			Global Task Management
+			    ↓
+			Monitor Active Organizational Work
+			    ↓
+			Select Specific Task
+			    ↓
+			Review Current Status
+			    ↓
+			Intervention Required?
+			    ├── NO → Continue Monitoring
+			    │
+			    └── YES
+			         ↓
+			       Edit / Reassign / Cancel /
+			       Directly Approve Where Authorized
+			         ↓
+			       Record Change in Audit
+
+
+			Use business-friendly language.
+
+			Avoid technical wording such as:
+
+			- database cleanup
+			- force edit
+			- hard delete
+			- queue manipulation
+
+			Prefer:
+
+			- Monitor Active Work
+			- Change Assignment
+			- Update Instructions
+			- Stop Assignment
+			- Approve Completed Work Where Authorized
+
+
+			------------------------------------------------------------
+			8.4 SYSTEM SETTINGS
+			------------------------------------------------------------
+
+			Flow:
+
+			System Settings
+			    ↓
+			Manage Designations & Roles
+			    ↓
+			Configure Report Timings
+			    ↓
+			Configure Email / Notification Templates
+			    ↓
+			Save Configuration
+			    ↓
+			Audit Change
+
+
+			------------------------------------------------------------
+			8.5 SECURITY & AUDIT VIEWER
+			------------------------------------------------------------
+
+			Flow:
+
+			Security & Audit Viewer
+			    ↓
+			View Security / Activity Records
+			    ↓
+			Filter by Date / User / Action
+			    ↓
+			Review Login History
+			    ↓
+			Review Modification History
+			    ↓
+			Review Location / Network Events
+			    ↓
+			Export Authorized Report
+
+
+			------------------------------------------------------------
+			8.6 GLOBAL ANNOUNCEMENTS
+			------------------------------------------------------------
+
+			Flow:
+
+			Global Announcements
+			    ↓
+			Create Notice
+			    ↓
+			Select Audience
+			    ↓
+			Set Display / Schedule
+			    ↓
+			Publish
+			    ↓
+			Record Action
+
+
+			============================================================
+			9. MANAGEMENT LAYER — MANAGER FUNCTIONALITY
+			============================================================
+
+			The Manager architecture must be broader than simple task assignment.
+
+			It must reflect actual management responsibilities.
+
+			Major Manager functions:
+
+			1. Task Management & Workflow
+			2. Team Management
+			3. Performance Monitoring
+			4. Workload Management
+			5. Attendance Management
+			6. Team Communication
+			7. Feedback & Evaluation
+			8. Issues Management
+
+
+			------------------------------------------------------------
+			9.1 TASK MANAGEMENT & WORKFLOW
+			------------------------------------------------------------
+
+			Core flow:
+
+			Create Task
+			    ↓
+			Define Task / Deliverables
+			    ↓
+			Set Priority
+			    ↓
+			Set Due Date / Deadline
+			    ↓
+			Check Employee Workload
+			    ↓
+			Assign Employee
+			    ↓
+			Notify Employee
+			    ↓
+			Monitor Progress
+			    ↓
+			Receive Submission
+			    ↓
+			Manager Review
+			    ↓
+			Approved?
+			    ├── YES
+			    │    ↓
+			    │  Complete & Close
+			    │
+			    └── NO
+			         ↓
+			       Provide Feedback / Corrections
+			         ↓
+			       Employee Revises
+			         ↓
+			       Resubmit
+			         ↓
+			       Manager Review
+
+
+			------------------------------------------------------------
+			9.2 TASK STATE / EXCEPTION HANDLING
+			------------------------------------------------------------
+
+			The task architecture must represent:
+
+			Assigned
+			Pending / In Progress
+			Overdue
+			Reassigned
+			Completed
+
+			Operational execution may additionally represent:
+
+			Blocked
+			Waiting for Review
+			Under Review
+			Changes Requested
+			Issue Resolved
+			Done / Closed
+
+			IMPORTANT:
+
+			Reassigned is a transition/event, not a terminal state.
+
+			Overdue is an exception requiring intervention.
+
+			Completed is the final business outcome after appropriate review/approval.
+
+
+			------------------------------------------------------------
+			9.3 OVERDUE FLOW
+			------------------------------------------------------------
+
+			Active Task
+			    ↓
+			Deadline Reached
+			    ↓
+			Overdue
+			    ↓
+			Manager Review
+			    ↓
+			Resolution?
+			    ├── Extend Deadline
+			    ├── Reassign Task
+			    └── Escalate / Intervene
+			    ↓
+			Record Decision
+			    ↓
+			Continue / Resolve
+
+
+			The system must not allow a task simply to disappear after its deadline.
+
+
+			------------------------------------------------------------
+			9.4 REASSIGNMENT FLOW
+			------------------------------------------------------------
+
+			Task Requires Reassignment
+			    ↓
+			Check Employee Capacity
+			    ↓
+			Select New Employee
+			    ↓
+			Record Reason
+			    ↓
+			Transfer Task Context
+			    ↓
+			Notify New Employee
+			    ↓
+			Continue Task
+			    ↓
+			Record Reassignment History
+
+
+			Do not represent reassignment by deleting the old task and creating an unrelated
+			new task.
+
+
+			------------------------------------------------------------
+			9.5 TEAM MANAGEMENT
+			------------------------------------------------------------
+
+			Team Management
+			    ↓
+			View Team Members
+			    ↓
+			View Employee Profiles
+			    ↓
+			View Current Assignments
+			    ↓
+			View Workload
+			    ↓
+			View Availability
+			    ↓
+			Track Progress
+
+
+			------------------------------------------------------------
+			9.6 PERFORMANCE MONITORING
+			------------------------------------------------------------
+
+			Performance Monitoring
+			    ↓
+			Review Completion
+			    ↓
+			Review Deadline Adherence
+			    ↓
+			Review Overdue Work
+			    ↓
+			Identify Performance Concerns
+			    ↓
+			Provide Feedback
+			    ↓
+			Monitor Improvement
+
+
+			------------------------------------------------------------
+			9.7 WORKLOAD MANAGEMENT
+			------------------------------------------------------------
+
+			Workload Management
+			    ↓
+			View Current Workload
+			    ↓
+			Identify Overloaded Employees
+			    ↓
+			Check Availability
+			    ↓
+			Balance Work
+			    ↓
+			Reassign Where Required
+			    ↓
+			Record Change
+
+
+			------------------------------------------------------------
+			9.8 ATTENDANCE MANAGEMENT
+			------------------------------------------------------------
+
+			Attendance Management
+			    ↓
+			View Team Attendance
+			    ↓
+			Review Late / Absent Records
+			    ↓
+			Review Location Exceptions
+			    ↓
+			Review Leave / Permission Requests
+			    ↓
+			Approve / Reject Where Authorized
+			    ↓
+			Adjust Workload Where Required
+
+
+			Important distinction:
+
+			ADMIN
+			→ controls attendance/location rules and system oversight
+
+			MANAGER
+			→ uses attendance and availability information to manage the team
+
+
+			------------------------------------------------------------
+			9.9 TEAM COMMUNICATION
+			------------------------------------------------------------
+
+			Team Communication
+			    ↓
+			Send Team Announcement
+			    ↓
+			Send Employee-Specific Message
+			    ↓
+			Share Task Instructions
+			    ↓
+			Send Deadline Reminder
+			    ↓
+			Receive Employee Updates
+
+
+			------------------------------------------------------------
+			9.10 FEEDBACK & EVALUATION
+			------------------------------------------------------------
+
+			Feedback & Evaluation
+			    ↓
+			Review Submitted Work
+			    ↓
+			Provide Feedback
+			    ↓
+			Record Evaluation
+			    ↓
+			Track Improvement
+
+
+			------------------------------------------------------------
+			9.11 ISSUES MANAGEMENT
+			------------------------------------------------------------
+
+			Issues Management
+			    ↓
+			Identify Issue
+			    ↓
+			Assess Severity
+			    ↓
+			Manager Review
+			    ↓
+			Resolve?
+			    ├── YES → Mark Resolved
+			    │
+			    └── NO
+			         ↓
+			       Escalate to Higher Authority
+			         ↓
+			       Record Escalation
+			         ↓
+			       Monitor Resolution
+
+
+			============================================================
+			10. MANAGEMENT LAYER — EMPLOYEE FUNCTIONALITY
+			============================================================
+
+			Employee functionality must represent real work execution.
+
+			Major branches:
+
+			1. Work Management
+			2. Attendance & Availability
+			3. Request & Self-Service
+			4. Notification & Communication
+			5. Performance & Activity
+			6. Profile & Security
+
+
+			------------------------------------------------------------
+			10.1 WORK MANAGEMENT
+			------------------------------------------------------------
+
+			Employee Dashboard
+			    ↓
+			View Task Queue
+			    ↓
+			Open Task Details
+			    ↓
+			View Priority / Deadline / Deliverables
+			    ↓
+			Start / Continue Work
+			    ↓
+			Update Progress
+			    ↓
+			Record Work Activity
+			    ↓
+			Upload Supporting Evidence
+			    ↓
+			Encounter Issue?
+			    ├── NO → Continue Work
+			    │
+			    └── YES
+			         ↓
+			       Raise Issue / Blocker
+			         ↓
+			       Assign Severity
+			         ↓
+			       Manager Intervention
+			         ↓
+			       Resolve
+			         ↓
+			       Continue Work
+			    ↓
+			Submit Work
+			    ↓
+			Manager Review
+			    ↓
+			Approved?
+			    ├── YES → Complete / Close
+			    │
+			    └── NO
+			         ↓
+			       Receive Corrections
+			         ↓
+			       Revise
+			         ↓
+			       Resubmit
+
+
+			------------------------------------------------------------
+			10.2 WORK ACTIVITY
+			------------------------------------------------------------
+
+			Work Activity must be represented separately from task state.
+
+			Include:
+
+			- Progress Update
+			- Work Notes
+			- Time / Effort Entry
+			- Supporting Documents / Evidence
+
+			These are historical activity records.
+
+			Do NOT treat each activity entry as a task status.
+
+
+			------------------------------------------------------------
+			10.3 ATTENDANCE & AVAILABILITY
+			------------------------------------------------------------
+
+			Attendance & Availability
+			    ↓
+			Check-In
+			    ↓
+			Record Attendance
+			    ↓
+			Set Availability
+			    ↓
+			Perform Work
+			    ↓
+			Update Availability When Required
+			    ↓
+			Check-Out
+			    ↓
+			Calculate / Record Work Hours
+			    ↓
+			Store Attendance History
+
+
+			Availability can include:
+
+			- Available
+			- Busy
+			- In Meeting
+			- On Break
+			- In Training
+			- Do Not Disturb
+			- Working Remotely
+			- On Leave
+			- Absent
+			- Offline
+
+
+			------------------------------------------------------------
+			10.4 REQUEST & SELF-SERVICE
+			------------------------------------------------------------
+
+			Request & Self-Service
+			    ↓
+			Create Request
+			    ↓
+			Select Request Type
+			    ↓
+			Submit Request
+			    ↓
+			Manager / Authorized Authority Review
+			    ↓
+			Approved?
+			    ├── YES → Request Approved
+			    │
+			    └── NO → Request Rejected / Returned
+			    ↓
+			Store Decision History
+
+
+			Supported request concepts include:
+
+			- Leave Request
+			- Permission Request
+			- Scheduled Request
+			- Task Clarification / Guidance
+			- Resource Request
+
+
+			------------------------------------------------------------
+			10.5 NOTIFICATION & COMMUNICATION
+			------------------------------------------------------------
+
+			Represent notifications as triggers generated by operational events.
+
+			Examples:
+
+			New Task
+			    ↓
+			Notify Employee
+
+			Task Reassigned
+			    ↓
+			Notify Employee
+
+			Deadline Approaching
+			    ↓
+			Send Reminder
+
+			Task Overdue
+			    ↓
+			Notify / Surface to Manager
+
+			Manager Provides Feedback
+			    ↓
+			Notify Employee
+
+			Request Decision
+			    ↓
+			Notify Employee
+
+			Announcement Published
+			    ↓
+			Display to Target Audience
+
+
+
+Final Instruction:
+	- The flowchart needs to be in high detail and should match the visual theme of referential-flowchart.jpeg, and the flow needs to be neatly designed, must cover the aspects that would completely make the
+	stakeholder realize the workflow of the system.
+	- Use the Drawio mcp, and design, and store it in same directory's final-version.drawio

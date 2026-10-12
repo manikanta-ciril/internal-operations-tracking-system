@@ -1,0 +1,3 @@
+﻿XML parses; IDs unique; all parents and connector endpoints valid.
+24 original Layer 1 cells retained verbatim except the containing-group parent.
+One continuous canvas; ten roles; six Admin, eight Manager, six Employee branches; shared database; six analytical centres; scoped reports for ten roles.
