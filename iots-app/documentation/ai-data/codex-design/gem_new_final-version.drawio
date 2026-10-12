@@ -1,6 +1,6 @@
 <mxfile host="Electron" compressed="false">
   <diagram id="iots-complete" name="IOTS — Complete three-layer operational architecture">
-    <mxGraphModel dx="11840" dy="2427" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="6800" pageHeight="9560" background="#FFFFFF" math="0" shadow="0">
+    <mxGraphModel dx="8816" dy="971" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="6800" pageHeight="9560" background="#FFFFFF" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -508,11 +508,11 @@
         <mxCell id="new-552" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Verdana;fontSize=17;spacing=10;strokeWidth=1.5;rounded=0;strokeOpacity=0;align=center;fillColor=#F5F7FA;strokeColor=#728294;fontColor=#152735;" value="METRIC RULES • Zero denominator: N/A. Missing target: “Target not configured”. Approved leave and external blockers retain context. Reassignment never creates a new task count. Approved deadline changes retain original deadlines and prior overdue history. Rules flag risk; authorised people decide actions." vertex="1">
           <mxGeometry height="95" width="6400" x="200" y="9290" as="geometry" />
         </mxCell>
-        <mxCell id="new-553" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Verdana;fontSize=17;spacing=10;strokeWidth=1.5;rounded=0;strokeOpacity=0;align=center;fillColor=#F5F7FA;strokeColor=#728294;fontColor=#152735;" value="POLICY SETTINGS • Approval / escalation mandates, shifts / grace / breaks, report schedules, appraisal template and recognition scoring remain configurable. CRM royalty uses agreed brokerage shares and lease days; CIRIL receives 7.5% of each party’s share. Integration/import must preserve verified CRM source records.&lt;br&gt;Sources: original Actual-FlowChart.drawio Layer 1; Construct.txt functional scope; final-version.drawio role and operational detail; referential-flowchart.jpeg visual theme." vertex="1">
+        <mxCell id="new-553" parent="1" style="whiteSpace=wrap;html=1;fontFamily=Verdana;fontSize=17;spacing=10;strokeWidth=1.5;rounded=0;strokeOpacity=0;align=center;fillColor=#F5F7FA;strokeColor=#728294;fontColor=#152735;" value="POLICY SETTINGS • Approval / escalation mandates, shifts / grace / breaks, report schedules, appraisal template and recognition scoring remain configurable. CRM royalty uses agreed brokerage shares and lease days; CIRIL receives 7.5% of each party’s share. Integration/import must preserve verified CRM source records." vertex="1">
           <mxGeometry height="105" width="6400" x="200" y="9410" as="geometry" />
         </mxCell>
         <mxCell id="layer2" parent="1" style="swimlane;horizontal=1;startSize=75;rounded=1;fillColor=light-dark(#ff1a1a, #ededed);swimlaneFillColor=#FFFFFF;strokeColor=#19344A;fontColor=#1F74FF;fontFamily=Verdana;fontSize=28;fontStyle=1;fillStyle=hatch;" value="LAYER 2 • MANAGEMENT, OPERATIONS &amp; EXECUTION" vertex="1">
-          <mxGeometry height="5140" width="6600" x="100" y="1360" as="geometry" />
+          <mxGeometry height="5200" width="6610" x="90" y="1360" as="geometry" />
         </mxCell>
         <mxCell id="edge-23" edge="1" parent="layer2" source="new-8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;endFill=1;html=1;fontFamily=Verdana;fontSize=15;labelBackgroundColor=#FFFFFF;strokeWidth=1.5;strokeColor=#32749A;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="new-17" value="">
           <mxGeometry relative="1" as="geometry" />
