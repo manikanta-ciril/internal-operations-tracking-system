@@ -60,8 +60,8 @@ IOTS establishes an institutional backbone that unifies **10 discrete organizati
 ```
 
 ### 1.2 Core Architectural Invariants
-1. **Work Activity $\neq$ Task State:** Task states (`Assigned`, `In Progress`, `Waiting for Review`, `Under Review`, `Closed`) are governed strictly by state transitions. Progress notes, file attachments, and time logs are historical activity events that never directly mutate the task state.
-2. **Platform Privilege $\neq$ Business Authority:** Technical super-users (Super Administrator, IT System Analyst) hold comprehensive administrative and system diagnostics access, but cannot approve commercial terms, royalty distributions, leave requests, or creative deliverables without an explicit business mandate.
+1. **Work Activity ≠ Task State:** Task states (`Assigned`, `In Progress`, `Waiting for Review`, `Under Review`, `Closed`) are governed strictly by state transitions. Progress notes, file attachments, and time logs are historical activity events that never directly mutate the task state.
+2. **Platform Privilege ≠ Business Authority:** Technical super-users (Super Administrator, IT System Analyst) hold comprehensive administrative and system diagnostics access, but cannot approve commercial terms, royalty distributions, leave requests, or creative deliverables without an explicit business mandate.
 3. **Immutability & Non-Destructive Operations:** Reassigning a task transfers ownership without duplicating the task entity or destroying prior ownership history. Extending a deadline preserves the original target date for variance auditing.
 4. **CRM Decoupling:** IOTS manages internal human coordination, accountability, and operational evidence. It reads CRM commercial deals and royalty milestones, but never mutates or overrides the CRM's primary financial ledger.
 
@@ -72,24 +72,25 @@ IOTS establishes an institutional backbone that unifies **10 discrete organizati
 Layer 1 serves as the secure gateway to the IOTS ecosystem, ensuring that every session is authenticated, location-verified, and bound to an immutable audit record before access to operational tools is granted.
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 flowchart TD
-    Start([User Initiates Login]) --> CredInput[Enter Corporate Credentials]
-    CredInput --> ValidateCred{Validate Credentials}
+    Start(["User Initiates Login"]) --> CredInput["Enter Corporate Credentials"]
+    CredInput --> ValidateCred{"Validate Credentials"}
     
-    ValidateCred -- Invalid --> AuthFail[Notify: Invalid Credentials<br/>Log Failed Attempt] --> Terminate([Session Terminated])
+    ValidateCred -- "Invalid" --> AuthFail["Notify: Invalid Credentials - Log Attempt"] --> Terminate(["Session Terminated"])
     
-    ValidateCred -- Valid --> GeoCheck{Verify Location Coordinates<br/>vs Approved Geofences}
+    ValidateCred -- "Valid" --> GeoCheck{"Verify Location Coordinates vs Geofences"}
     
-    GeoCheck -- Known Office Bounds --> MarkOnsite[Mark Session: On-Site Office]
-    GeoCheck -- Outside Perimeter --> MarkRemote[Mark Session: Remote / Off-Site]
+    GeoCheck -- "Known Office Bounds" --> MarkOnsite["Mark Session: On-Site Office"]
+    GeoCheck -- "Outside Perimeter" --> MarkRemote["Mark Session: Remote / Off-Site"]
     
-    MarkOnsite --> AuditSession[Write Immutable Login Event<br/>Timestamp, Coordinates, IP, Device, Status]
+    MarkOnsite --> AuditSession["Write Immutable Login Event: Timestamp, Coordinates, IP, Status"]
     MarkRemote --> AuditSession
     
-    AuditSession --> RoleEval{Evaluate User Profile<br/>& Assigned System Roles}
+    AuditSession --> RoleEval{"Evaluate User Profile and Assigned System Roles"}
     
-    RoleEval --> RoleDecision[Resolve Role Permissions<br/>& Authorised Workspaces]
-    RoleDecision --> WorkspaceLoad[Open Primary Workspace<br/>Initialize Context Switcher]
+    RoleEval --> RoleDecision["Resolve Role Permissions and Authorised Workspaces"]
+    RoleDecision --> WorkspaceLoad["Open Primary Workspace and Initialize Context Switcher"]
 ```
 
 ### 2.1 Detailed Authentication Protocol
@@ -98,7 +99,9 @@ flowchart TD
   * **On-Site Verification:** Sessions within the defined perimeter are tagged as `On-Site`.
   * **Remote / Off-Site Flagging:** Sessions originating outside approved geofences are flagged as `Remote / Off-Site`. This flag does not block access for mobile or remote staff, but enters the attendance tracking engine for manager auditing.
 * **Session Audit Record:** An immutable audit entry is immediately written to the database capturing:
-  $$\text{LoginEvent} = \{\text{UserID}, \text{Timestamp}, \text{Latitude}, \text{Longitude}, \text{LocationStatus}, \text{IPAddress}, \text{UserAgent}\}$$
+  ```text
+  LoginEvent = { UserID, Timestamp, Latitude, Longitude, LocationStatus, IPAddress, UserAgent }
+  ```
 * **Role Decision & Workspace Dispatcher:** The system resolves the user's role assignments, pulls their active permission grants, loads their designated primary workspace, and initializes the global navigation context switcher.
 
 ---
@@ -108,24 +111,25 @@ flowchart TD
 IOTS partitions organizational responsibilities across **Three Functional Lanes** containing **Ten Specialized Role Workspaces**. Each workspace provides a tailored user interface, strict data filtering, and explicit operational tools.
 
 ```mermaid
-graph TD
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
+flowchart TD
     subgraph Lane1["LANE 1: ADMINISTRATIVE & GOVERNANCE LANE"]
-        R1[Administrator]
-        R2[Super Administrator]
-        R3[IT System Analyst]
+        R1["Administrator"]
+        R2["Super Administrator"]
+        R3["IT System Analyst"]
     end
     
     subgraph Lane2["LANE 2: MANAGEMENT & SUPERVISORY LANE"]
-        R4[Chairman & Chief Executive]
-        R5[General Manager]
-        R6[Senior Manager]
-        R7[Lead / Operations Manager]
+        R4["Chairman & Chief Executive"]
+        R5["General Manager"]
+        R6["Senior Manager"]
+        R7["Lead / Operations Manager"]
     end
     
     subgraph Lane3["LANE 3: EMPLOYEE & EXECUTION LANE"]
-        R8[Operations Executive]
-        R9[Business Development Executive]
-        R10[Creatives & Communications Associate]
+        R8["Operations Executive"]
+        R9["Business Development Executive"]
+        R10["Creatives & Communications Associate"]
     end
 ```
 
@@ -232,7 +236,7 @@ graph TD
   * **Multi-Channel Social Media Management:** Drives end-to-end social media campaigns across LinkedIn, Instagram, YouTube, and corporate channels.
   * **Quarterly Market Report Formatting & Proofreading:** Formats, designs, and rigorously proofreads quarterly real estate research reports, validating statistical charts and typographic standards.
   * **Visual Asset Production:** Designs institutional-grade graphics, marketing collateral, digital brochures, conference keynote decks, and identity badges.
-  * **Strict Design Version Control:** Operates a rigorous design drafting pipeline with version-controlled iterations (`v1.0` $\rightarrow$ `v1.1` $\rightarrow$ `v2.0`).
+  * **Strict Design Version Control:** Operates a rigorous design drafting pipeline with version-controlled iterations (`v1.0` → `v1.1` → `v2.0`).
   * **Office Vertical Call Support:** Coordinates zone-wise Office Vertical conference calls and assists in publishing client update summaries.
 
 ---
@@ -272,34 +276,35 @@ In dynamic corporate environments, staff members often execute cross-functional 
 Layer 2 provides the day-to-day functional interfaces for administrative management, supervisory controls, and employee self-service.
 
 ```mermaid
-graph LR
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
+flowchart LR
     subgraph AdminBranches["ADMINISTRATIVE (6 Branches)"]
-        A1[User Management]
-        A2[Location & Attendance]
-        A3[Global Task Oversight]
-        A4[System Settings]
-        A5[Security & Audit Viewer]
-        A6[Global Announcements]
+        A1["User Management"]
+        A2["Location & Attendance"]
+        A3["Global Task Oversight"]
+        A4["System Settings"]
+        A5["Security & Audit Viewer"]
+        A6["Global Announcements"]
     end
 
     subgraph ManagerFunctions["MANAGEMENT (8 Functions)"]
-        M1[Task Workflow]
-        M2[Team Management]
-        M3[Performance Monitoring]
-        M4[Workload Management]
-        M5[Attendance Management]
-        M6[Team Communication]
-        M7[Feedback & Evaluation]
-        M8[Issues Management]
+        M1["Task Workflow"]
+        M2["Team Management"]
+        M3["Performance Monitoring"]
+        M4["Workload Management"]
+        M5["Attendance Management"]
+        M6["Team Communication"]
+        M7["Feedback & Evaluation"]
+        M8["Issues Management"]
     end
 
     subgraph EmployeeServices["EMPLOYEE (6 Services)"]
-        E1[Work Management]
-        E2[Attendance & Availability]
-        E3[Request & Self-Service]
-        E4[Notification & Comms]
-        E5[Performance & Activity]
-        E6[Profile & Security]
+        E1["Work Management"]
+        E2["Attendance & Availability"]
+        E3["Request & Self-Service"]
+        E4["Notification & Communication"]
+        E5["Performance & Activity"]
+        E6["Profile & Security"]
     end
 ```
 
@@ -331,12 +336,12 @@ graph LR
 ### 4.2 The Real-Time Availability Engine
 IOTS decouples **Presence (Attendance)** from **Operational State (Availability)**. While attendance verifies that an employee is logged in and working, the Availability Engine communicates their real-time operational capacity through **10 Deterministic States**:
 
-$$\text{AvailabilityState} \in \left\{
-\begin{array}{lllll}
-\text{Available}, & \text{Busy}, & \text{In Meeting}, & \text{On Break}, & \text{In Training}, \\
-\text{Do Not Disturb}, & \text{Working Remotely}, & \text{On Leave}, & \text{Absent}, & \text{Offline}
-\end{array}
-\right\}$$
+```text
+Availability States:
+• Available         • Busy              • In Meeting        • On Break
+• In Training       • Do Not Disturb    • Working Remotely  • On Leave
+• Absent            • Offline
+```
 
 * **Decoupled Architecture:** Setting an availability state (e.g., `In Meeting`) does not pause work hours or alter task deadlines; it informs supervisors and colleagues of immediate capacity.
 * **Audit Trail:** Every availability transition is timestamped and recorded, providing visibility into daily operational patterns and focus time allocation.
@@ -348,26 +353,27 @@ $$\text{AvailabilityState} \in \left\{
 At the heart of IOTS is a deterministic, unified task lifecycle engine. Every operational assignment—whether a brokerage royalty follow-up, a corporate presentation design, or a member acquisition call—is executed through the **same standardized state machine**.
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 stateDiagram-v2
-    [*] --> Created: 1. Create Task (Manager)
-    Created --> DeliverablesDefined: 2. Define Deliverables & Criteria
-    DeliverablesDefined --> Prioritized: 3. Set Priority & Target Due Date
-    Prioritized --> CapacityChecked: 4. Check Capacity & Availability
-    CapacityChecked --> Assigned: 5. Assign Task & Notify Employee
+    [*] --> Created: 1. Create Task
+    Created --> DeliverablesDefined: 2. Define Deliverables
+    DeliverablesDefined --> Prioritized: 3. Set Priority and Due Date
+    Prioritized --> CapacityChecked: 4. Check Capacity
+    CapacityChecked --> Assigned: 5. Assign Task and Notify
     
-    Assigned --> InProgress: 6. Start Work (Employee Logs Progress/Effort)
-    InProgress --> InProgress: Add Notes, Upload Evidence, Log Time
+    Assigned --> InProgress: 6. Start Work
+    InProgress --> InProgress: Log Notes, Effort and Evidence
     
-    InProgress --> WaitingForReview: 7. Submit Deliverables (Upload Proof)
-    WaitingForReview --> UnderReview: 8. Manager Opens Review Queue
+    InProgress --> WaitingForReview: 7. Submit Deliverables
+    WaitingForReview --> UnderReview: 8. Manager Review
     
     state Decision <<choice>>
-    UnderReview --> Decision: Evaluate Against Acceptance Criteria
+    UnderReview --> Decision: Evaluate Criteria
     
-    Decision --> Closed: Approved (Record Sign-off & Final Evidence)
-    Decision --> ChangesRequested: Changes Requested (Record Specific Corrections)
+    Decision --> Closed: Approved and Signed Off
+    Decision --> ChangesRequested: Changes Requested
     
-    ChangesRequested --> InProgress: Employee Revises & Resubmits (v1.1, v2.0)
+    ChangesRequested --> InProgress: Revise and Resubmit
     
     Closed --> [*]
 ```
@@ -380,7 +386,9 @@ stateDiagram-v2
    * Explicit, measurable acceptance criteria are defined (e.g., "Signed 7.5% royalty reconciliation letter", "Finalized PDF market report v2.0", "Verified list of 25 RERA commercial brokers").
 3. **Step 3: Priority & SLA Scheduling**
    * Priority is categorized (`Low`, `Medium`, `High`, `Urgent`). The baseline target completion timestamp is recorded:
-     $$\text{BaselineDueDate} = \text{InitialScheduledDeadline}$$
+     ```text
+     BaselineDueDate = InitialScheduledDeadline (Immutable baseline timestamp)
+     ```
      *Note: This baseline timestamp remains immutable across future extensions for variance auditing.*
 4. **Step 4: Capacity & Availability Verification**
    * The manager reviews the target employee's current active queue, availability state, and pending deadlines to prevent overload.
@@ -404,36 +412,37 @@ stateDiagram-v2
 While all organizational work passes through the standardized 8-step lifecycle, three primary operational pipelines possess domain-specific business rules:
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 flowchart TD
     subgraph Pipe1["1. MEMBERSHIP EXPANSION PIPELINE"]
-        P1A[BDE Researches RERA/Directories] --> P1B[Daily Cold Calls & WhatsApp Intro]
-        P1B --> P1C{Prospect Interested?}
-        P1C -- No --> P1D[Archive / Future Follow-up Queue]
-        P1C -- Yes --> P1E[Schedule GM Discovery Meeting]
-        P1E --> P1F[GM Meeting & Value Proposition]
-        P1F --> P1G[Legal Drafts Agreement & Fee Invoice]
-        P1G --> P1H[Member Signs & Pays Annual Dues]
-        P1H --> P1I[Network Onboarding Complete]
+        P1A["BDE Researches RERA and Directories"] --> P1B["Daily Cold Calls and WhatsApp Intro"]
+        P1B --> P1C{"Prospect Interested?"}
+        P1C -- "No" --> P1D["Archive / Future Follow-up Queue"]
+        P1C -- "Yes" --> P1E["Schedule GM Discovery Meeting"]
+        P1E --> P1F["GM Meeting and Value Proposition"]
+        P1F --> P1G["Legal Drafts Agreement and Fee Invoice"]
+        P1G --> P1H["Member Signs and Pays Annual Dues"]
+        P1H --> P1I["Network Onboarding Complete"]
     end
 
     subgraph Pipe2["2. MEMBER DEAL & 7.5% ROYALTY PIPELINE"]
-        P2A[CRM Lead Broadcast to Network] --> P2B[Receiving Member Accepts Lead]
-        P2B --> P2C[Deal Negotiations & Property Inspection]
-        P2C --> P2D[Concluded Transaction Signed]
-        P2D --> P2E[Brokerage Invoice Raised]
-        P2E --> P2F[Calculate 7.5% Royalty on Giver + Receiver]
-        P2F --> P2G[Lead Manager Follows Up for Payment]
-        P2G --> P2H[Payment Confirmed & Verified in IOTS]
+        P2A["CRM Lead Broadcast to Network"] --> P2B["Receiving Member Accepts Lead"]
+        P2B --> P2C["Deal Negotiations and Property Inspection"]
+        P2C --> P2D["Concluded Transaction Signed"]
+        P2D --> P2E["Brokerage Invoice Raised"]
+        P2E --> P2F["Calculate 7.5% Royalty on Giver and Receiver"]
+        P2F --> P2G["Lead Manager Follows Up for Payment"]
+        P2G --> P2H["Payment Confirmed and Verified in IOTS"]
     end
 
     subgraph Pipe3["3. CREATIVE & RESEARCH PIPELINE"]
-        P3A[Executive Research Brief Received] --> P3B[Data Extraction & Initial Draft v1.0]
-        P3B --> P3C[Design Layout & Typography in InDesign/Illustrator]
-        P3C --> P3D[Internal Proofreading & Copy Validation]
-        P3D --> P3E{Editorial Corrections?}
-        P3E -- Yes --> P3F[Revise Layout / Copy v1.1] --> P3D
-        P3E -- No --> P3G[Manager Sign-Off & High-Res Export]
-        P3G --> P3H[Multi-Channel Publication & Distribution]
+        P3A["Executive Research Brief Received"] --> P3B["Data Extraction and Initial Draft v1.0"]
+        P3B --> P3C["Design Layout and Typography in InDesign/Illustrator"]
+        P3C --> P3D["Internal Proofreading and Copy Validation"]
+        P3D --> P3E{"Editorial Corrections?"}
+        P3E -- "Yes" --> P3F["Revise Layout and Copy v1.1"] --> P3D
+        P3E -- "No" --> P3G["Manager Sign-Off and High-Res Export"]
+        P3G --> P3H["Multi-Channel Publication and Distribution"]
     end
 ```
 
@@ -444,37 +453,40 @@ flowchart TD
 In real-world operations, unexpected delays, resource constraints, and operational roadblocks occur. IOTS provides deterministic, transparent exception-handling workflows.
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 flowchart TD
     subgraph OverdueFlow["OVERDUE WORKFLOW"]
-        OD1[Task Passes Scheduled Due Date] --> OD2{Is Task Closed?}
-        OD2 -- Yes --> OD3([Normal Completion])
-        OD2 -- No --> OD4[Automated System Flag: OVERDUE]
-        OD4 --> OD5[Alert Dispatched to Responsible Manager]
-        OD5 --> OD6{Manager Intervention}
-        OD6 -- Option A --> OD7[Grant Extension: Record Justification<br/>Retain Original Due Date for Audit]
-        OD6 -- Option B --> OD8[Reassign Task: Check New Capacity<br/>Transfer Full Context & History]
-        OD6 -- Option C --> OD9[Escalate to Senior Manager]
+        OD1["Task Passes Scheduled Due Date"] --> OD2{"Is Task Closed?"}
+        OD2 -- "Yes" --> OD3(["Normal Completion"])
+        OD2 -- "No" --> OD4["Automated System Flag: OVERDUE"]
+        OD4 --> OD5["Alert Dispatched to Responsible Manager"]
+        OD5 --> OD6{"Manager Intervention"}
+        OD6 -- "Option A" --> OD7["Grant Extension: Record Justification"]
+        OD6 -- "Option B" --> OD8["Reassign Task: Transfer Context and History"]
+        OD6 -- "Option C" --> OD9["Escalate to Senior Manager"]
     end
 
     subgraph BlockerFlow["BLOCKER & ESCALATION WORKFLOW"]
-        BK1[Employee Encounters Obstacle] --> BK2[Raise Blocker on Task Record]
-        BK2 --> BK3[Specify Severity: Low / Med / High / Critical<br/>Attach Business Impact & Context]
-        BK3 --> BK4[Alert Responsible Manager]
-        BK4 --> BK5{Technical or Business Fault?}
-        BK5 -- Technical Bug/API Outage --> BK6[Route to IT System Analyst]
-        BK5 -- Business/Commercial Dependency --> BK7{Resolvable within Authority?}
-        BK7 -- Yes --> BK8[Manager Resolves Blocker & Notifies]
-        BK7 -- No --> BK9[Escalate to Senior GM / Chairman]
-        BK8 --> BK10[Resume Task Execution]
+        BK1["Employee Encounters Obstacle"] --> BK2["Raise Blocker on Task Record"]
+        BK2 --> BK3["Specify Severity: Low / Med / High / Critical"]
+        BK3 --> BK4["Alert Responsible Manager"]
+        BK4 --> BK5{"Technical or Business Fault?"}
+        BK5 -- "Technical Fault" --> BK6["Route to IT System Analyst"]
+        BK5 -- "Business Dependency" --> BK7{"Resolvable within Authority?"}
+        BK7 -- "Yes" --> BK8["Manager Resolves Blocker and Notifies"]
+        BK7 -- "No" --> BK9["Escalate to Senior GM or Chairman"]
+        BK8 --> BK10["Resume Task Execution"]
         BK9 --> BK10
         BK6 --> BK10
     end
 ```
 
 ### 6.1 Overdue Protocol & Deadline Extensions
-* **Automated Overdue Flagging:** The moment system time surpasses $\text{CurrentDueDate}$ and the task is not in `Closed` status, the system flags the task as `OVERDUE` and dispatches high-priority alerts to the task owner and supervising manager.
+* **Automated Overdue Flagging:** The moment system time surpasses `CurrentDueDate` and the task is not in `Closed` status, the system flags the task as `OVERDUE` and dispatches high-priority alerts to the task owner and supervising manager.
 * **Audited Deadline Extensions:** A manager can grant a deadline extension only by providing an official operational justification. 
-  $$\text{AuditTrail} \leftarrow \text{LogExtension}(\text{TaskID}, \text{BaselineDueDate}, \text{OldDueDate}, \text{NewDueDate}, \text{ManagerReason})$$
+  ```text
+  AuditTrail <- LogExtension(TaskID, BaselineDueDate, OldDueDate, NewDueDate, ManagerReason)
+  ```
   *The original baseline due date is never overwritten, preserving full SLA variance visibility for Layer 3 reporting.*
 
 ### 6.2 Non-Destructive Task Reassignment
@@ -482,7 +494,9 @@ When workload balancing or employee absence requires transferring a task to a ne
 1. **Single Identity Invariant:** The task preserves its unique primary key ID. No duplicate task records are created.
 2. **Context Retention:** All previous progress notes, time logs, and attachment versions remain intact and accessible to the new owner.
 3. **Audit Provenance:** An ownership transfer event is appended to the audit ledger:
-   $$\text{TransferEvent} = \{\text{TaskID}, \text{PreviousOwnerID}, \text{NewOwnerID}, \text{AuthorizingManagerID}, \text{TransferTimestamp}, \text{Reason}\}$$
+   ```text
+   TransferEvent = { TaskID, PreviousOwnerID, NewOwnerID, AuthorizingManagerID, TransferTimestamp, Reason }
+   ```
 
 ### 6.3 Blockers & Escalation Hierarchy
 * **Severity Taxonomy:** Blockers are tagged with explicit severity ratings:
@@ -501,6 +515,7 @@ When workload balancing or employee absence requires transferring a task to a ne
 Underpinning the entire IOTS architecture is the **Shared Operational Records & Audit Database**. It serves as the single source of truth for all organizational activity, ensuring absolute transparency and non-repudiation.
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 erDiagram
     USERS ||--o{ ROLES_ASSIGNMENTS : "possesses"
     USERS ||--o{ LOGIN_AUDIT_LOGS : "generates"
@@ -518,19 +533,18 @@ erDiagram
 ### 7.1 The Append-Only Audit Contract
 Every write operation across the system must satisfy the **IOTS Audit Contract**. Direct database record deletions or unrecorded mutations are strictly prevented at the database schema and ORM levels.
 
-$$\text{AuditEvent} = \left[
-\begin{array}{ll}
-\mathbf{Timestamp}: & \text{ISO 8601 Microsecond Timestamp} \\
-\mathbf{EmployeeID}: & \text{Unique User Identifier} \\
-\mathbf{ActiveRole}: & \text{Role Context Active at Action Time} \\
-\mathbf{ActionType}: & \text{CREATE }|\text{ UPDATE }|\text{ DELETE }|\text{ APPROVE }|\text{ REASSIGN }|\dots \\
-\mathbf{TargetEntity}: & \text{Table / Entity Name and Primary Key ID} \\
-\mathbf{BeforeValue}: & \text{JSON Snapshot of State Before Mutation} \\
-\mathbf{AfterValue}: & \text{JSON Snapshot of State After Mutation} \\
-\mathbf{ReasonNote}: & \text{Mandatory Explanation for Critical Actions} \\
-\mathbf{SourceVector}: & \text{Client IP, User Agent, API Origin}
-\end{array}
-\right]$$
+```text
+AuditEvent Structure:
+  • Timestamp:       ISO 8601 Microsecond Timestamp
+  • EmployeeID:      Unique User Identifier
+  • ActiveRole:      Role Context Active at Action Time
+  • ActionType:      CREATE | UPDATE | DELETE | APPROVE | REASSIGN | ESCALATE
+  • TargetEntity:    Table / Entity Name and Primary Key ID
+  • BeforeValue:     JSON Snapshot of State Before Mutation
+  • AfterValue:      JSON Snapshot of State After Mutation
+  • ReasonNote:      Mandatory Explanation for Critical Actions
+  • SourceVector:    Client IP, User Agent, API Origin
+```
 
 ### 7.2 The 8 Stored Record Families
 1. **User & Identity Records:** Employee profiles, department allocations, role assignments, reporting lines, credential update histories.
@@ -549,26 +563,32 @@ $$\text{AuditEvent} = \left[
 Layer 3 transforms the raw, timestamped operational data captured in Layer 2 into real-time business intelligence, automated executive reports, and performance recognition standings.
 
 ```mermaid
-graph TD
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
+flowchart TD
     subgraph DataIngest["DATA INGESTION & COMPLIANCE"]
-        DB[(Shared Operational Records & Audit Database)] --> ScopeCheck[Validate User Clearance & Data Scope]
-        ScopeCheck --> Deduplicate[Deduplicate Transferred Tasks & Apply Single Identity Rules]
+        DB[("Shared Operational Records and Audit Database")] --> ScopeCheck["Validate User Clearance and Data Scope"]
+        ScopeCheck --> Deduplicate["Deduplicate Tasks and Apply Single Identity Rules"]
     end
 
     subgraph SixPillars["THE SIX ANALYTICS PILLARS"]
-        Deduplicate --> P1[1. Performance Analytics]
-        Deduplicate --> P2[2. Task & Workload Analytics]
-        Deduplicate --> P3[3. Attendance & Presence Analytics]
-        Deduplicate --> P4[4. Exception & Risk Analytics]
-        Deduplicate --> P5[5. Trends & Longitudinal Analytics]
-        Deduplicate --> P6[6. Business & Recognition Analytics]
+        Deduplicate --> P1["1. Performance Analytics"]
+        Deduplicate --> P2["2. Task and Workload Analytics"]
+        Deduplicate --> P3["3. Attendance and Presence Analytics"]
+        Deduplicate --> P4["4. Exception and Risk Analytics"]
+        Deduplicate --> P5["5. Trends and Longitudinal Analytics"]
+        Deduplicate --> P6["6. Business and Recognition Analytics"]
     end
 
     subgraph Outputs["ROLE-SCOPED REPORTING ENGINE"]
-        P1 & P2 & P3 & P4 & P5 & P6 --> ReportEngine[Automated Report Generator]
-        ReportEngine --> RDaily[Daily Operational Briefs]
-        ReportEngine --> RWeekly[Weekly Tactical Reviews]
-        ReportEngine --> RMonthly[Monthly Strategic & Appraisal Ledgers]
+        P1 --> ReportEngine["Automated Report Generator"]
+        P2 --> ReportEngine
+        P3 --> ReportEngine
+        P4 --> ReportEngine
+        P5 --> ReportEngine
+        P6 --> ReportEngine
+        ReportEngine --> RDaily["Daily Operational Briefs"]
+        ReportEngine --> RWeekly["Weekly Tactical Reviews"]
+        ReportEngine --> RMonthly["Monthly Strategic and Appraisal Ledgers"]
     end
 ```
 
@@ -576,7 +596,9 @@ graph TD
 
 #### 1. Performance Analytics
 * **True Completion Ratio:** Measures task closures against total assigned workload over a defined period:
-  $$\text{CompletionRate} = \frac{\text{Tasks Completed Successfully}}{\text{Total Assigned Workload}} \times 100$$
+  ```text
+  Completion Rate (%) = (Tasks Completed Successfully / Total Assigned Workload) * 100
+  ```
   *(Mathematical Rule: If denominator is 0, metric evaluates to `N/A`, avoiding division-by-zero errors).*
 * **On-Time Delivery Index:** Percentage of tasks closed on or before the baseline scheduled deadline versus late closures.
 * **Effort vs. Elapsed Ratio:** Compares total active working effort logged against gross calendar elapsed duration, exposing idle wait periods.
@@ -598,7 +620,12 @@ graph TD
 
 #### 5. Trends & Longitudinal Analytics
 * **Periodic Delta Tracking:** Compares performance metrics across standard chronological intervals:
-  $$\Delta_{\text{Day}} = \text{Today} \text{ vs } \text{Yesterday}, \quad \Delta_{\text{Week}} = \text{Current Week} \text{ vs } \text{Prior Week}, \quad \Delta_{\text{Month}} = \text{Current Month} \text{ vs } \text{Prior Month}$$
+  ```text
+  Periodic Variance Formulas:
+    • Day Variance:   Today vs Yesterday
+    • Week Variance:  Current Week vs Prior Week
+    • Month Variance: Current Month vs Prior Month
+  ```
 * **Workload Velocity Trends:** Forecasts milestone delivery trajectories based on historical completion speeds.
 
 #### 6. Business & Commercial Analytics
@@ -613,22 +640,17 @@ graph TD
 To enforce data privacy, prevent unauthorized disclosure, and deliver relevant context, all reports are filtered through a strict **Role-Scoped Recipient Filter**:
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
 flowchart TD
-    ReportReq[Report Generation Triggered] --> FilterScope{Evaluate Active User Role}
+    ReportReq["Report Generation Triggered"] --> FilterScope{"Evaluate Active User Role"}
     
-    FilterScope -- Chairman --> OutChairman[Full Enterprise Overview<br/>7.5% Royalty Pipeline Health<br/>Company Attendance Summaries<br/>Executive Requires Attention Queue<br/>Appraisal Export Templates]
-    
-    FilterScope -- General Manager --> OutGM[Complete Operations Throughput<br/>Board Governance Actions<br/>Finance & Audit Status<br/>Member Network Expansion Data]
-    
-    FilterScope -- Senior Manager --> OutSM[Cross-Team Capacity Balances<br/>SLA Breach Risk Warnings<br/>Escalated Decision Records<br/>Comparative Team Metrics]
-    
-    FilterScope -- Lead Manager --> OutLM[Direct Team Performance<br/>Review Queue Backlog<br/>Deal & Royalty Follow-Up Status<br/>Vertical Calls Progress]
-    
-    FilterScope -- Admin / Super Admin --> OutAdmin[User Accounts & Role Distribution<br/>Geofence & Attendance Exceptions<br/>Security Audit Logs & Export Trails]
-    
-    FilterScope -- IT System Analyst --> OutIT[Platform Uptime & Query Latency<br/>API Integration Health & Error Rates<br/>Technical Incident Lifecycles<br/>Deployment & Schema Migration Logs]
-    
-    FilterScope -- Executive / BDE / Creatives --> OutStaff[Personal Task Completion Metrics<br/>Personal Attendance & Hours Summary<br/>Individual Target Progress<br/>Quarterly Reward Standing]
+    FilterScope -- "Chairman" --> OutChairman["Full Enterprise Overview & Royalty Health"]
+    FilterScope -- "General Manager" --> OutGM["Operations Throughput & Governance Actions"]
+    FilterScope -- "Senior Manager" --> OutSM["Cross-Team Capacity & SLA Risk Warnings"]
+    FilterScope -- "Lead Manager" --> OutLM["Team Performance & Deal Follow-Up Status"]
+    FilterScope -- "Admin / Super Admin" --> OutAdmin["User Accounts & Security Audit Logs"]
+    FilterScope -- "IT System Analyst" --> OutIT["Platform Uptime & API Integration Health"]
+    FilterScope -- "Executive / BDE / Creatives" --> OutStaff["Personal Task Metrics & Attendance Summary"]
 ```
 
 ### 8.3 The Gamified Recognition & Reward Architecture
@@ -668,13 +690,14 @@ To drive employee motivation and institutional excellence, IOTS incorporates an 
 While the architectural blueprint in `gem_new_final-version.drawio` is technically complete, several **business policy decisions** require formal corporate leadership determination prior to database seed deployment:
 
 ```mermaid
-graph TD
+%%{init: {"themeVariables": {"fontSize": "18px"}, "flowchart": {"nodeSpacing": 36, "rankSpacing": 45}}}%%
+flowchart TD
     subgraph Decisions["POLICY DECISIONS REQUIRING LEADERSHIP SIGN-OFF"]
-        D1["1. Approval & Escalation Matrix<br/>• Exact SLA hours before auto-escalation<br/>• Delegated financial approval thresholds"]
-        D2["2. Attendance & Geofencing Parameters<br/>• Office radius tolerance (e.g., 100m vs 250m)<br/>• Morning arrival grace period (e.g., 15m vs 30m)<br/>• Break accounting rules"]
-        D3["3. Reporting & Appraisal Templates<br/>• Automated dispatch schedules (e.g., 08:00 daily)<br/>• Standardized Chairman appraisal export format"]
-        D4["4. Recognition Weights & Scoring<br/>• Relative weighting: Task Velocity vs Quality<br/>• Quarterly award bonus and recognition structures"]
-        D5["5. CRM Integration & Synchronization<br/>• Batch polling vs real-time webhook ingestion<br/>• Lead provenance preservation rules"]
+        D1["1. Approval & Escalation Matrix: SLA hours and financial thresholds"]
+        D2["2. Attendance & Geofencing Parameters: Office radius and grace periods"]
+        D3["3. Reporting & Appraisal Templates: Standard dispatch schedules"]
+        D4["4. Recognition Weights & Scoring: Task velocity vs quality formula"]
+        D5["5. CRM Integration & Synchronization: Polling vs webhook ingestion"]
     end
 ```
 
@@ -682,7 +705,7 @@ graph TD
 - [ ] **Policy 1 (Escalation Thresholds):** Define exact SLA elapsed hours for Task Inactivity (e.g., 48 hours) and High-Severity Blockers (e.g., 4 hours) prior to automated managerial escalation.
 - [ ] **Policy 2 (Attendance & Grace Limits):** Confirm standard office check-in window (e.g., 09:30), maximum grace duration (e.g., 15 minutes), and monthly allowable late-arrival instances before formal HR flagging.
 - [ ] **Policy 3 (Appraisal Export Layout):** Review and freeze the executive appraisal template layout generated by Layer 3 for annual compensation and promotion reviews.
-- [ ] **Policy 4 (Reward Weightings):** Approve the numerical formula weighting on-time task completion ($40\%$), deliverable quality ($30\%$), and role-specific KPI targets ($30\%$) for the 3-consecutive-month excellence award.
+- [ ] **Policy 4 (Reward Weightings):** Approve the numerical formula weighting on-time task completion (40%), deliverable quality (30%), and role-specific KPI targets (30%) for the 3-consecutive-month excellence award.
 - [ ] **Policy 5 (CRM Data Ingestion SLA):** Ratify the protocol for synchronizing concluded CRM brokerage deals and 7.5% royalty status milestones into the IOTS operational follow-up queue.
 
 ---
