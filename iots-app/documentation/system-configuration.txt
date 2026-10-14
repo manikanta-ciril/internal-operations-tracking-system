@@ -1,0 +1,299 @@
+IOTS SYSTEM CONFIGURATION INVENTORY
+===================================
+
+Purpose
+-------
+This file turns the IOTS system diagram into a buildable list of systems. It
+keeps related logic in one place, gives frontend and backend teams the same
+language, and avoids building the same rules separately in every dashboard.
+
+The systems below are modules, not necessarily separate microservices. Begin
+with a modular backend and shared database. Split a module into a service only
+when scale, ownership, security, or integration needs make that worthwhile.
+
+Core platform systems
+---------------------
+
+1. Identity, Login and Session System
+   Purpose: Let a person sign in, identify the employee, create or end a
+   session, allow role switching, and record failed login attempts.
+   Owns: accounts, passwords or identity-provider links, sessions, password
+   changes, active-session termination, login history, and invalid-login
+   notices.
+   Depends on: RBAC, Audit, Notification.
+
+2. Location Validation System
+   Purpose: At login, check-in, and approved field work, record whether the
+   session is onsite, remote, or location unknown. It must tag the record; it
+   must not hard-block normal work merely because location is unavailable.
+   Owns: geofence rules, approved work locations, captured coordinates,
+   location result, exception reason, and review queue.
+   Depends on: Identity and Session, Attendance, Audit.
+
+3. RBAC and Mandate System
+   Purpose: Decide what a person may see and do for the currently active role.
+   Authority follows configured mandate and assigned scope, not a job title
+   shown in the user interface.
+   Owns: employees, roles, role assignments, teams, departments, branches,
+   reporting scopes, permissions, approval mandates, and role-switch refresh.
+   Depends on: Identity and Session. Used by every API endpoint.
+
+4. Auditing and Operational History System
+   Purpose: Preserve a trustworthy, append-only record of important actions.
+   Every record explains who acted, in which active role, when, on which item,
+   what changed, why it changed, and whether the source was a person or system.
+   Owns: audit events, before/after values, reasons, source references,
+   export history, report-generation history, and configuration change history.
+   Depends on: all write systems. It is a cross-cutting module, not an optional
+   screen feature.
+
+5. Shared Records and Business Linkage System
+   Purpose: Give every operational item a stable identity and link it to the
+   business context that created it.
+   Owns: employee IDs, task IDs, request IDs, issue IDs, business entity IDs,
+   CRM references, member references, campaign references, incident references,
+   and relationship history.
+   Key rule: a task keeps one ID for its whole life, including transfers. It
+   retains original due date, approved changed date, prior owner history, and
+   overdue history.
+
+Work management systems
+-----------------------
+
+6. Task and Work Lifecycle System
+   Purpose: Create, assign, execute, review, revise, close, or separately
+   cancel work through controlled state changes.
+   Owns: deliverables, owners, due dates, priority, work state, assignments,
+   transfers, estimated effort, first submission time, review decisions, and
+   closure records.
+   Key rule: notes, effort, and files are activity records. They do not change
+   a task's formal state by themselves.
+   Depends on: RBAC, Evidence, Notification, Audit, Business Linkage.
+
+7. Evidence and File Verification System
+   Purpose: Make work reviewable with proof instead of verbal confirmation.
+   Owns: required-evidence checklists, files, file hashes, versions, storage
+   references, location proof, external confirmations, outreach logs,
+   publication proof, submitted/accepted/rejected/superseded status, reviewer,
+   and rejection reason.
+   Key rule: required evidence is complete before review; a reviewer other than
+   the submitter accepts required items before closure.
+   Depends on: Task Lifecycle, File Storage/Scanning, Audit.
+
+8. Attendance and Availability System
+   Purpose: Record check-in, checkout, breaks, work hours, availability, leave,
+   and exceptions fairly.
+   Owns: attendance events, onsite/remote/unknown result, breaks, shift rules,
+   complete working-hour calculation, leave, permission, absence, late arrival,
+   missing checkout, and the ten availability statuses.
+   Key rule: attendance, session activity, and task effort are separate facts.
+   Depends on: Identity, Location Validation, Request and Approval, Audit.
+
+9. Request and Approval System
+   Purpose: Let employees submit leave, permission, remote-work, attendance
+   correction, deadline extension, resource, and guidance requests.
+   Owns: request type, dates, explanation, evidence, assigned approver,
+   mandate check, decision, decision reason, and decision history.
+   Depends on: RBAC and Mandate, Attendance, Task Lifecycle, Notification,
+   Audit.
+
+10. Issues, Blockers and Escalation System
+    Purpose: Record work blockers, measure how long they remain open, route them
+    to the right authority, and keep a clear decision trail.
+    Owns: linked task or entity, severity, business impact, evidence, owner,
+    escalation level, next review date, resolution, verification, and closure.
+    Depends on: Task Lifecycle, RBAC and Mandate, Notification, Audit.
+
+11. Feedback, Evaluation and Recognition System
+    Purpose: Record manager feedback and evaluate eligibility for recognition
+    from fair, configured evidence-based rules.
+    Owns: feedback entries, evaluation periods, qualified/not-qualified result,
+    score inputs, recognition review items, and evidence packs.
+    Key rule: rules qualify and rank people; authorised people make the final
+    recognition decision. Targets and weights are configured and versioned.
+    Depends on: Analytics, Task, Attendance, Evidence, Audit.
+
+Communication systems
+---------------------
+
+12. Notification and Reminder System
+    Purpose: Tell the right person when a task, review, request, issue, deadline
+    or important system event needs attention.
+    Owns: event rules, recipients, delivery channel, read status, reminder
+    schedule, escalation schedule, and delivery outcome.
+    Depends on: all event-producing modules, RBAC, Audit.
+
+13. Messaging System
+    Purpose: Keep conversations attached to the work, request, member, deal, or
+    issue they concern.
+    Owns: message threads, linked entity, sender, recipients, timestamps,
+    attachments or evidence links, and read state.
+    Depends on: RBAC, Evidence/File System, Notification, Audit.
+
+14. Email Routing System
+    Purpose: Send authorised notices, reminders, reports, and escalations by
+    email while retaining a delivery record.
+    Owns: approved templates, recipient routing, send queue, retry outcome,
+    bounce/failure result, and delivery audit.
+    Key rule: email is a delivery channel, not the source of truth. The IOTS
+    record and audit event remain the official history.
+    Depends on: Notification, Report Generation, Audit.
+
+Decision and intelligence systems
+---------------------------------
+
+15. Analytics and Metric System
+    Purpose: Calculate one shared definition of operational measures for every
+    authorised dashboard and report.
+    Owns: metric definitions, numerator, denominator, period, scope, source,
+    data-as-of time, definition version, minimum sample rule, and N/A behavior.
+    Examples: completion, on-time delivery, revision rate, first-time acceptance,
+    overdue age, active effort, attendance, punctuality, review delay, request
+    response time, blocker resolution time, and evidence completeness.
+    Key rule: missing target means "Target not configured"; zero denominator is
+    "N/A"; small samples show counts, not misleading percentages.
+    Depends on: Shared Records, Task, Evidence, Attendance, Request, Issue.
+
+16. Risk Detection and Routing System
+    Purpose: Detect overdue work, no-activity risk, review delay, repeated
+    transfers, evidence rejection, location exception, unresolved blocker,
+    pending request, overload, unpaid royalty, or security anomaly.
+    Owns: rule version, severity, duration, business impact, assigned owner,
+    source records, open/cleared state, and clearing condition.
+    Key rule: the system flags risk; an authorised person decides what to do.
+    Depends on: Analytics, Notification, RBAC, Audit.
+
+17. Report Generation and Export System
+    Purpose: Build dashboard, PDF, Excel, authorised-email, and appraisal
+    outputs from records the recipient is allowed to see.
+    Owns: report templates, filters, recipient scope, generation job, snapshot
+    time, export file, delivery status, and audit event.
+    Required filters: period, employee, manager, team, role, department, branch,
+    priority, status, request, attendance, and risk.
+    Depends on: RBAC, Analytics, Email Routing, Audit.
+
+Business workflow systems
+-------------------------
+
+18. Membership Workflow System
+    Purpose: Track member work from research through outreach, response,
+    follow-up, GM meeting, agreement/fee coordination, and outcome.
+    Owns: prospect/member record, contacts, dated follow-up, stage history,
+    handoff, agreement evidence, and outcome.
+    Depends on: Task, Evidence, Messaging, Notification, Report, CRM Sync.
+
+19. Deal and Royalty Follow-up System
+    Purpose: Track internal ownership and evidence for deal follow-up and CIRIL
+    royalty collection while the CRM remains the financial source of truth.
+    Owns: CRM link, follow-up owner, receiving-member response, proposal or
+    negotiation status, brokerage confirmation evidence, royalty due/collected
+    status, verification time, and unresolved follow-up.
+    Key rule: IOTS does not invent CRM money figures. Royalty assumptions and
+    brokerage shares must be configured or confirmed.
+    Depends on: CRM Integration, Task, Evidence, Analytics, Notification.
+
+20. Creative Delivery System
+    Purpose: Track briefs, research inputs, draft, proofreading, design, review,
+    corrections, approval, publishing/printing, and proof of publication.
+    Owns: creative brief, asset versions, reviewers, revision cycles, final
+    links, distribution record, and publication proof.
+    Depends on: Task, Evidence, Messaging, Notification, Analytics.
+
+21. Governance and Organisation Commitments System
+    Purpose: Track board actions, statutory filings, invoices, agreements,
+    renewal work, events, and other company commitments.
+    Owns: commitment, owner, due date, evidence, review state, decision, and
+    completion record.
+    Depends on: Task, Evidence, Request/Approval, Notification, Audit.
+
+Administration, configuration and platform systems
+--------------------------------------------------
+
+22. Employee and Organisation Directory System
+    Purpose: Maintain the official employee, team, department, branch, manager,
+    role-assignment, and profile data used by every other module.
+    Owns: employee identity, employment status, reporting relationship, team,
+    department, branch, profile completeness, and active role assignment.
+    Depends on: Identity and RBAC. Used everywhere.
+
+23. Configuration and Policy Versioning System
+    Purpose: Keep thresholds, targets, grace periods, holiday calendars,
+    geofences, approval mandates, report schedules, scoring weights, and
+    retention rules configurable rather than hard-coded.
+    Owns: versioned configuration values, effective dates, change reason,
+    approver, and rollback history.
+    Depends on: RBAC, Audit. Used by every rules-based module.
+
+24. File Storage, Security Scanning and Retention System
+    Purpose: Store evidence safely, scan files, protect sensitive personal data,
+    retain what is required, and remove or redact data according to policy.
+    Owns: storage reference, hash, scan state, access grant, retention policy,
+    redaction, deletion schedule, and recovery record.
+    Depends on: Evidence, Messaging, Audit, Security.
+
+25. CRM Integration and Sync Monitoring System
+    Purpose: Synchronise only agreed CRM entities and make freshness visible.
+    Owns: external IDs, sync job, last successful sync, failure reason, retry,
+    data source time, mapping version, and reconciliation status.
+    Depends on: Membership, Deal/Royalty, Analytics, Notification, Audit.
+
+26. Platform Health and Incident System
+    Purpose: Measure the health of IOTS itself and manage technical incidents.
+    Owns: uptime, latency, error rate, authentication anomalies, deployment
+    records, migration records, backup result, recovery test, incident timeline,
+    owner, severity, and resolution time.
+    Depends on: Audit, Notification, Configuration.
+
+27. Privacy, Security and Compliance System
+    Purpose: Apply data minimisation, legal review, access review, retention,
+    export control, and security monitoring across the platform.
+    Owns: privacy classification, consent/legal basis where required, access
+    reviews, privileged access review, export register, redaction rule, and
+    security incident link.
+    Key boundary: IOTS tracks work records, attendance, evidence, and location
+    only at login, check-in, and field tasks. It does not perform keystroke,
+    screen, or continuous location monitoring.
+
+Recommended build order
+-----------------------
+
+Phase 1 - Shared foundation
+  1. Employee and Organisation Directory
+  2. Identity, Login and Session
+  3. RBAC and Mandate
+  4. Shared Records and Business Linkage
+  5. Auditing and Operational History
+  6. Configuration and Policy Versioning
+
+Phase 2 - Daily work creation
+  7. Task and Work Lifecycle
+  8. Evidence and File Verification
+  9. Notification and Reminder
+ 10. Attendance and Availability
+ 11. Request and Approval
+ 12. Issues, Blockers and Escalation
+
+Phase 3 - Management visibility
+ 13. Analytics and Metric
+ 14. Risk Detection and Routing
+ 15. Report Generation and Export
+ 16. Messaging and Email Routing
+ 17. Feedback, Evaluation and Recognition
+
+Phase 4 - CIRIL business operations and platform hardening
+ 18. Membership Workflow
+ 19. Deal and Royalty Follow-up with CRM Sync Monitoring
+ 20. Creative Delivery and Governance Commitments
+ 21. File Security and Retention
+ 22. Platform Health, Incident, Privacy, Security, and Compliance
+
+Development rule of thumb
+-------------------------
+
+Build shared systems once and let dashboards call versioned APIs. Do not place
+permission decisions, metric formulas, approval rules, or data-writing logic in
+the React frontend. The backend should own writes, scopes, rules, and audit
+events. The frontend should show only the authorised data returned by the API.
+
+This organisation lets different developers work in parallel by module while
+sharing the same record IDs, audit contract, API standards, and role scope.
