@@ -1,0 +1,118 @@
+.tab-view {
+  animation: tab-arrive .24s ease-out both;
+  min-height: min(680px, calc(100vh - 190px));
+}
+
+.tab-view.section {
+  margin-bottom: 0;
+}
+
+.today-followup {
+  margin-top: 34px;
+}
+
+.today-followup .section-heading {
+  margin-bottom: 15px;
+}
+
+.today-followup .task-row:last-child {
+  border-radius: 0 0 14px 14px;
+}
+
+.schedule-view,
+.review-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(255px, .8fr);
+  align-items: start;
+  gap: 20px;
+}
+
+.schedule-aside,
+.review-aside {
+  display: grid;
+  gap: 12px;
+}
+
+.schedule-aside-card,
+.review-aside-card {
+  padding: 21px;
+}
+
+.schedule-aside-card h3,
+.review-aside-card h3 {
+  margin: 9px 0 6px;
+  color: #303a41;
+  font-size: 17px;
+  letter-spacing: -.025em;
+}
+
+.schedule-aside-card > p,
+.review-aside-card > p {
+  margin: 0 0 17px;
+  color: #89959a;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.schedule-aside-card > div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 0;
+  border-top: 1px solid #eef0ed;
+}
+
+.schedule-aside-card > div strong {
+  color: #59666d;
+  font-size: 11px;
+}
+
+.schedule-aside-card > div span {
+  color: #929da1;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.review-aside-card ul {
+  margin: 0;
+  padding-left: 17px;
+  color: #66747b;
+  font-size: 11px;
+  line-height: 1.9;
+}
+
+.review-view .review-body {
+  min-height: 250px;
+}
+
+.schedule-view .schedule-item,
+.review-view .review-item {
+  min-height: 67px;
+}
+
+@keyframes tab-arrive {
+  from { opacity: .55; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1050px) {
+  .schedule-view,
+  .review-view {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tab-view {
+    min-height: calc(100vh - 190px);
+  }
+
+  .today-followup .text-button {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-view {
+    animation: none;
+  }
+}
