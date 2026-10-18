@@ -1,0 +1,6 @@
+1. need to add otp based verification for password update or change for the particular user.
+2. Authenticating with mobile number, and email apart from username.
+3. login without password.
+4. every action done on authentication system needs to be logged on the database that is configured.
+5. designing all the shared components of the users completely in the iots-system.svg or .drawio file as well.
+6. dashboards designs completely.
