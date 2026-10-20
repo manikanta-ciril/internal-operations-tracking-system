@@ -1,0 +1,40 @@
+.login-page {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: 88px;
+  overflow-x: clip;
+}
+.login-sheet { position: fixed; inset: 0; z-index: -1; overflow: clip; pointer-events: none; background: #cac1ab; }
+.dark .login-sheet { background: #202830; }
+.login-main {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 36px;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 32px 24px;
+}
+.login-brand { min-width: 0; width: 100%; display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+/* Crop transparent asset margins so the visible mark aligns with the heading. */
+.login-logo { position: relative; width: 220px; max-width: 100%; aspect-ratio: 1495 / 383; overflow: hidden; margin-bottom: 28px; }
+.login-logo img { position: absolute; width: 119.532%; max-width: none; height: auto; left: -8.1605%; top: -40.731%; }
+@media (min-width: 640px) { .login-logo { width: 280px; } }
+.login-title { font-size: clamp(27px, 7.7vw, 44px); font-weight: 700; line-height: 1.12; letter-spacing: -.03em; margin: 0; }
+.login-pane { width: 100%; min-width: 0; max-width: 520px; }
+.login-footer { position: relative; z-index: 10; padding: 20px 16px; text-align: center; }
+@media (min-width: 1024px) {
+  .login-main { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; padding: 32px clamp(40px, 4.5vw, 64px); }
+  .login-brand { align-self: start; align-items: flex-start; text-align: left; margin-top: max(0px, calc(50svh - 280px)); }
+  .login-title { font-size: clamp(40px, 3.85vw, 56px); }
+  .login-pane { justify-self: end; }
+}
+@media (max-width: 360px) { .login-main { padding-inline: 16px; } }

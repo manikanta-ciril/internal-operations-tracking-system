@@ -1,0 +1,23 @@
+.ca-topbar-actions{display:flex;align-items:center;gap:12px}.ca-topbar-actions .theme-toggle{min-height:40px}
+:root.dark{color:#f8f8f8;background:#202830}
+.dark .ca-app{background:#202830;color:#f8f8f8}
+.dark .ca-app :is(.topbar,.count-card,.panel,.task-row,.schedule-item,.review-item,.task-drawer,.scope-disclosure,.personal-surface,.inbox-row){background:#22272f;border-color:#4a4943;color:#f8f8f8}
+.dark .ca-app :is(.work-toolbar,.category-row,.schedule-header,.review-tabs,.page-footer,.drawer-rule,.scope-content,.scope-item,.scope-item-body,.panel-detail,.plain-row,.request-row,.inbox-row,.profile-info dl>div,.schedule-aside-card>div){border-color:#4a4943}
+.dark .ca-app :is(.topbar,.count-card strong,.count-card>span:not(.count-icon),.task-title,.schedule-copy strong,.review-item strong,.detail-grid dd,.task-drawer h3,.scope-item>summary strong,.personal-heading h1,.personal-detail h3,.profile-info h3,.security-surface h3,.plain-row>strong,.list-heading strong,.request-row strong,.inbox-row strong,.profile-info dd,.schedule-aside-card h3,.review-aside-card h3){color:#f3f4f3}
+.dark .ca-app :is(.welcome-line p,.section-heading p,.count-card small,.subtle-count,.segmented button,.search-wrap,.category-row,.task-meta,.task-due,.empty-state,.schedule-copy small,.panel-footnote,.review-tabs button,.review-item small,.page-footer,.drawer-context,.detail-grid dt,.task-drawer h3+p,.scope-disclosure>summary small,.scope-item>summary small,.scope-item-body ul,.scope-item-body p,.panel-detail,.personal-primary p,.plain-row>span,.plain-row small,.view-note,.list-heading span,.request-row small,.inbox-row small,.inbox-row>span:nth-child(2)>span,.profile-identity p,.profile-info dt,.security-surface p,.schedule-aside-card>p,.review-aside-card>p,.schedule-aside-card>div strong,.schedule-aside-card>div span,.review-aside-card ul){color:#bcc4c7}
+.dark .ca-app :is(.segmented,.date-block,.review-mark,.icon-button,.personal-primary,.profile-identity){background:#343b41;color:#f3f4f3}
+.dark .ca-app .segmented button.active{background:#535047;color:#fff}
+.dark .ca-app :is(.search-wrap,.category-row select){background:#22272f;border-color:#666357;color:#f8f8f8}
+.dark .ca-app .search-wrap input{color:#f8f8f8}
+.dark .ca-app .search-wrap input::placeholder{color:#bac1c4}
+.dark .ca-app :is(.task-row:hover,.schedule-item:hover,.review-item:hover,.scope-disclosure>summary:hover,.scope-item>summary:hover,.panel-detail summary:hover,.inbox-row:hover){background:#343b41}
+.dark .ca-app :is(.demo-pill,.drawer-note,.date-today,.request-state,.sender-avatar){background:#3e382f;border-color:#756044;color:#eed1aa}
+.dark .ca-app :is(.section-eyebrow,.text-button,.section-number,.scope-count,.scope-column h3,.scope-item-plus,.source-tag,.panel-detail summary,.personal-label,.drawer-top,.review-tabs button.active,.review-tabs span){color:#ddbc90}
+.dark .ca-app .text-button:hover{color:#f3d8b4}
+.dark .ca-app :is(.small-status,.request-state.approved,.status-approved,.mint){background:#2d4034;color:#b7ddc3}
+.dark .ca-app :is(.lavender,.status-waiting-for-review){background:#3b3448;color:#dcc9f3}
+.dark .ca-app :is(.peach,.status-changes-requested){background:#49352f;color:#f1bda4}
+.dark .ca-app :is(.status,.status-in-progress,.request-state.in-review){background:#303e4b;color:#bed4ed}
+.dark .ca-app .status-waiting-for-input{background:#453f2c;color:#ead49a}
+.dark .ca-app .mobile-menu-button{background:#343b41;color:#f8f8f8}
+@media(max-width:600px){.ca-topbar-actions{gap:8px}.ca-topbar-actions .demo-pill{display:none}.ca-topbar-actions .theme-toggle{padding:7px 10px}}
