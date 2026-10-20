@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('node:path').join(require('../config/paths').backend, '.env') });
 const mysql = require('mysql2/promise');
 module.exports = mysql.createPool({
   host: process.env.DB_HOST || '127.0.0.1',

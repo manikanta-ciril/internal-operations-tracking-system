@@ -56,3 +56,25 @@ CREATE TABLE IF NOT EXISTS photo_evidence_details (
   details JSON NOT NULL,
   FOREIGN KEY (photo_id) REFERENCES photo_evidence(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS checkout_checks (
+  session_hash CHAR(64) PRIMARY KEY,
+  stage VARCHAR(30) NOT NULL,
+  location_json JSON NOT NULL,
+  checked_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (session_hash) REFERENCES sessions(token_hash) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS checkout_evidence (
+  id CHAR(36) PRIMARY KEY,
+  employee_id INT NOT NULL,
+  session_hash CHAR(64) NOT NULL UNIQUE,
+  sign_in_photo_id CHAR(36) NOT NULL UNIQUE,
+  storage_path VARCHAR(300) NOT NULL,
+  file_size INT NOT NULL,
+  sha256 CHAR(64) NOT NULL,
+  captured_at DATETIME NOT NULL,
+  checked_out_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  details JSON NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id),
+  FOREIGN KEY (sign_in_photo_id) REFERENCES photo_evidence(id)
+);

@@ -1,8 +1,8 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('node:path').join(__dirname, '../.env') });
 const mysql = require('mysql2/promise');
 const fs = require('node:fs');
 const path = require('node:path');
-const { hash } = require('./passwords');
+const { hash } = require('../src/auth/passwords');
 const roles = [
   ['chairman', 'Chairman'], ['senior-manager', 'Senior Manager'],
   ['general-manager', 'General Manager'], ['executive', 'Executive'],
@@ -31,7 +31,9 @@ async function seed() {
     multipleStatements: true,
   });
   try {
-    await connection.query(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
+    const database = process.env.DB_NAME || 'iots_auth_temp';
+    if (!/^[a-zA-Z0-9_]+$/.test(database)) throw new Error('Invalid database name.');
+    await connection.query(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8').replaceAll('iots_auth_temp', database));
     await connection.beginTransaction();
     for (const [code, label] of roles) {
       await connection.execute('INSERT IGNORE INTO roles (code,label) VALUES (?,?)', [code, label]);

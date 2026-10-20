@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { assessLocation } = require('./location');
+const { assessLocation } = require('../src/location/assess');
 const office = { latitude: 17, longitude: 78, radiusMeters: 20 };
 const fix = (metres, accuracy = 1) => ({ latitude: office.latitude + metres / 6371000 * 180 / Math.PI, longitude: office.longitude, accuracy, timestamp: Date.now() });
 assert.equal(assessLocation(fix(0), office).status, 'onsite');
@@ -14,4 +14,9 @@ assert.equal(assessLocation({ ...fix(0), latitude: '17' }, office).status, 'unkn
 assert.equal(assessLocation({ ...fix(0), latitude: 91 }, office).status, 'unknown');
 assert.equal(assessLocation({ ...fix(0), timestamp: Date.now() - 180000 }, office).status, 'unknown');
 assert.equal(assessLocation(fix(0), { ...office, latitude: null }).status, 'unknown');
-console.log('PASS: 20m boundary, onsite, offsite, GPS uncertainty, missing, malformed, stale and unconfigured positions.');
+const widerOffice = { ...office, radiusMeters: 50 };
+assert.equal(assessLocation(fix(40, 2), widerOffice).status, 'onsite');
+assert.equal(assessLocation(fix(50, 0), widerOffice).status, 'onsite');
+assert.equal(assessLocation(fix(55, 2), widerOffice).status, 'offsite');
+assert.equal(assessLocation(fix(49, 5), widerOffice).status, 'unknown');
+console.log('PASS: 20m and 50m boundaries, onsite, offsite, GPS uncertainty, missing, malformed, stale and unconfigured positions.');

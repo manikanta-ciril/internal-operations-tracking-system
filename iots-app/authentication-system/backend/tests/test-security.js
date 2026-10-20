@@ -1,0 +1,31 @@
+const assert = require('node:assert/strict');
+const { createLoginLimiter, clientAddress } = require('../src/auth/login-limiter');
+const { hash, verify } = require('../src/auth/passwords');
+const { requireCheck, requireCaptureTime } = require('../src/auth/session-state');
+
+(async () => {
+  let now = 0;
+  const limiter = createLoginLimiter(() => now);
+  for (let i = 0; i < 10; i++) limiter.consume('shared-proxy', 'vijay')(false);
+  assert.equal(limiter.consume('shared-proxy', 'vijay'), null);
+  limiter.consume('shared-proxy', 'manasa')(true);
+  assert.equal(limiter.consume('shared-proxy', 'vijay'), null, 'Another account must not reset the failed account.');
+  assert.ok(limiter.consume('another-client', 'ipsheeta'));
+  now += 60001;
+  assert.ok(limiter.consume('shared-proxy', 'vijay'));
+  assert.equal(clientAddress({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'x-iots-client-ip': '10.0.0.42', 'x-iots-proxy-token': 'spoof' } }), '127.0.0.1');
+  const secret = require('../src/auth/proxy-secret');
+  assert.equal(clientAddress({ socket: { remoteAddress: '127.0.0.1' }, headers: { 'x-iots-client-ip': '10.0.0.42', 'x-iots-proxy-token': secret } }), '10.0.0.42');
+  const stored = hash('memory-only');
+  let timerFired = false;
+  setTimeout(() => { timerFired = true; }, 0);
+  const results = await Promise.all(Array.from({ length: 12 }, () => verify('memory-only', stored)));
+  assert.ok(results.every(Boolean)); assert.equal(timerFired, true, 'Verification must yield to the event loop.');
+  assert.equal(await verify('wrong', stored), false);
+  assert.equal(await verify('missing-account'), false);
+  const location = { checkId: 'current', captureAfter: Date.now() };
+  assert.throws(() => requireCheck(location, 'stale'), { status: 409 });
+  assert.throws(() => requireCaptureTime(Date.now() - 30000, location), { status: 400 });
+  requireCaptureTime(Date.now(), location);
+  console.log('PASS: independent failure budgets, spoofed proxy rejection, async password verification and capture chronology.');
+})().catch(error => { console.error(error); process.exitCode = 1; });
