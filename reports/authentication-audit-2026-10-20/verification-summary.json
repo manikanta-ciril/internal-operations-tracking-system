@@ -1,0 +1,25 @@
+{
+  "pdfPages": 21,
+  "findings": 12,
+  "severity": {
+    "high": 2,
+    "medium": 9,
+    "low": 1
+  },
+  "newRuntimeObservedFindings": [
+    "AUTH-08",
+    "AUTH-09",
+    "AUTH-10"
+  ],
+  "applicationSourceFilesUnchanged": true,
+  "reviewedSourceHashes": 21,
+  "databaseCountsBeforeAndAfter": {
+    "employees": 10,
+    "sessions": 0,
+    "signInPhotos": 1,
+    "checkoutPhotos": 1
+  },
+  "authenticationApiPostRequestsIssued": 0,
+  "applicationFixesApplied": false,
+  "printOverflow": false
+}

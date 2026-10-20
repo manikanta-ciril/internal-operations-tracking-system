@@ -1,0 +1,90 @@
+{
+  "baselineCommit": "bd82321cfebdcd538fd8e39bb4f8cf65abfa845b",
+  "workingTreeReview": true,
+  "files": [
+    {
+      "path": "iots-app/backend/AUTH_SETUP.md",
+      "sha256": "7a1237fbdf62396ef206b50b9ace30dfa04082870dbc17e894c69a078a3fae9a"
+    },
+    {
+      "path": "iots-app/backend/checkout/routes.js",
+      "sha256": "00a4fc78f8a6eb4013ff25a69c45828118fc6edee98f49c85227a3128d48d183"
+    },
+    {
+      "path": "iots-app/backend/evidence/encode.js",
+      "sha256": "f521e636331060bc58047762b6a31cbd38221f3559f66fef08282d8ed7577847"
+    },
+    {
+      "path": "iots-app/backend/index.js",
+      "sha256": "dc9ab2a61913b566b45bbf1d7b631d151f4e5584c84da2cf6a2e036be3fb56c6"
+    },
+    {
+      "path": "iots-app/backend/passwords.js",
+      "sha256": "3427cefcefe91b78f918e29f4045e533c7a94e429e29d87c43259ac20f13e6a9"
+    },
+    {
+      "path": "iots-app/backend/photos.js",
+      "sha256": "51b763d2f47fad308c1ddb29ef6d13e708c531cddbbbd2d37cc6cf479296f4ea"
+    },
+    {
+      "path": "iots-app/backend/schema.sql",
+      "sha256": "bbc5862e272636c9b4f5f41ab5bc8fdca9f7b016f7167a90e3bb56c95cba7ee9"
+    },
+    {
+      "path": "iots-app/backend/test-photos.js",
+      "sha256": "e43b2b10185379b6f53a0f4ef65e954a13a85ab7ae2046259b3d3ae01100deb6"
+    },
+    {
+      "path": "iots-app/frontend/index.html",
+      "sha256": "730d84940c0d751e38fdec8c3e56baa5c955df1e5d8b0e8fe0e8a0214878e9f6"
+    },
+    {
+      "path": "iots-app/frontend/package.json",
+      "sha256": "42d2686dcf3c4d33f4d83a8288ee7fd7b247c05194bf0582c30507d1d8ba8d39"
+    },
+    {
+      "path": "iots-app/frontend/src/App.jsx",
+      "sha256": "934de5a32f1b13aa3447cefabfcea1a74f94634a2e3de623d62306dab8d36c5f"
+    },
+    {
+      "path": "iots-app/frontend/src/auth/AuthApp.jsx",
+      "sha256": "674cb7ed9e5472cd8c71fbd57c318273e7c1414dfe4b357aa8eb52f715c7825c"
+    },
+    {
+      "path": "iots-app/frontend/src/auth/LocationPermissionGate.jsx",
+      "sha256": "7d5451edd738c02db1a08ad219e391b82a27df1929c56c51be8380a406f0399a"
+    },
+    {
+      "path": "iots-app/frontend/src/auth/PhotoEvidence.jsx",
+      "sha256": "7c401e3aa01bcfc6c8c12dd340d833b0fd786a9af1d082845750218e3860a6c6"
+    },
+    {
+      "path": "iots-app/frontend/src/auth/checkout/CheckoutFlow.jsx",
+      "sha256": "d66b898c86667f2567854128bffead86bc164420f9469361bb58b2b226fe900e"
+    },
+    {
+      "path": "iots-app/frontend/src/components/SimplexNoiseBackground.jsx",
+      "sha256": "fdf0e6f896f7d029ef444e61e322c9065835d50d2583a2bd0387f4fc6181016c"
+    },
+    {
+      "path": "iots-app/frontend/src/components/modals/EmptyCredsModal.jsx",
+      "sha256": "8cc6ad742193919cd298842eec8bab02d7ca26119749f61485e0224f5232d868"
+    },
+    {
+      "path": "iots-app/frontend/src/components/modals/HelpModal.jsx",
+      "sha256": "be28a7ae0d926544f37c798f2b4996e3764b89e79f46238e0da9bb9b9d0fd175"
+    },
+    {
+      "path": "iots-app/frontend/src/index.css",
+      "sha256": "78014a8fb93a8fd78708b6b5c26353bfe50df92eb16262705d077d229e6e56d6"
+    },
+    {
+      "path": "iots-app/frontend/src/theme/useTheme.js",
+      "sha256": "d50eed2dad82846b384df4e8e0da867d1c7588fc59305326fdb2ce4ed6fac8b9"
+    },
+    {
+      "path": "iots-app/frontend/vite.config.js",
+      "sha256": "a3059a2da8f6f9d3de0b7a48eab1d36370aa0a00d4a7c5c15bdbdeb13f021006"
+    }
+  ]
+}

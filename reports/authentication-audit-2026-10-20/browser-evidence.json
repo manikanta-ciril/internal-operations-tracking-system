@@ -1,0 +1,49 @@
+{
+  "date": "2026-10-20",
+  "mutationRequestsBlocked": 0,
+  "normal": {
+    "usernameWidth": 382
+  },
+  "modal": {
+    "dialogRoles": 0,
+    "focusAfterOpen": {
+      "tag": "BUTTON",
+      "id": "",
+      "text": "Recovery Process"
+    },
+    "tabTargets": [
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Login"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Understood!"
+      },
+      {
+        "tag": "BODY",
+        "id": "",
+        "text": "Light\nInternal Operations\nTracking System\n\nOne place for your work, your team, a"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Light"
+      },
+      {
+        "tag": "INPUT",
+        "id": "input-username",
+        "text": ""
+      }
+    ],
+    "visibleAfterEscape": true
+  },
+  "cdn": {
+    "pageErrors": [
+      "tailwind is not defined"
+    ],
+    "usernameWidth": 177
+  }
+}

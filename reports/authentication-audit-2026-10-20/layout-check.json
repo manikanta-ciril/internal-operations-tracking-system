@@ -1,0 +1,128 @@
+[
+  {
+    "page": 1,
+    "title": "Authentication\nreview",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 2,
+    "title": "What to address first",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 3,
+    "title": "The flow under review",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 4,
+    "title": "Finding register",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 5,
+    "title": "One employee can trigger a shared login lockout",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 6,
+    "title": "Sign-in transitions use stale state snapshots",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 7,
+    "title": "A late checkout response can override location revocation",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 8,
+    "title": "Success animation can outlive revoked location permission",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 9,
+    "title": "Expired punch-in capture stays on an unusable photo screen",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 10,
+    "title": "A lost successful upload response leaves punch-in stranded",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 11,
+    "title": "Punch-in accepts a claimed capture before validation",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 12,
+    "title": "Password verification blocks the whole API event loop",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 13,
+    "title": "A blocked styling CDN breaks the login layout",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 14,
+    "title": "Visual modal overlays do not behave as keyboard dialogs",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 15,
+    "title": "Reduced motion does not stop the moving shader",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 16,
+    "title": "The title test can pass without different punch titles",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 17,
+    "title": "Browser evidence",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 18,
+    "title": "Documented limits and product decisions",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 19,
+    "title": "Validation and remaining proof",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 20,
+    "title": "Resolution sequence",
+    "height": 990.234375,
+    "scrollHeight": 990
+  },
+  {
+    "page": 21,
+    "title": "Scope, confidence and handover",
+    "height": 990.234375,
+    "scrollHeight": 990
+  }
+]
