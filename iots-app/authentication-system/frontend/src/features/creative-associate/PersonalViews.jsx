@@ -14,12 +14,12 @@ function ViewHeading({ id, title, subtitle }) {
 export function AttendanceView() {
   return (
     <section id="attendance" className="section tab-view personal-view" aria-labelledby="attendance-title">
-      <ViewHeading id="attendance-title" title="Attendance" subtitle="Your check-ins and availability." />
+      <ViewHeading id="attendance-title" title="Attendance" subtitle="Your punch-ins and availability." />
       <div className="personal-surface attendance-surface">
-        <div className="personal-primary"><span className="personal-label">TODAY</span><h2>Checked in</h2><p>09:32 AM <span className="inline-separator">·</span> Onsite at check-in</p><span className="small-status">Available</span></div>
+        <div className="personal-primary"><span className="personal-label">TODAY</span><h2>Punched in</h2><p>09:32 AM <span className="inline-separator">·</span> Onsite at punch-in</p><span className="small-status">Available</span></div>
         <div className="personal-detail"><h3>Recent days</h3><div className="plain-row"><span>{dayFromNow(-1)}</span><strong>Complete <small>9:28 AM – 6:10 PM</small></strong></div><div className="plain-row"><span>{dayFromNow(-2)}</span><strong>Complete <small>9:36 AM – 6:04 PM</small></strong></div><div className="plain-row"><span>{dayFromNow(-3)}</span><strong>Approved leave <small>Excluded from attendance rate</small></strong></div></div>
       </div>
-      <p className="view-note">Check-in, checkout and approved leave are separate records. These are sample entries.</p>
+      <p className="view-note">Punch-in, punch-out and approved leave are separate records. These are sample entries.</p>
     </section>
   );
 }

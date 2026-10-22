@@ -37,7 +37,7 @@ async function main() {
   assert.equal((await photo('checkout/photo', session.cookie)).status, 409);
   assert.equal((await call('checkout/location', { position: { ...position(), timestamp: Date.now() - 180000 } }, session.cookie)).status, 400);
   assert.equal((await call('checkout/location', { position: null }, session.cookie)).status, 400);
-  const uncertain = await call('checkout/location', { position: position(0, 100) }, session.cookie);
+  const uncertain = await call('checkout/location', { position: position(.001, 100) }, session.cookie);
   assert.equal(uncertain.data.requiresConfirmation, true);
   assert.equal((await call('checkout/confirm', { proceed: 'yes' }, session.cookie)).status, 400);
   assert.equal((await call('checkout/confirm', { proceed: false }, session.cookie)).status, 200);

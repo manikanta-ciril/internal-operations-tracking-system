@@ -22,7 +22,7 @@ async function main() {
     const response = await fetch(base + 'photo', { method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'image/jpeg', 'X-Captured-At': String(Date.now()), 'X-Location-Check': checks.get(cookie)?.checkId || '' }, body: buffer });
     return { status: response.status, data: await response.json() };
   }
-  const position = () => ({ latitude: require('../src/location/office-location.json').latitude, longitude: require('../src/location/office-location.json').longitude, accuracy: 100, timestamp: Date.now() });
+  const position = () => ({ latitude: require('../src/location/office-location.json').latitude + .001, longitude: require('../src/location/office-location.json').longitude, accuracy: 100, timestamp: Date.now() });
   assert.equal((await call('me')).status, 401);
   assert.equal((await call('login', { username: 'vijay', password: 'wrong' })).status, 401);
   assert.equal((await call('login', { username: "' OR 1=1 --", password: 'wrong' })).status, 401);
@@ -41,7 +41,7 @@ async function main() {
     assert.equal((await photo(login.cookie)).status, 409);
     const check = await call('location', { position: position(), status: 'onsite' }, login.cookie);
     assert.equal(check.data.requiresConfirmation, true);
-    assert.equal(check.data.location.status, 'unknown');
+    assert.equal(check.data.location.status, 'offsite');
     assert.equal((await call('me', undefined, login.cookie)).status, 403);
     assert.equal((await call('location/confirm', { proceed: 'yes' }, login.cookie)).status, 400);
     const confirmed = await call('location/confirm', { proceed: true }, login.cookie);
@@ -67,7 +67,7 @@ async function main() {
     }
     assert.equal((await call('role', { role: role === 'admin' ? 'chairman' : 'admin' }, login.cookie)).status, 403);
     assert.equal((await call('logout', {}, login.cookie)).status, 409);
-    assert.equal((await call('checkout/location', { position: { ...position(), accuracy: 1 } }, login.cookie)).data.requiresPhoto, true);
+    assert.equal((await call('checkout/location', { position: { ...position(), latitude: require('../src/location/office-location.json').latitude } }, login.cookie)).data.requiresPhoto, true);
     const checkout = await fetch(base + 'checkout/photo', { method: 'POST', headers: { Cookie: login.cookie, 'Content-Type': 'image/jpeg', 'X-Captured-At': String(Date.now()), 'X-Location-Check': checks.get(login.cookie)?.checkId || '' }, body: photoBuffer });
     assert.equal(checkout.status, 200);
     assert.equal((await call('me', undefined, login.cookie)).status, 401);

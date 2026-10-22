@@ -59,14 +59,15 @@ again; revoked or denied permission keeps the form locked.
 ## Office location check
 
 `src/location/office-location.json` holds the office centre supplied by the user:
-latitude **17.4303611**, longitude **78.4566389**, radius **50 metres**.
-The backend calculates distance using the Haversine formula and includes the
-browser's reported accuracy: the entire accuracy circle must fit inside the
-office boundary for an on-site result. A position entirely outside is off-site;
-an overlapping accuracy circle is unknown. Missing, invalid or stale positions
-are rejected and must be retried. Denied location permission keeps the login
-form locked. A genuine off-site or imprecise reading still allows an explicit
-location exception decision.
+latitude **17.4303611**, longitude **78.4566389**, radius **75 metres**.
+The backend calculates Haversine distance from the reported coordinates alone:
+within or exactly 75 metres is on-site; beyond 75 metres is off-site. Browser
+accuracy is not required, stored in new location assessments or used to classify
+attendance. Missing, invalid or stale coordinates are rejected and must be
+retried. Denied location permission keeps the login form locked. Off-site
+readings still require an explicit location exception decision. Historical
+photo stamps and metadata retain their original assessment.
+
 
 The login first creates a pending session. `/api/auth/me` and role switching
 reject it until location checks and photo evidence are complete. On-site proceeds to the camera;

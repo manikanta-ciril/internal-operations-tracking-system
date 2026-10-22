@@ -56,7 +56,7 @@ export default function CheckoutFlow({ user, onComplete, onCancel, onSessionEnde
   }
   function retryLocation(message) {
     attempt.current++; lastLocation.current = null; setLocation(null); setBusy(false);
-    setError(message || 'Get a fresh checkout location reading.'); setPhase('retry');
+    setError(message || 'Get a fresh punch-out location reading.'); setPhase('retry');
   }
   async function confirm() {
     const version = attempt.current;
@@ -71,14 +71,14 @@ export default function CheckoutFlow({ user, onComplete, onCancel, onSessionEnde
     } finally { if (current(version)) setBusy(false); }
   }
   return <div className="checkout-flow auth-form-enter">
-    <h1 tabIndex={-1}>Check out</h1>
+    <h1 tabIndex={-1}>Punch out</h1>
     <p className="checkout-intro">Record your location and a photo to finish this session.</p>
     {phase === 'location' && <LocationPermissionGate checkout onGranted={checkLocation}/>}
-    {phase === 'checking' && <p role="status">Checking your checkout location...</p>}
+    {phase === 'checking' && <p role="status">Checking your punch-out location...</p>}
     {phase === 'decision' && <LocationDecision checkout inline location={location} onContinue={confirm} onCancel={cancel} busy={busy}/>}
     {phase === 'photo' && location && <div className="photo-shell"><PhotoEvidence mode="checkout" employeeName={user.name} employeeUsername={user.username} employeeEmail={user.email} location={location} onSaved={onComplete} onCancel={cancel} onSessionEnded={onSessionEnded} onLocationExpired={retryLocation}/></div>}
     {error && <p className="capture-error" role="alert">{error}</p>}
     {phase === 'retry' && <button className="capture-primary" type="button" onClick={() => { setError(''); setPhase('location'); }}>Retry location check</button>}
-    {!['photo', 'decision'].includes(phase) && <button type="button" className="capture-cancel" disabled={busy || phase === 'checking'} onClick={cancel}>Cancel checkout</button>}
+    {!['photo', 'decision'].includes(phase) && <button type="button" className="capture-cancel" disabled={busy || phase === 'checking'} onClick={cancel}>Cancel punch-out</button>}
   </div>;
 }

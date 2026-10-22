@@ -10,7 +10,7 @@ const { preparePhoto, storePhoto, photoDetails, checkoutPhotoRoot } = require('.
 module.exports = function registerCheckout(app, { pool, userData }) {
   app.post('/api/auth/checkout/location', async (req, res) => {
     const assessed = assessLocation(req.body?.position);
-    if (!Number.isFinite(assessed.latitude)) return res.status(400).json({ message: 'Allow location and obtain a fresh reading before checking out.' });
+    if (!Number.isFinite(assessed.latitude)) return res.status(400).json({ message: 'Allow location and obtain a fresh reading before punching out.' });
     const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
       requireStage(session, 'active');
       const location = { ...assessed, checkId: randomUUID(), captureAfter: Date.now() };
@@ -23,12 +23,12 @@ module.exports = function registerCheckout(app, { pool, userData }) {
   });
   async function currentCheck(connection, session, checkId) {
     const [[check]] = await connection.execute('SELECT * FROM checkout_checks WHERE session_hash=? AND checked_at>NOW()-INTERVAL 5 MINUTE FOR UPDATE', [session.token_hash]);
-    if (!check) throw httpError(409, 'Obtain a new checkout location reading.');
+    if (!check) throw httpError(409, 'Obtain a new punch-out location reading.');
     requireCheck(check.location_json, checkId);
     return check;
   }
   app.post('/api/auth/checkout/confirm', async (req, res) => {
-    if (typeof req.body?.proceed !== 'boolean') return res.status(400).json({ message: 'Choose whether to continue checkout.' });
+    if (typeof req.body?.proceed !== 'boolean') return res.status(400).json({ message: 'Choose whether to continue punch-out.' });
     const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
       requireStage(session, 'active');
       const check = await currentCheck(connection, session, req.body.checkId);
@@ -57,7 +57,7 @@ module.exports = function registerCheckout(app, { pool, userData }) {
   app.post('/api/auth/checkout/photo', express.raw({ type: 'image/jpeg', limit: '2mb' }), async (req, res) => {
     let buffer;
     try { buffer = await preparePhoto(req.body); }
-    catch { return res.status(400).json({ message: 'Retake your checkout photo using the camera.' }); }
+    catch { return res.status(400).json({ message: 'Retake your punch-out photo using the camera.' }); }
     let photo;
     try {
       await withSession(pool, req.session.token_hash, async (connection, session) => {
@@ -82,9 +82,9 @@ module.exports = function registerCheckout(app, { pool, userData }) {
   });
   app.get('/api/auth/checkout/photos/:id', async (req, res) => {
     const [[photo]] = await pool.execute('SELECT storage_path FROM checkout_evidence WHERE id=? AND employee_id=?', [req.params.id, req.session.employee_id]);
-    if (!photo) return res.status(404).json({ message: 'Checkout photo not found.' });
+    if (!photo) return res.status(404).json({ message: 'Punch-out photo not found.' });
     res.set('Content-Disposition', 'inline'); res.set('X-Content-Type-Options', 'nosniff');
     res.sendFile(path.join(checkoutPhotoRoot, photo.storage_path), { dotfiles: 'allow' });
   });
-  app.post('/api/auth/logout', (req, res) => res.status(409).json({ message: 'Complete the checkout location check and photo capture to log out.', requiresCheckout: true }));
+  app.post('/api/auth/logout', (req, res) => res.status(409).json({ message: 'Complete the punch-out location check and photo capture to log out.', requiresCheckout: true }));
 };

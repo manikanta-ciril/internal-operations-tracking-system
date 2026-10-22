@@ -108,12 +108,12 @@ export default function PhotoEvidence({ employeeName, employeeUsername, employee
   }
   if (!location) return <p role="alert">A fresh location check is required before photo capture.</p>;
   return <section className="photo-evidence auth-form-enter" aria-labelledby="photo-title">
-    <p className="permission-caption">{mode === 'checkout' ? 'Checkout location checked' : 'Account and location checked'}</p>
+    <p className="permission-caption">{mode === 'checkout' ? 'Punch-out location checked' : 'Account and location checked'}</p>
     <h2 id="photo-title" tabIndex={-1} ref={heading}>{mode === 'checkout' ? 'One photo before you leave.' : 'One photo, then you are in.'}</h2>
     <p>Hi {employeeName}. Centre your face in the frame and make sure it’s clearly lit.</p>
     <div className={`camera-frame ${photo ? 'is-preview' : ''}`}>
       <video ref={video} autoPlay playsInline muted onLoadedData={() => setReady(true)} aria-label="Live camera preview"/>
-      {preview && <img src={preview} alt={`Your captured ${mode === 'checkout' ? 'checkout' : 'sign-in'} photo`}/>}
+      {preview && <img src={preview} alt={`Your captured ${mode === 'checkout' ? 'punch-out' : 'punch-in'} photo`}/>}
       {!ready && !photo && <div className="camera-placeholder"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 4 7 7H4a2 2 0 0 0-2 2v10h20V9a2 2 0 0 0-2-2h-3l-2-3H9Z"/><circle cx="12" cy="12" r="4"/></svg><span>Your camera is off</span></div>}
       {!photo && ready && <div className="camera-guide" aria-hidden="true"/>}
       <span className="camera-badge">{photo ? 'Review your photo' : ready ? 'Camera on' : 'Camera permission required'}</span>
@@ -121,7 +121,7 @@ export default function PhotoEvidence({ employeeName, employeeUsername, employee
     <p className="capture-privacy">{photo ? 'Check your photo before submitting. Only the photo you confirm will be saved.' : 'Your camera is used only for this photo. No audio or video is recorded.'}</p>
     {photo && <div className="photo-stamp-summary"><strong>Included on your saved photo</strong><p>{employeeName} / {employeeUsername}</p><p>{employeeEmail}</p><p>Lat {location.latitude?.toFixed(7) ?? 'unknown'} / Lon {location.longitude?.toFixed(7) ?? 'unknown'}</p><p>Status: {location.status === 'onsite' ? 'On-site' : location.status === 'offsite' ? 'Off-site' : 'Unknown'}</p></div>}
     {error && <p role="alert" className="capture-error">{error}</p>}
-    <div className="capture-actions">{photo ? <><button type="button" disabled={uploading} onClick={startCamera}>Retake</button><button className="capture-primary" type="button" disabled={uploading} onClick={save}>{uploading ? 'Saving your photo…' : mode === 'checkout' ? 'Save checkout & log out' : 'Use photo & continue'}</button></> : <button className="capture-primary" type="button" disabled={starting} onClick={ready ? capture : startCamera}>{starting ? 'Opening camera…' : ready ? 'Take photo' : 'Allow camera'}</button>}</div>
-    <button className="capture-cancel" type="button" disabled={uploading || starting} onClick={() => { stopCamera(); setReady(false); onCancel(); }}>{mode === 'checkout' ? 'Cancel checkout' : 'Cancel sign-in'}</button>
+    <div className="capture-actions">{photo ? <><button type="button" disabled={uploading} onClick={startCamera}>Retake</button><button className="capture-primary" type="button" disabled={uploading} onClick={save}>{uploading ? 'Saving your photo…' : mode === 'checkout' ? 'Save punch-out & log out' : 'Use photo & continue'}</button></> : <button className="capture-primary" type="button" disabled={starting} onClick={ready ? capture : startCamera}>{starting ? 'Opening camera…' : ready ? 'Take photo' : 'Allow camera'}</button>}</div>
+    <button className="capture-cancel" type="button" disabled={uploading || starting} onClick={() => { stopCamera(); setReady(false); onCancel(); }}>{mode === 'checkout' ? 'Cancel punch-out' : 'Cancel sign-in'}</button>
   </section>;
 }

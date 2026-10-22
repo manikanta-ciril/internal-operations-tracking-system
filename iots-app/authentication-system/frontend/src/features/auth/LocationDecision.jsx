@@ -9,9 +9,9 @@ export default function LocationDecision({ location, onContinue, onCancel, busy,
     <span className="location-verified">Account verified</span></>}
     <h2 id="location-title" tabIndex={-1} ref={heading}>{location.status === 'offsite' ? 'You’re outside the office.' : 'We couldn’t confirm your location.'}</h2>
     <p>{location.reason} You can continue. Your session will be marked <strong>{location.status === 'offsite' ? 'off-site' : 'location unknown'}</strong>.</p>
-    <dl className="location-facts"><div><dt>Office radius</dt><dd>{location.radiusMeters} metres</dd></div>{location.distanceMeters !== null && <div><dt>Distance from office</dt><dd>{location.distanceMeters} metres</dd></div>}{location.accuracyMeters !== null && <div><dt>Reported GPS accuracy</dt><dd>±{Math.round(location.accuracyMeters)} metres</dd></div>}</dl>
-    <p className="location-decision-note">{checkout ? 'Continue with checkout, or cancel and return to your workspace.' : 'Continue with this session, or cancel and return to login.'} Your decision is recorded.</p>
+    <dl className="location-facts"><div><dt>Office radius</dt><dd>{location.radiusMeters} metres</dd></div>{location.distanceMeters !== null && <div><dt>Distance from office</dt><dd>{location.distanceMeters} metres</dd></div>}</dl>
+    <p className="location-decision-note">{checkout ? 'Continue with punch-out, or cancel and return to your workspace.' : 'Continue with this session, or cancel and return to login.'} Your decision is recorded.</p>
     {error && <p className="location-error" role="alert">{error}</p>}
-    <div className="location-actions"><button type="button" disabled={busy} onClick={onCancel}>{checkout ? 'Cancel checkout' : 'Cancel sign-in'}</button><button className="location-continue" type="button" disabled={busy} onClick={onContinue}>{busy ? 'Please wait…' : checkout ? 'Continue checkout' : 'Continue sign-in'}</button></div>
+    <div className="location-actions"><button type="button" disabled={busy} onClick={onCancel}>{checkout ? 'Cancel punch-out' : 'Cancel sign-in'}</button><button className="location-continue" type="button" disabled={busy} onClick={onContinue}>{busy ? 'Please wait…' : checkout ? 'Continue punch-out' : 'Continue sign-in'}</button></div>
   </section>;
 }

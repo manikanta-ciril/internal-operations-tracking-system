@@ -92,7 +92,7 @@ export default function LoginPage({ onAuthenticated }) {
   function capturePosition(version) {
     if (!navigator.geolocation) return Promise.reject(new Error('Location access is required.'));
     return new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(fix => {
-      const captured = { latitude: fix.coords.latitude, longitude: fix.coords.longitude, accuracy: fix.coords.accuracy, timestamp: fix.timestamp };
+      const captured = { latitude: fix.coords.latitude, longitude: fix.coords.longitude, timestamp: fix.timestamp };
       if (current(version)) setPosition(captured);
       resolve(captured);
     }, failure => {

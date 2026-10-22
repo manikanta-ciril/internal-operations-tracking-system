@@ -38,7 +38,7 @@ async function call(route, cookie, body) {
   assert.equal((await call('cancel', cancelled, {})).status, 200);
   assert.equal((await photo(cancelled, checked.data.location.checkId)).status, 401);
   const uncertain = await login();
-  const check = await call('location', uncertain, { position: { ...position(), accuracy: 100 } });
+  const check = await call('location', uncertain, { position: { ...position(), latitude: office.latitude + .001 } });
   assert.equal((await call('location/confirm', uncertain, { proceed: true, checkId: 'wrong' })).status, 409);
   const confirm = await call('location/confirm', uncertain, { proceed: true, checkId: check.data.location.checkId }); assert.equal(confirm.status, 200);
   assert.equal((await call('location/confirm', uncertain, { proceed: false, checkId: check.data.location.checkId })).status, 409);

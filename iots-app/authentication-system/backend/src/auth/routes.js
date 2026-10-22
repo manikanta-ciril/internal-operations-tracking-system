@@ -65,7 +65,7 @@ router.use('/api/auth', async (req, res, next) => {
 });
 router.post('/api/auth/location', async (req, res) => {
   const p = req.body?.position;
-  if (!p || ![p.latitude, p.longitude, p.accuracy, p.timestamp].every(Number.isFinite) || Math.abs(p.latitude) > 90 || Math.abs(p.longitude) > 180 || p.accuracy < 0 || Math.abs(Date.now() - p.timestamp) > 120000) return res.status(400).json({ message: 'Allow location access and obtain a fresh location reading before continuing.' });
+  if (!p || ![p.latitude, p.longitude, p.timestamp].every(Number.isFinite) || Math.abs(p.latitude) > 90 || Math.abs(p.longitude) > 180 || Math.abs(Date.now() - p.timestamp) > 120000) return res.status(400).json({ message: 'Allow location access and obtain a fresh location reading before continuing.' });
   const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
     requireStage(session, 'pending');
     const location = { ...assessLocation(p), checkId: randomUUID(), captureAfter: Date.now() };
@@ -98,7 +98,7 @@ router.post('/api/auth/location/confirm', async (req, res) => {
 });
 router.post('/api/auth/cancel', async (req, res) => {
   await withSession(pool, req.session.token_hash, async (connection, session) => {
-    if (session.stage === 'active') throw Object.assign(new Error('Use checkout to end an active session.'), { status: 409 });
+    if (session.stage === 'active') throw Object.assign(new Error('Use punch-out to end an active session.'), { status: 409 });
     await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [session.employee_id, 'sign_in_cancelled']);
     await connection.execute('DELETE FROM sessions WHERE token_hash=?', [session.token_hash]);
   });
