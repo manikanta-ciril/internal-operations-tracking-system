@@ -38,3 +38,14 @@
   .login-pane { justify-self: end; }
 }
 @media (max-width: 360px) { .login-main { padding-inline: 16px; } }
+.login-page .session-choice {padding:32px;color:var(--auth-text,#202830);background:#faf9f6;border-radius:20px;box-shadow:0 12px 30px -14px #0003;}
+.login-page.dark .session-choice {background:#222a32;color:#f4f4f0;}
+.session-choice h2 {font-size:24px;font-weight:600;margin-bottom:16px;}
+.session-choice p {font-size:14px;line-height:1.6;margin:12px 0;}
+.session-choice ul {padding:0;list-style:none;}
+.session-choice li {display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid #8885;}
+.session-choice li span {font-size:12px;margin-top:4px;}
+.session-choice-actions {display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;}
+.session-choice-actions button {padding:12px 16px;border:1px solid #9b7847;border-radius:10px;cursor:pointer;}
+.session-choice-actions button:last-child {background:#c09860;color:#202830;}
+.session-choice-actions button:disabled {opacity:.6;cursor:wait;}
