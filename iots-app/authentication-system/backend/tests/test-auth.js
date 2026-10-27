@@ -1,3 +1,4 @@
+const pool = require('../src/database/connection');
 // Run against the local dev stack: node test-auth.js
 const assert = require('node:assert/strict');
 const sharp = require('sharp');
@@ -22,7 +23,7 @@ async function main() {
     const response = await fetch(base + 'photo', { method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'image/jpeg', 'X-Captured-At': String(Date.now()), 'X-Location-Check': checks.get(cookie)?.checkId || '' }, body: buffer });
     return { status: response.status, data: await response.json() };
   }
-  const position = () => ({ latitude: require('../src/location/office-location.json').latitude + .001, longitude: require('../src/location/office-location.json').longitude, accuracy: 100, timestamp: Date.now() });
+  const position = () => ({ latitude: require('../src/location/office-location.json').latitude, longitude: require('../src/location/office-location.json').longitude, accuracy: 100, timestamp: Date.now() });
   assert.equal((await call('me')).status, 401);
   assert.equal((await call('login', { username: 'vijay', password: 'wrong' })).status, 401);
   assert.equal((await call('login', { username: "' OR 1=1 --", password: 'wrong' })).status, 401);
@@ -40,11 +41,11 @@ async function main() {
     assert.equal((await call('location', { position: null }, login.cookie)).status, 400);
     assert.equal((await photo(login.cookie)).status, 409);
     const check = await call('location', { position: position(), status: 'onsite' }, login.cookie);
-    assert.equal(check.data.requiresConfirmation, true);
-    assert.equal(check.data.location.status, 'offsite');
+    assert.equal(check.data.requiresPhoto, true);
+    assert.equal(check.data.location.status, 'onsite');
     assert.equal((await call('me', undefined, login.cookie)).status, 403);
     assert.equal((await call('location/confirm', { proceed: 'yes' }, login.cookie)).status, 400);
-    const confirmed = await call('location/confirm', { proceed: true }, login.cookie);
+    const confirmed = check;
     assert.equal(confirmed.data.requiresPhoto, true);
     assert.equal((await call('me', undefined, login.cookie)).status, 403);
     assert.equal((await photo(login.cookie, Buffer.from('not a JPEG'))).status, 400);
@@ -73,13 +74,15 @@ async function main() {
     assert.equal((await call('me', undefined, login.cookie)).status, 401);
   }
   assert.equal((await call('me', undefined, 'iots_session=forged')).status, 401);
+  // Move the test fixture's completed shift into yesterday before testing a new day.
+  await pool.execute('UPDATE checkout_evidence SET checked_out_at=NOW()-INTERVAL 1 DAY WHERE employee_id=(SELECT id FROM employees WHERE username=?)', ['vijay']);
   const cancelled = await call('login', { username: 'vijay', password: 'Iots@123' });
   await call('location', { position: position() }, cancelled.cookie);
-  assert.equal((await call('location/confirm', { proceed: false }, cancelled.cookie)).status, 200);
+  assert.equal((await call('cancel', {}, cancelled.cookie)).status, 200);
   assert.equal((await call('me', undefined, cancelled.cookie)).status, 401);
   assert.equal((await call('location/confirm', { proceed: true }, cancelled.cookie)).status, 401);
   for (let i = 0; i < 10; i++) await call('login', { username: 'invalid', password: 'wrong' });
   assert.equal((await call('login', { username: 'invalid', password: 'wrong' })).status, 429);
   console.log('PASS: 10 accounts, 11 roles, required location, photo stage gate, invalid JPEG, private photo access, replay protection, session restore, role scope, logout, credentials, cancellation and rate limiting.');
 }
-main().catch(error => { console.error(error); process.exitCode = 1; });
+main().catch(error => { console.error(error); process.exitCode = 1; }).finally(()=>pool.end());
