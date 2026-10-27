@@ -8,7 +8,7 @@
     "setup": "node scripts/setup.cjs",
     "build": "npm run build --prefix authentication-system/frontend",
     "lint": "npm run lint --prefix authentication-system/frontend",
-    "test:unit": "npm run test:unit --prefix authentication-system/backend && node authentication-system/frontend/src/shared/theme/useTheme.test.cjs",
+    "test:unit": "npm run test:unit --prefix authentication-system/backend && node authentication-system/frontend/src/shared/theme/useTheme.test.cjs && node authentication-system/frontend/tests/ui-models.test.cjs",
     "test:auth": "npm run test:auth --prefix authentication-system/backend"
   },
   "engines": {
