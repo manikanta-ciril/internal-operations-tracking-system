@@ -1,3 +1,4 @@
+const pool = require('../../backend/src/database/connection');
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 if (!process.env.IOTS_TEST_BASE_URL || process.env.DB_NAME !== 'iots_auth_fix_test') throw new Error('Use backend npm run test:auth.');
@@ -9,10 +10,35 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
     args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'] });
   const contexts = [];
   async function setup(normalMotion = false) {
+    // Each browser scenario starts a separate simulated workday in the isolated database.
+    await pool.execute('DELETE FROM sessions');
+    await pool.execute('UPDATE checkout_evidence SET checked_out_at=NOW()-INTERVAL 1 DAY');
     const context = await browser.newContext({ viewport: { width: 1440, height: 800 }, reducedMotion: normalMotion ? 'no-preference' : 'reduce',
       permissions: ['geolocation', 'camera'], geolocation: { latitude: 17.430361111, longitude: 78.456638889, accuracy: 1 } });
     contexts.push(context);
     await context.addInitScript(() => {
+      // Deterministic browser video fixture: exercise video playback/capture/JPEG upload
+      // without depending on Edge's intermittent fake camera driver when reopening it.
+      navigator.mediaDevices.getUserMedia = async () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 640; canvas.height = 480;
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+        const draw = () => {
+          ctx.fillStyle = '#c09860'; ctx.fillRect(0, 0, 640, 480);
+          ctx.fillStyle = '#202830'; ctx.fillRect(120, 90, 400, 300);
+          ctx.fillStyle = '#faf9f6'; ctx.fillRect(180, 150, 280, 180);
+          ctx.fillStyle = '#c09860'; ctx.fillRect(200 + (frame++ % 40), 180, 100, 100);
+        };
+        draw();
+        const stream = canvas.captureStream(10);
+        const timer = setInterval(draw, 100);
+        for (const track of stream.getTracks()) {
+          const stop = track.stop.bind(track);
+          track.stop = () => { clearInterval(timer); stop(); };
+        }
+        return stream;
+      };
       const query = navigator.permissions.query.bind(navigator.permissions);
       const geo = new EventTarget(); geo.state = 'granted';
       navigator.permissions.query = request => request.name === 'geolocation' ? Promise.resolve(geo) : query(request);
@@ -32,6 +58,11 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
       if (url.pathname.endsWith('/photo') && state.expirePhoto) return route.fulfill({ status: 401, json: { message: 'Your session has ended. Please sign in.' } });
       if (url.pathname.endsWith('/checkout/photo') && state.expireLocation) return route.fulfill({ status: 409, json: { message: 'Obtain a new punch-out location reading.' } });
       const response = await route.fetch({ url: process.env.IOTS_TEST_BASE_URL + url.pathname.slice('/api/auth/'.length) });
+      if (url.pathname.endsWith('/photo') && response.status() === 400) {
+        const body=request.postDataBuffer();
+        const sharp=require('../../backend/node_modules/sharp');
+        console.error('Test photo diagnostics:', body?.length, await sharp(body).metadata().catch(error=>({error:error.message})));
+      }
       if (url.pathname.endsWith('/checkout/confirm') && state.holdConfirm) { state.confirmSeen.resolve(); await state.releaseConfirm.promise; }
       if (url.pathname.endsWith('/auth/photo') && state.dropAcknowledgement && response.ok()) { state.dropAcknowledgement = false; return route.abort(); }
       return route.fulfill({ response });
@@ -175,8 +206,15 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
     await transition.page.getByRole('heading', { name: 'Allow location to continue.' }).waitFor();
     assert.deepEqual(transition.state.pageErrors, []); await transition.context.close();
     console.log('PASS: AUTH-04 permission revocation invalidates the success animation.');
+  } catch (error) {
+    const page=contexts.at(-1)?.pages()[0];
+    if(page&&!page.isClosed()) {
+      console.error('Browser failure state:',await page.locator('body').innerText());
+      await page.screenshot({path:require('node:path').resolve(__dirname,'../../../../.local/auth-regression-failure.png'),fullPage:true});
+    }
+    throw error;
   } finally {
     for (const context of contexts) await context.close().catch(() => {});
     await browser.close();
   }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+})().catch(error => { console.error(error); process.exitCode = 1; }).finally(()=>pool.end());
