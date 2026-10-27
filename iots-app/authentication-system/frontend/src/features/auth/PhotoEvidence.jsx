@@ -1,3 +1,5 @@
+import Spinner from "../../shared/feedback/Spinner";
+import { beginOperation } from "../../shared/feedback/operations";
 import { useEffect, useRef, useState } from 'react';
 import './auth-motion.css';
 
@@ -80,6 +82,7 @@ export default function PhotoEvidence({ employeeName, employeeUsername, employee
     const current = () => active.current && version === operation.current;
     if (!location?.checkId) { onLocationExpired?.('Get a fresh location reading before taking your photo.'); return; }
     setUploading(true); setError('');
+    const finish = beginOperation(mode === 'checkout' ? 'Saving your punch-out photo' : 'Saving your sign-in photo');
     try {
       const response = await fetch(mode === 'checkout' ? '/api/auth/checkout/photo' : '/api/auth/photo', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'image/jpeg', 'X-Captured-At': String(capturedAt.current), 'X-Location-Check': location.checkId }, body: photo });
       const result = await response.json();
@@ -104,7 +107,7 @@ export default function PhotoEvidence({ employeeName, employeeUsername, employee
       if (failure.status === 401) { onSessionEnded?.(failure.message); return; }
       if (failure.status === 409 && onLocationExpired) { onLocationExpired(failure.message); return; }
       setError(failure.message);
-    } finally { if (current()) setUploading(false); }
+    } finally { finish(); if (current()) setUploading(false); }
   }
   if (!location) return <p role="alert">A fresh location check is required before photo capture.</p>;
   return <section className="photo-evidence auth-form-enter" aria-labelledby="photo-title">
@@ -121,7 +124,7 @@ export default function PhotoEvidence({ employeeName, employeeUsername, employee
     <p className="capture-privacy">{photo ? 'Check your photo before submitting. Only the photo you confirm will be saved.' : 'Your camera is used only for this photo. No audio or video is recorded.'}</p>
     {photo && <div className="photo-stamp-summary"><strong>Included on your saved photo</strong><p>{employeeName} / {employeeUsername}</p><p>{employeeEmail}</p><p>Lat {location.latitude?.toFixed(7) ?? 'unknown'} / Lon {location.longitude?.toFixed(7) ?? 'unknown'}</p><p>Status: {location.status === 'onsite' ? 'On-site' : location.status === 'offsite' ? 'Off-site' : 'Unknown'}</p></div>}
     {error && <p role="alert" className="capture-error">{error}</p>}
-    <div className="capture-actions">{photo ? <><button type="button" disabled={uploading} onClick={startCamera}>Retake</button><button className="capture-primary" type="button" disabled={uploading} onClick={save}>{uploading ? 'Saving your photo…' : mode === 'checkout' ? 'Save punch-out & log out' : 'Use photo & continue'}</button></> : <button className="capture-primary" type="button" disabled={starting} onClick={ready ? capture : startCamera}>{starting ? 'Opening camera…' : ready ? 'Take photo' : 'Allow camera'}</button>}</div>
+    <div className="capture-actions">{photo ? <><button type="button" disabled={uploading} onClick={startCamera}>Retake</button><button className="capture-primary" type="button" disabled={uploading} aria-busy={uploading || undefined} onClick={save}>{uploading && <Spinner/>}{uploading ? 'Saving your photo…' : mode === 'checkout' ? 'Save punch-out & log out' : 'Use photo & continue'}</button></> : <button className="capture-primary" type="button" disabled={starting} aria-busy={starting || undefined} onClick={ready ? capture : startCamera}>{starting && <Spinner/>}{starting ? 'Opening camera…' : ready ? 'Take photo' : 'Allow camera'}</button>}</div>
     <button className="capture-cancel" type="button" disabled={uploading || starting} onClick={() => { stopCamera(); setReady(false); onCancel(); }}>{mode === 'checkout' ? 'Cancel punch-out' : 'Cancel sign-in'}</button>
   </section>;
 }
