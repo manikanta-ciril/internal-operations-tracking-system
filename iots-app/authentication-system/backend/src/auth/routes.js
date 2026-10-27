@@ -1,8 +1,9 @@
+const { requireNotPunchedOut, requireOfficeLocation } = require('./workday');
 const { withSession, requireStage, requireCheck, requireCaptureTime } = require('../auth/session-state');
 const { clientAddress, createLoginLimiter } = require('../auth/login-limiter');
 const { loginUsername } = require('../auth/login-identity');
 const express = require('express');
-const { randomBytes, randomUUID, createHash } = require('node:crypto');
+const { randomUUID, createHash } = require('node:crypto');
 const pool = require('../database/connection');
 const { verify } = require('../auth/passwords');
 const { assessLocation } = require('../location/assess');
@@ -11,7 +12,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const router = express.Router();
 const digest = (token) => createHash('sha256').update(token).digest('hex');
-const cookieOptions = { httpOnly: true, sameSite: 'strict', secure: false, path: '/api', maxAge: 8 * 60 * 60 * 1000 };
+const cookieOptions = { httpOnly: true, sameSite: 'strict', secure: false, path: '/api', maxAge: 12 * 60 * 60 * 1000 };
 const tokenFrom = (req) => (req.headers.cookie || '').split(';').map(x => x.trim()).find(x => x.startsWith('iots_session='))?.slice(13);
 router.use('/api', (req, res, next) => {
   res.set('Cache-Control', 'no-store');
@@ -37,29 +38,33 @@ router.post('/api/auth/login', async (req, res) => {
     await pool.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [employee?.id || null, 'credentials_rejected']);
     return res.status(401).json({ message: 'Username or password is incorrect.' });
   }
+  finishAttempt(true);
   const user = await userData(employee.id);
   if (!user.roles.length) return res.status(403).json({ message: 'No role is assigned to this account.' });
   const activeRole = user.roles.find(r => r.code === 'general-manager')?.code || user.roles[0].code;
-  const old = tokenFrom(req);
-  if (old) await pool.execute('DELETE FROM sessions WHERE token_hash=?', [digest(old)]);
-  const token = randomBytes(32).toString('hex');
-  const connection = await pool.getConnection();
-  try {
-    await connection.beginTransaction();
-    await connection.execute('INSERT INTO sessions (token_hash,employee_id,active_role,expires_at) VALUES (?,?,?,?)', [digest(token), employee.id, activeRole, new Date(Date.now() + cookieOptions.maxAge)]);
-    await connection.execute('INSERT INTO session_locations (token_hash) VALUES (?)', [digest(token)]);
-    await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [employee.id, 'credentials_verified']);
-    await connection.commit();
-  } catch (error) { await connection.rollback(); throw error; }
-  finally { connection.release(); }
-  finishAttempt(true);
-  res.cookie('iots_session', token, cookieOptions).json({ requiresLocationCheck: true });
+  const result = await require('./session-choice').beginSignIn(pool, employee, activeRole, req.headers['user-agent']);
+  if (result.token) res.cookie('iots_session', result.token, cookieOptions).json({ requiresLocationCheck: true });
+  else res.json(result);
 });
+require('./session-choice').registerSessionChoice(router, { pool, cookieOptions });
 router.use('/api/auth', async (req, res, next) => {
   const token = tokenFrom(req);
   if (!token) return res.status(401).json({ message: 'Please sign in.' });
   const [[session]] = await pool.execute("SELECT s.*,sl.stage,sl.location_json FROM sessions s JOIN session_locations sl ON sl.token_hash=s.token_hash JOIN employee_roles er ON er.employee_id=s.employee_id AND er.role_code=s.active_role WHERE s.token_hash=? AND s.expires_at>NOW() AND (sl.stage='active' OR s.created_at>NOW()-INTERVAL 5 MINUTE)", [digest(token)]);
   if (!session) return res.status(401).json({ message: 'Your session has ended. Please sign in.' });
+  if (session.stage === 'active') {
+    try {
+      await requireNotPunchedOut(pool, session.employee_id);
+      requireOfficeLocation(session.location_json);
+    } catch (error) {
+      if (error.status !== 403) throw error;
+      await withSession(pool, session.token_hash, async (connection, current) => {
+        await connection.execute('UPDATE remote_work_sessions SET ended_at=LEAST(NOW(3),expires_at) WHERE session_hash=? AND ended_at IS NULL', [current.token_hash]);
+        await connection.execute('DELETE FROM sessions WHERE token_hash=?', [current.token_hash]);
+      });
+      return res.clearCookie('iots_session', { path: '/api', httpOnly: true, sameSite: 'strict' }).status(403).json({ message: error.message });
+    }
+  }
   req.session = session;
   next();
 });
@@ -69,13 +74,21 @@ router.post('/api/auth/location', async (req, res) => {
   const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
     requireStage(session, 'pending');
     const location = { ...assessLocation(p), checkId: randomUUID(), captureAfter: Date.now() };
-    const stage = location.status === 'onsite' ? 'awaiting_photo' : 'awaiting_confirmation';
-    await connection.execute('UPDATE session_locations SET stage=?,location_json=?,confirmed_at=? WHERE token_hash=?', [stage, JSON.stringify(location), stage === 'awaiting_photo' ? new Date() : null, session.token_hash]);
+    try {
+      await requireNotPunchedOut(connection, session.employee_id);
+      requireOfficeLocation(location);
+    } catch (error) {
+      if (error.status !== 403) throw error;
+      await connection.execute('DELETE FROM sessions WHERE token_hash=?', [session.token_hash]);
+      await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [session.employee_id, 'location_rejected']);
+      return { blocked: true, message: error.message };
+    }
+    await connection.execute("UPDATE session_locations SET stage='awaiting_photo',location_json=?,confirmed_at=NOW() WHERE token_hash=?", [JSON.stringify(location), session.token_hash]);
     await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [session.employee_id, 'location_checked', JSON.stringify(location)]);
-    if (stage !== 'awaiting_photo') return { requiresConfirmation: true, location };
     const employee = await userData(session.employee_id, session.active_role, connection);
     return { requiresPhoto: true, employeeName: employee.name, employeeUsername: employee.username, employeeEmail: employee.email, location };
   });
+  if (result.blocked) return res.clearCookie('iots_session', { path: '/api', httpOnly: true, sameSite: 'strict' }).status(403).json({ message: result.message });
   res.json(result);
 });
 router.post('/api/auth/location/confirm', async (req, res) => {
@@ -89,6 +102,8 @@ router.post('/api/auth/location/confirm', async (req, res) => {
       return { cancelled: true, message: 'Sign-in cancelled. No workspace session was opened.' };
     }
     const location = { ...session.location_json, captureAfter: Date.now() };
+    await requireNotPunchedOut(connection, session.employee_id);
+    requireOfficeLocation(location);
     await connection.execute("UPDATE session_locations SET stage='awaiting_photo',location_json=?,confirmed_at=NOW() WHERE token_hash=?", [JSON.stringify(location), session.token_hash]);
     const employee = await userData(session.employee_id, session.active_role, connection);
     return { requiresPhoto: true, employeeName: employee.name, employeeUsername: employee.username, employeeEmail: employee.email, location };
@@ -112,6 +127,8 @@ router.post('/api/auth/photo', express.raw({ type: 'image/jpeg', limit: '2mb' })
   try {
     const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
       requireStage(session, 'awaiting_photo');
+      await requireNotPunchedOut(connection, session.employee_id);
+      requireOfficeLocation(session.location_json);
       requireCheck(session.location_json, req.headers['x-location-check']);
       const capturedAt = Number(req.headers['x-captured-at']);
       requireCaptureTime(capturedAt, session.location_json);
@@ -155,5 +172,6 @@ router.post('/api/auth/role', async (req, res) => {
   await pool.execute('UPDATE sessions SET active_role=? WHERE token_hash=?', [role, req.session.token_hash]);
   res.json({ user: { ...user, activeRole: role, location: req.session.location_json } });
 });
+require('../workspace/routes')(router, { pool });
 require('../checkout/routes')(router, { pool, userData });
 module.exports = router;
