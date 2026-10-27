@@ -8,6 +8,11 @@ const { preparePhoto, storePhoto, photoDetails, checkoutPhotoRoot } = require('.
 
 // Registered after the active-session and sign-in-evidence guards.
 module.exports = function registerCheckout(app, { pool, userData }) {
+  app.use('/api/auth/checkout',async(req,res,next)=>{
+    const [[remote]]=await pool.execute('SELECT session_hash FROM remote_work_sessions WHERE session_hash=? AND ended_at IS NULL',[req.session.token_hash]);
+    if(remote) return res.status(409).json({message:'WFH sessions do not require punch-out evidence. Use Log out.'});
+    next();
+  });
   app.post('/api/auth/checkout/location', async (req, res) => {
     const assessed = assessLocation(req.body?.position);
     if (!Number.isFinite(assessed.latitude)) return res.status(400).json({ message: 'Allow location and obtain a fresh reading before punching out.' });
