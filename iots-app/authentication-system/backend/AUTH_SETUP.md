@@ -42,7 +42,7 @@ component. Admin and Super Admin are placeholders because no names were supplied
   These and the portable server are ignored by Git. Do not edit database files manually.
 
 Passwords use salted scrypt hashes. A random session token is sent in an HttpOnly,
-SameSite=Strict cookie; MySQL stores its SHA-256 hash and eight-hour expiry.
+SameSite=Strict cookie; MySQL stores its SHA-256 hash and twelve-hour expiry.
 The API checks assigned roles on session reads and role switches. Logout deletes
 the session. Browser refresh restores the session from the API.
 This local implementation uses a session token, without a separate JWT.
@@ -81,9 +81,9 @@ Pending decisions expire after five minutes. Login checks and location decisions
 are stored in `login_events`; location details are in `session_locations`.
 The welcome page shows the session's actual location classification.
 
-## Required camera photo
+## Required camera photo for office sessions
 
-After location passes or an exception is accepted, the session moves to
+For office sessions, after location passes the session moves to
 `awaiting_photo`. Camera permission is required; there is no file-picker or skip
 path. The employee sees a mirrored live preview with a face-position guide,
 captures a frame, then chooses Retake or Use photo & continue. This collects
@@ -299,3 +299,10 @@ Runtime entry: `src/server.js`; Express composition: `src/app.js`; sign-in and
 session routes: `src/auth/routes.js`; checkout: `src/checkout/routes.js`.
 All backend tests live in `tests/`. Startup orchestration: `../../scripts/dev.cjs`.
 See [the complete file guide](../../FILE_STRUCTURE.md).
+
+
+## Office-only access and account controls
+
+Off-site sign-in is disabled. Credentials must be followed by a fresh verified office location and camera evidence. After punch-out, the account cannot sign in again until the next IST day, regardless of location. Old WFH sessions cannot restore access. Rejected location attempts clear their pending session.
+
+The header shows current IST time and hours/minutes left until office closing: Monday?Friday 09:30?18:00, Saturday 09:30?16:00. Sunday is the weekly off. Password changes remain under Profile > Security & sessions; takeover still requires explicit confirmation, and does not bypass office or same-day eligibility rules. See ../WORKSPACE_STRUCTURE.md for details.
