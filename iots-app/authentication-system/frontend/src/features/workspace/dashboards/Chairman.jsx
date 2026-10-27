@@ -1,5 +1,5 @@
 import WelcomeCard from './WelcomeCard';
 
-export default function Chairman({ user }) {
-  return <WelcomeCard user={user} role="Chairman"/>;
+export default function Chairman({ user, children }) {
+  return <WelcomeCard user={user} role="Chairman">{children}</WelcomeCard>;
 }
