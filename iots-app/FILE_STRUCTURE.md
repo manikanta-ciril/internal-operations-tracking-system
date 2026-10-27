@@ -268,3 +268,7 @@ Login background: `frontend/src/shared/components/SimplexNoiseBackground.jsx`
 (within authentication-system) renders the restored moving-sheet effect. It
 respects reduced motion and pauses while hidden. Login geometry and responsive
 title sizing live in `frontend/src/features/auth/login-layout.css`.
+
+## Integrated employee workspace
+
+See [WORKSPACE_STRUCTURE.md](authentication-system/WORKSPACE_STRUCTURE.md) for the authenticated workspace component map, API ownership, storage, routing and extension points. The original role dashboards remain under `frontend/src/features/workspace/dashboards`; reusable profile, attendance, service and shell modules live in separate `employee-*` feature folders, with UI primitives under `shared/workspace`.
