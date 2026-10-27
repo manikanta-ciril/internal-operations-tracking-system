@@ -1,4 +1,5 @@
-export async function authApi(path, body) {
+import { requestLabel, trackOperation } from "../../shared/feedback/operations";
+async function request(path, body) {
   let response;
   try {
     response = await fetch(`/api/auth/${path}`, {
@@ -11,4 +12,8 @@ export async function authApi(path, body) {
   const data = await response.json().catch(() => ({ message: 'Server is unreachable' }));
   if (!response.ok) { const error = new Error(data.message); error.status = response.status; throw error; }
   return data;
+}
+
+export function authApi(path, body) {
+  return body === undefined ? request(path, body) : trackOperation(requestLabel(`/auth/${path}`), () => request(path, body));
 }
