@@ -15,7 +15,7 @@ async function call(route, cookie, body) {
     const res = await fetch(base + 'photo', { method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'image/jpeg', 'X-Captured-At': String(time), 'X-Location-Check': checkId || '' }, body: jpeg });
     return { status: res.status, data: await res.json() };
   };
-  const login = async () => (await call('login', '', { username: 'manasa', password: 'Iots@123' })).cookie;
+  const login = async () => { let result=await call('login', '', {username:'manasa',password:'Iots@123'}); if(result.data.requiresSessionChoice) result=await call('session-choice','',{challenge:result.data.challenge,proceed:true}); return result.cookie; };
   for (let n = 0; n < 10; n++) assert.equal((await call('login', '', { username: 'rate-target', password: 'wrong' })).status, 401);
   assert.equal((await call('login', '', { username: 'rate-target@ciril.in', password: 'wrong' })).status, 429);
   const cookie = await login();
@@ -39,9 +39,9 @@ async function call(route, cookie, body) {
   assert.equal((await photo(cancelled, checked.data.location.checkId)).status, 401);
   const uncertain = await login();
   const check = await call('location', uncertain, { position: { ...position(), latitude: office.latitude + .001 } });
-  assert.equal((await call('location/confirm', uncertain, { proceed: true, checkId: 'wrong' })).status, 409);
-  const confirm = await call('location/confirm', uncertain, { proceed: true, checkId: check.data.location.checkId }); assert.equal(confirm.status, 200);
-  assert.equal((await call('location/confirm', uncertain, { proceed: false, checkId: check.data.location.checkId })).status, 409);
-  assert.equal((await photo(uncertain, confirm.data.location.checkId)).status, 200);
+  assert.equal(check.status,403);assert.match(check.data.message,/Off-site sign-in is not allowed/);
+  assert.equal((await call('me',uncertain)).status,401);
+  assert.equal((await call('location/confirm',uncertain,{proceed:true,checkId:'forged'})).status,401);
+  assert.equal((await photo(uncertain,'forged')).status,401);
   console.log('PASS: atomic location/photo transitions, stale check rejection, old capture rejection and cancellation boundaries.');
 })().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => pool.end());
