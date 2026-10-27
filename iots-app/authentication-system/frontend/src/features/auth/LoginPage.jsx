@@ -12,6 +12,7 @@ import { authApi } from './api';
 import './login-layout.css';
 import LocationPermissionGate from './LocationPermissionGate';
 import PhotoEvidence from './PhotoEvidence';
+import SessionChoice from './SessionChoice';
 
 export default function LoginPage({ onAuthenticated }) {
   const loginRoot = useRef(null);
@@ -19,6 +20,7 @@ export default function LoginPage({ onAuthenticated }) {
   const running = useRef(false);
   const mounted = useRef(true);
   const motion = useRef(null);
+  const [sessionChoice, setSessionChoice] = useState(null);
   const [empId, setEmpId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -137,6 +139,16 @@ export default function LoginPage({ onAuthenticated }) {
       const [result] = await Promise.allSettled([authApi('login', { username: empId.trim(), password }), pause(1100, version)]);
       if (!current(version)) return;
       if (result.status === 'rejected') throw result.reason;
+      setPassword('');
+      if (result.value.requiresSessionChoice) { setSessionChoice(result.value); setPhase('session-choice'); }
+      else await checkLocation(version);
+    } catch (error) {
+      if (!current(version)) return;
+      setErrorMessage(error.message); setPhase('failed');
+      if (await pause(1100, version)) await returnToForm(error.message, version);
+    } finally { if (attempt.current === version) running.current = false; }
+  }
+  async function checkLocation(version) {
       setPassword(''); setProcessStep(2);
       const captured = await capturePosition(version);
       if (!current(version)) return;
@@ -145,11 +157,19 @@ export default function LoginPage({ onAuthenticated }) {
       setLocation(checked.location);
       if (checked.requiresConfirmation) setPhase('location');
       else { setEmployeeName(checked.employeeName); setEmployeeIdentity(checked); setProcessStep(3); await changePane('photo', version); }
-    } catch (error) {
+  }
+  async function chooseSession(proceed) {
+    if (running.current || !locationAccess.current) return;
+    const version = attempt.current;
+    running.current = true; setDecisionBusy(true); setDecisionError('');
+    try {
+      await authApi('session-choice', { challenge: sessionChoice.challenge, proceed });
       if (!current(version)) return;
-      setErrorMessage(error.message); setPhase('failed');
-      if (await pause(1100, version)) await returnToForm(error.message, version);
-    } finally { if (attempt.current === version) running.current = false; }
+      setSessionChoice(null);
+      if (proceed) { setPhase('processing'); await checkLocation(version); }
+      else await returnToForm('Sign-in cancelled. Your other device remains signed in.', version);
+    } catch (error) { if (current(version)) restartSignIn(error.message); }
+    finally { if (attempt.current === version) { running.current = false; setDecisionBusy(false); } }
   }
   async function decideLocation(proceed) {
     if (running.current || !locationAccess.current) return;
@@ -186,7 +206,7 @@ export default function LoginPage({ onAuthenticated }) {
 
       </div>
       <div ref={pane} className="login-pane">
-        {!locationAllowed ? <LocationPermissionGate onGranted={allowLocation}/> : phase === 'photo' ? <div className="photo-shell"><PhotoEvidence employeeUsername={employeeIdentity.employeeUsername} employeeEmail={employeeIdentity.employeeEmail} employeeName={employeeName} location={location} onSaved={openWorkspace} onCancel={cancelPhoto} onSessionEnded={restartSignIn} onLocationExpired={restartSignIn}/>{decisionError && <p className="capture-error" role="alert">{decisionError}</p>}</div> : <LoginFormSection phase={phase} processStep={processStep} errorMessage={errorMessage} empId={empId} setEmpId={setEmpId} password={password} setPassword={setPassword} showPassword={showPassword} setShowPassword={setShowPassword} handleLogin={handleLogin} onOpenRecovery={() => setHelpModalOpen(true)} location={location} onContinue={() => decideLocation(true)} onCancel={() => decideLocation(false)} decisionBusy={decisionBusy} decisionError={decisionError}/>}
+        {!locationAllowed ? <LocationPermissionGate onGranted={allowLocation}/> : phase === 'session-choice' ? <SessionChoice devices={sessionChoice?.devices || []} busy={decisionBusy} onChoose={chooseSession}/> : phase === 'photo' ? <div className="photo-shell"><PhotoEvidence employeeUsername={employeeIdentity.employeeUsername} employeeEmail={employeeIdentity.employeeEmail} employeeName={employeeName} location={location} onSaved={openWorkspace} onCancel={cancelPhoto} onSessionEnded={restartSignIn} onLocationExpired={restartSignIn}/>{decisionError && <p className="capture-error" role="alert">{decisionError}</p>}</div> : <LoginFormSection phase={phase} processStep={processStep} errorMessage={errorMessage} empId={empId} setEmpId={setEmpId} password={password} setPassword={setPassword} showPassword={showPassword} setShowPassword={setShowPassword} handleLogin={handleLogin} onOpenRecovery={() => setHelpModalOpen(true)} location={location} onContinue={() => decideLocation(true)} onCancel={() => decideLocation(false)} decisionBusy={decisionBusy} decisionError={decisionError}/>}
       </div>
     </main>
     <footer className="login-footer"><p className="text-[10px] text-brand-darkslate dark:text-brand-silver">Authorized personnel only - Location exceptions are recorded</p></footer>
