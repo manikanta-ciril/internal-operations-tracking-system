@@ -1,3 +1,5 @@
+import ActionFeedback from "../shared/feedback/ActionFeedback";
+import { changeView } from "../shared/feedback/change-view";
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { animate, createScope, createTimeline, stagger } from 'animejs';
 import logo from '../assets/logo.png';
@@ -5,10 +7,10 @@ import ThemeToggle from '../shared/components/ThemeToggle';
 import Login from '../features/auth/LoginPage.jsx';
 import CheckoutFlow from '../features/auth/checkout/CheckoutFlow';
 import { authApi } from '../features/auth/api';
-import { dashboardComponents } from '../features/workspace/dashboards';
+import EmployeeWorkspace from '../features/employee-workspace/EmployeeWorkspace';
 import '../features/workspace/dashboards/dashboard.css';
 
-export default function App() {
+function Application() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -29,16 +31,25 @@ export default function App() {
     return () => scope.revert();
   }, [user]);
   useEffect(() => {
-    authApi('me').then(data => setUser(data.user)).catch(e => { if (![401, 403].includes(e.status)) setError(e.message); }).finally(() => setLoading(false));
+    authApi('me').then(data => setUser(data.user)).catch(e => { if (e.status !== 401) setError(e.message); }).finally(() => setLoading(false));
   }, []);
   useEffect(() => {
-    window.history.replaceState(null, '', user ? `/dashboard/${user.activeRole}` : '/');
-  }, [user]);
+    if (loading) return;
+    const base = user ? `/dashboard/${user.activeRole}` : '/';
+    if (!user || !(window.location.pathname === base || window.location.pathname.startsWith(`${base}/`))) {
+      window.history.replaceState(null, '', base);
+      window.dispatchEvent(new Event('iots:workspace-navigation'));
+    }
+  }, [user, loading]);
   async function changeRole(role) {
     setBusy(true); setError('');
-    try { setUser((await authApi('role', { role })).user); }
+    try { const next = (await authApi('role', { role })).user; changeView(() => setUser(next)); }
     catch (e) { setError(e.message); if (e.status === 401) setUser(null); }
     finally { setBusy(false); }
+  }
+  function requestLogout() {
+    setError('');
+    changeView(() => setCheckout(true));
   }
   async function finishCheckout() {
     setBusy(true); setError('');
@@ -50,15 +61,12 @@ export default function App() {
     finally { setBusy(false); }
   }
   if (loading) return <main className="auth-message"><span className="session-loader" aria-hidden="true"/><p role="status">Checking your session…</p></main>;
-  if (!user) return <><Login onAuthenticated={setUser}/>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
-  const Dashboard = dashboardComponents[user.activeRole];
-  return <main className="role-page" ref={workspace}><div className="role-container">
+  if (!user) return <><Login onAuthenticated={next => { setError(''); setUser(next); }}/>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
+  return <div ref={workspace}>{!checkout ? <EmployeeWorkspace key={user.id} user={user} busy={busy} error={error} onChangeRole={changeRole} onLogout={requestLogout} onSessionEnded={message => { setError(message || 'Your session has ended. Please sign in again.'); setCheckout(false); setUser(null); }}/>: <main className="role-page"><div className="role-container">
     <header className="workspace-header"><div className="workspace-brand"><img src={logo} alt="CIRIL"/><span>Internal operations</span></div><div className="workspace-actions"><span className="workspace-session"><span/>Session active</span><ThemeToggle inline/></div></header>
-    {checkout ? <CheckoutFlow user={user} onComplete={finishCheckout} onCancel={() => { setCheckout(false); requestAnimationFrame(() => workspace.current?.querySelector('.role-logout')?.focus()); }} onSessionEnded={() => { setCheckout(false); setUser(null); }}/>: <>
-    {user.roles.length > 1 && <label className="role-switch">Switch workspace<select value={user.activeRole} disabled={busy} onChange={e => changeRole(e.target.value)}>{user.roles.map(role => <option key={role.code} value={role.code}>{role.label}</option>)}</select></label>}
-    {Dashboard ? <Dashboard key={user.activeRole} user={user}/> : <p role="alert">This workspace is unavailable.</p>}
+    <CheckoutFlow user={user} onComplete={finishCheckout} onCancel={() => { changeView(() => setCheckout(false)); requestAnimationFrame(() => workspace.current?.querySelector('.role-logout')?.focus()); }} onSessionEnded={() => { setCheckout(false); setUser(null); }}/>
     {error && <p role="alert" className="role-error">{error}</p>}
-    <footer className="workspace-footer"><span>One team. A shared purpose.</span><button className="role-logout" disabled={busy} onClick={() => { setError(''); setCheckout(true); }}>{busy ? 'Please wait…' : 'Log out'}<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 5H5v14h4m5-14 7 7-7 7m-5-7h12"/></svg></button></footer>
-    </>}
-  </div></main>;
+  </div></main>}</div>;
 }
+
+export default function App() { return <><ActionFeedback/><Application/></>; }
