@@ -1,5 +1,10 @@
 CREATE DATABASE IF NOT EXISTS iots_auth_temp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE iots_auth_temp;
+CREATE TABLE IF NOT EXISTS calendar_holiday_cache (
+  year SMALLINT PRIMARY KEY,
+  payload JSON NOT NULL,
+  fetched_at DATETIME(3) NOT NULL
+);
 CREATE TABLE IF NOT EXISTS employees (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(80) NOT NULL UNIQUE,
@@ -9,6 +14,14 @@ CREATE TABLE IF NOT EXISTS employees (
 CREATE TABLE IF NOT EXISTS roles (
   code VARCHAR(60) PRIMARY KEY,
   label VARCHAR(100) NOT NULL
+);
+-- Per-employee workspace preferences. Authentication identity/roles remain in their own tables.
+CREATE TABLE IF NOT EXISTS employee_workspace (
+  employee_id INT PRIMARY KEY,
+  settings JSON NOT NULL,
+  avatar MEDIUMBLOB NULL,
+  avatar_updated_at DATETIME(3) NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 CREATE TABLE IF NOT EXISTS employee_roles (
   employee_id INT NOT NULL,
@@ -77,4 +90,37 @@ CREATE TABLE IF NOT EXISTS checkout_evidence (
   details JSON NOT NULL,
   FOREIGN KEY (employee_id) REFERENCES employees(id),
   FOREIGN KEY (sign_in_photo_id) REFERENCES photo_evidence(id)
+);
+
+CREATE TABLE IF NOT EXISTS session_devices (
+  token_hash CHAR(64) PRIMARY KEY,
+  device_label VARCHAR(120) NOT NULL,
+  FOREIGN KEY (token_hash) REFERENCES sessions(token_hash) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS signin_challenges (
+  token_hash CHAR(64) PRIMARY KEY,
+  employee_id INT NOT NULL,
+  active_role VARCHAR(60) NOT NULL,
+  device_label VARCHAR(120) NOT NULL,
+  session_snapshot JSON NOT NULL,
+  expires_at DATETIME NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS employee_notifications (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  employee_id INT NOT NULL,
+  title VARCHAR(160) NOT NULL,
+  message VARCHAR(500) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  read_at TIMESTAMP NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS remote_work_sessions (
+  session_hash CHAR(64) PRIMARY KEY,
+  employee_id INT NOT NULL,
+  started_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  ended_at DATETIME(3) NULL,
+  expires_at DATETIME NOT NULL,
+  FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
