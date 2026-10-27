@@ -6,6 +6,10 @@ async function withSession(pool, tokenHash, action) {
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
+    const [[owner]] = await connection.execute('SELECT employee_id FROM sessions WHERE token_hash=?', [tokenHash]);
+    if (!owner) throw httpError(401, 'Your session has ended. Please sign in.');
+    // Serialize account-level login, password changes, punch-out and takeover in the same lock order.
+    await connection.execute('SELECT id FROM employees WHERE id=? FOR UPDATE', [owner.employee_id]);
     const [[session]] = await connection.execute("SELECT s.*,sl.stage,sl.location_json FROM sessions s JOIN session_locations sl ON sl.token_hash=s.token_hash JOIN employee_roles er ON er.employee_id=s.employee_id AND er.role_code=s.active_role WHERE s.token_hash=? AND s.expires_at>NOW() AND (sl.stage='active' OR s.created_at>NOW()-INTERVAL 5 MINUTE) FOR UPDATE", [tokenHash]);
     if (!session) throw httpError(401, 'Your session has ended. Please sign in.');
     const result = await action(connection, session);
