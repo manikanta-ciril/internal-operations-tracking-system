@@ -24,7 +24,7 @@ async function clear(connection) {
   await connection.query('USE iots_auth_fix_test');
   await connection.beginTransaction();
   try {
-    for (const table of ['sessions', 'checkout_evidence', 'photo_evidence', 'login_events']) await connection.query(`DELETE FROM ${table}`);
+    for (const table of ['sessions', 'checkout_evidence', 'photo_evidence', 'login_events', 'employee_workspace', 'signin_challenges', 'employee_notifications', 'remote_work_sessions']) await connection.query(`DELETE FROM ${table}`);
     await connection.commit();
   } catch (error) { await connection.rollback(); throw error; }
   const resolved = path.resolve(storage);
@@ -58,10 +58,20 @@ async function freePort() {
       api.once('exit', code => { clearTimeout(timer); reject(new Error(`Isolated API exited ${code}`)); });
     });
     await run(path.join(backend, 'tests/test-security.js'));
+    await clear(admin);
     await run(path.join(backend, 'tests/test-transitions.cjs'));
+    await clear(admin);
     await run(path.join(backend, 'tests/test-auth.js'));
+    await clear(admin);
     await run(path.join(backend, 'tests/test-checkout.js'));
+    await clear(admin);
+    await run(path.join(backend, 'tests/test-workspace.cjs'));
+    await clear(admin);
+    await run(path.join(backend, 'tests/test-account-controls.cjs'));
+    await clear(admin);
     await run(path.join(workspace, 'iots-app/authentication-system/frontend/tests/auth-regressions.cjs'));
+    await run(path.join(workspace, 'iots-app/authentication-system/frontend/tests/loading-feedback.cjs'));
+    await run(path.join(workspace, 'iots-app/authentication-system/frontend/tests/attendance-calendar.cjs'));
     console.log('PASS: isolated authentication suite; manual-test database and photos were not used.');
   } finally {
     if (api && api.exitCode === null) {
