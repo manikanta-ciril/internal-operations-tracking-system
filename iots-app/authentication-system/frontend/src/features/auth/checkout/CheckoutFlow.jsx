@@ -1,3 +1,4 @@
+import Spinner from "../../../shared/feedback/Spinner";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { authApi } from '../api';
 import LocationPermissionGate from '../LocationPermissionGate';
@@ -74,11 +75,11 @@ export default function CheckoutFlow({ user, onComplete, onCancel, onSessionEnde
     <h1 tabIndex={-1}>Punch out</h1>
     <p className="checkout-intro">Record your location and a photo to finish this session.</p>
     {phase === 'location' && <LocationPermissionGate checkout onGranted={checkLocation}/>}
-    {phase === 'checking' && <p role="status">Checking your punch-out location...</p>}
+    {phase === 'checking' && <p role="status" className="inline-loading"><Spinner/>Checking your punch-out location...</p>}
     {phase === 'decision' && <LocationDecision checkout inline location={location} onContinue={confirm} onCancel={cancel} busy={busy}/>}
     {phase === 'photo' && location && <div className="photo-shell"><PhotoEvidence mode="checkout" employeeName={user.name} employeeUsername={user.username} employeeEmail={user.email} location={location} onSaved={onComplete} onCancel={cancel} onSessionEnded={onSessionEnded} onLocationExpired={retryLocation}/></div>}
     {error && <p className="capture-error" role="alert">{error}</p>}
     {phase === 'retry' && <button className="capture-primary" type="button" onClick={() => { setError(''); setPhase('location'); }}>Retry location check</button>}
-    {!['photo', 'decision'].includes(phase) && <button type="button" className="capture-cancel" disabled={busy || phase === 'checking'} onClick={cancel}>Cancel punch-out</button>}
+    {!['photo', 'decision'].includes(phase) && <button type="button" className="capture-cancel" disabled={busy || phase === 'checking'} aria-busy={busy || undefined} onClick={cancel}>{busy && <Spinner/>}Cancel punch-out</button>}
   </div>;
 }
