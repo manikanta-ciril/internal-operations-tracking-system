@@ -1,0 +1,79 @@
+/* App-owned overlay. Placement-based entry motion adapted from HeroUI 3.2.6
+   (@heroui/styles tooltip.css); see THIRD_PARTY_NOTICES.md and retained license. */
+.employee-workspace .ui-tooltip-root {
+  position: relative;
+  display: inline-flex;
+}
+.employee-workspace .ui-tooltip.ui-tooltip-native {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  border: 0;
+  padding: 12px 14px;
+  width: max-content;
+  max-width: min(300px, calc(100vw - 16px));
+  overflow: visible;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px -8px #0006;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+  pointer-events: auto;
+  --tooltip-enter-y: 3px;
+  transform-origin: var(--tooltip-arrow-left, 50%) bottom;
+}
+.employee-workspace .ui-tooltip.ui-tooltip-native[data-placement="bottom"] {
+  --tooltip-enter-y: -3px;
+  transform-origin: var(--tooltip-arrow-left, 50%) top;
+}
+.employee-workspace .ui-tooltip-native:not(:popover-open) {
+  display: none;
+}
+.employee-workspace .ui-tooltip-native::backdrop {
+  background: transparent;
+}
+.employee-workspace .ui-tooltip-native::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--tooltip-arrow-left, 50%) - 4px);
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.employee-workspace .ui-tooltip-native[data-placement="bottom"]::after {
+  top: -4px;
+  bottom: auto;
+}
+.employee-workspace .ui-tooltip-content {
+  display: block;
+  max-height: min(260px, calc(100dvh - 40px));
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .employee-workspace .ui-tooltip-native:popover-open {
+    animation: tooltip-pop-out 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes tooltip-pop-out {
+    from {
+      opacity: 0;
+      transform: translateY(var(--tooltip-enter-y)) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .employee-workspace .ui-tooltip-native:popover-open {
+    animation: none;
+  }
+}
