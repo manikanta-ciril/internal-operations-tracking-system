@@ -66,6 +66,7 @@ async function main() {
   assert.equal(record.details.signInPhotoId, session.signInId);
   assert.equal((await sharp(await fs.readFile(path.join(checkoutPhotoRoot, record.storage_path))).metadata()).format, 'webp');
   assert.equal((await fetch(base + 'checkout/photos/' + id)).status, 401);
+  await pool.execute('UPDATE checkout_evidence SET checked_out_at=NOW()-INTERVAL 1 DAY');
   const second = await signIn();
   assert.equal((await fetch(base + 'checkout/photos/' + id, { headers: { Cookie: second.cookie } })).status, 200);
   await call('checkout/location', { position: position() }, second.cookie);
