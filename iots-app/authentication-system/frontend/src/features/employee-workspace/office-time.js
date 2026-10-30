@@ -34,6 +34,12 @@ export function officeHoursLabel(value) {
 
 // Presentation stays independent of attendance and employee availability.
 export function shiftPresentation(schedule, now) {
+  if (schedule?.mode === 'offsite' && now) {
+    const seconds = Math.max(0, Math.floor(schedule.elapsedSeconds || 0));
+    return { phase: 'offsite', minutes: null, progress: null,
+      status: 'Off-site session', countdown: `${Math.floor(seconds / 3600)}h ${Math.floor(seconds % 3600 / 60)}m worked`,
+      hours: 'Today · No fixed shift', detail: 'Accumulated off-site session time today (IST). This is session duration, not task effort.' };
+  }
   const remaining = officeTimeRemaining(schedule, now);
   const base = { ...remaining, progress: null, status: 'Updating schedule', countdown: 'Syncing', hours: 'Working hours', detail: 'Waiting for the office schedule' };
   if (remaining.minutes === null) return base;

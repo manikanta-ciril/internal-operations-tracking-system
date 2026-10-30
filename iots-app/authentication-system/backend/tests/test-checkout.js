@@ -23,36 +23,48 @@ async function main() {
     const response = await fetch(base + route, { method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'image/jpeg', 'X-Captured-At': String(timestamp), 'X-Location-Check': checks.get(cookie)?.checkId || '' }, body: buffer });
     return { status: response.status, data: await response.json() };
   }
-  async function signIn() {
-    const login = await call('login', { username: 'vijay', password: 'Iots@123' });
+  async function signIn(username = 'vijay', delta = 0) {
+    const login = await call('login', { username, password: 'Iots@123' });
     assert.equal(login.status, 200);
     assert.equal((await call('checkout/location', { position: position() }, login.cookie)).status, 403);
-    await call('location', { position: position() }, login.cookie);
+    const location = await call('location', { position: position(delta) }, login.cookie);
+    if (location.data.resumedPunchIn) return { cookie: login.cookie, signInId: location.data.user.location.punchInPhotoId };
     const capture = await photo('photo', login.cookie); assert.equal(capture.status, 200);
     return { cookie: login.cookie, signInId: capture.data.photoId };
   }
-  const session = await signIn();
+  let session = await signIn();
+  const originalId = session.signInId;
+  assert.equal((await call('logout', { withoutPunchOut: 'true' }, session.cookie)).status, 409);
+  const loggedOut = await call('logout', { withoutPunchOut: true }, session.cookie);
+  assert.equal(loggedOut.status, 200);
+  assert.equal(loggedOut.data.punchOutRecorded, false);
+  assert.equal((await call('me', undefined, session.cookie)).status, 401);
+  session = await signIn();
+  assert.equal(session.signInId, originalId);
+  const [[dailyCount]] = await pool.execute('SELECT COUNT(*) AS n FROM photo_evidence WHERE employee_id=(SELECT id FROM employees WHERE username=?)', ['vijay']);
+  assert.equal(dailyCount.n, 1);
+  assert.equal((await call('workspace', undefined, session.cookie)).data.sessions.length, 1);
   assert.equal((await call('logout', {}, session.cookie)).status, 409);
   assert.equal((await call('cancel', {}, session.cookie)).status, 409);
   assert.equal((await photo('checkout/photo', session.cookie)).status, 409);
   assert.equal((await call('checkout/location', { position: { ...position(), timestamp: Date.now() - 180000 } }, session.cookie)).status, 400);
   assert.equal((await call('checkout/location', { position: null }, session.cookie)).status, 400);
   const uncertain = await call('checkout/location', { position: position(.001, 100) }, session.cookie);
-  assert.equal(uncertain.data.requiresConfirmation, true);
+  assert.equal(uncertain.status, 403);
+  assert.match(uncertain.data.message, /Return within the office radius/);
   assert.equal((await call('checkout/confirm', { proceed: 'yes' }, session.cookie)).status, 400);
-  assert.equal((await call('checkout/confirm', { proceed: false }, session.cookie)).status, 200);
+  assert.equal((await call('checkout/cancel', {}, session.cookie)).status, 200);
   assert.equal((await call('me', undefined, session.cookie)).status, 200);
   assert.equal((await photo('checkout/photo', session.cookie)).status, 409);
   const offsite = await call('checkout/location', { position: position(.001) }, session.cookie);
-  assert.equal(offsite.data.location.status, 'offsite');
+  assert.equal(offsite.status, 403);
   assert.equal((await photo('checkout/photo', session.cookie)).status, 409);
-  assert.equal((await call('checkout/confirm', { proceed: true }, session.cookie)).status, 200);
+  await call('checkout/location', { position: position() }, session.cookie);
   assert.equal((await photo('checkout/photo', session.cookie, Buffer.from('bad jpeg'))).status, 400);
   assert.equal((await photo('checkout/photo', session.cookie, jpeg, Date.now() - 180000)).status, 400);
-  await pool.execute('UPDATE checkout_checks SET checked_at=NOW()-INTERVAL 6 MINUTE WHERE session_hash=(SELECT session_hash FROM photo_evidence WHERE id=?)', [session.signInId]);
+  await pool.execute('UPDATE checkout_checks SET checked_at=NOW()-INTERVAL 6 MINUTE WHERE session_hash=?', [require('node:crypto').createHash('sha256').update(session.cookie.split('=')[1]).digest('hex')]);
   assert.equal((await photo('checkout/photo', session.cookie)).status, 409);
-  await call('checkout/location', { position: position(.001) }, session.cookie);
-  await call('checkout/confirm', { proceed: true }, session.cookie);
+  await call('checkout/location', { position: position() }, session.cookie);
   const results = await Promise.all([photo('checkout/photo', session.cookie), photo('checkout/photo', session.cookie)]);
   assert.equal(results.filter(result => result.status === 200).length, 1);
   assert.ok(results.every(result => [200, 401, 403, 409].includes(result.status)));
@@ -62,7 +74,7 @@ async function main() {
   const [[count]] = await pool.execute('SELECT COUNT(*) AS n FROM checkout_evidence WHERE sign_in_photo_id=?', [session.signInId]);
   assert.equal(count.n, 1);
   const [[record]] = await pool.execute('SELECT * FROM checkout_evidence WHERE id=?', [id]);
-  assert.equal(record.details.kind, 'checkout'); assert.equal(record.details.location.status, 'offsite');
+  assert.equal(record.details.kind, 'checkout'); assert.equal(record.details.location.status, 'onsite');
   assert.equal(record.details.signInPhotoId, session.signInId);
   assert.equal((await sharp(await fs.readFile(path.join(checkoutPhotoRoot, record.storage_path))).metadata()).format, 'webp');
   assert.equal((await fetch(base + 'checkout/photos/' + id)).status, 401);
@@ -74,6 +86,26 @@ async function main() {
   assert.equal((await photo('checkout/photo', second.cookie)).status, 409);
   await call('checkout/location', { position: position() }, second.cookie);
   assert.equal((await photo('checkout/photo', second.cookie)).status, 200);
+  // A user with no office punch can sign in off-site, but both photos are mandatory.
+  const remote = await signIn('admin', .01);
+  await pool.execute('UPDATE remote_work_sessions SET started_at=NOW()-INTERVAL 90 MINUTE WHERE session_hash=(SELECT session_hash FROM photo_evidence WHERE id=?)', [remote.signInId]);
+  const time = await call('workspace/time', undefined, remote.cookie);
+  assert.equal(time.data.mode, 'offsite');
+  const expected = Math.min(5400, (Date.now() - require('../src/auth/workday').workday().start.getTime()) / 1000);
+  assert.ok(time.data.elapsedSeconds >= expected - 10 && time.data.elapsedSeconds < expected + 20);
+  assert.equal((await call('me', undefined, remote.cookie)).status, 200);
+  assert.equal((await call('logout', {}, remote.cookie)).status, 409);
+  const remoteCheck = await call('checkout/location', { position: position(.01) }, remote.cookie);
+  assert.equal(remoteCheck.data.requiresConfirmation, true);
+  assert.equal((await photo('checkout/photo', remote.cookie)).status, 409);
+  assert.equal((await call('checkout/confirm', { proceed: true }, remote.cookie)).status, 200);
+  assert.equal((await photo('checkout/photo', remote.cookie)).status, 200);
+  const [[closed]] = await pool.execute('SELECT ended_at FROM remote_work_sessions WHERE session_hash=(SELECT session_hash FROM photo_evidence WHERE id=?)', [remote.signInId]);
+  assert.ok(closed.ended_at);
+  // Off-site punch-out does not lock another sign-in on the same day.
+  const remoteAgain = await signIn('admin', .01);
+  assert.ok((await call('workspace/time', undefined, remoteAgain.cookie)).data.elapsedSeconds >= expected - 10);
+  assert.equal((await call('me', undefined, remoteAgain.cookie)).status, 200);
   console.log('PASS: checkout stage gates, stale GPS, exception decision, cancellation, invalid/expired photo, concurrent replay, persisted linked WebP and session termination.');
 }
 main().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => pool.end());

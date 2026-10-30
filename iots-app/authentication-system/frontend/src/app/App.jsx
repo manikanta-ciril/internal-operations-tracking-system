@@ -6,6 +6,7 @@ import logo from '../assets/logo.png';
 import ThemeToggle from '../shared/components/ThemeToggle';
 import Login from '../features/auth/LoginPage.jsx';
 import CheckoutFlow from '../features/auth/checkout/CheckoutFlow';
+import LogoutChoice from '../features/auth/checkout/LogoutChoice';
 import { authApi } from '../features/auth/api';
 import EmployeeWorkspace from '../features/employee-workspace/EmployeeWorkspace';
 import '../features/workspace/dashboards/dashboard.css';
@@ -16,6 +17,7 @@ function Application() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [checkout, setCheckout] = useState(false);
+  const [logoutChoice, setLogoutChoice] = useState(false);
   const workspace = useRef(null);
   useLayoutEffect(() => {
     if (!user || !workspace.current) return;
@@ -49,7 +51,18 @@ function Application() {
   }
   function requestLogout() {
     setError('');
-    changeView(() => setCheckout(true));
+    setLogoutChoice(true);
+  }
+  async function logoutOnly() {
+    setBusy(true); setError('');
+    try {
+      await authApi('logout', { withoutPunchOut: true });
+      setLogoutChoice(false);
+      await finishCheckout();
+    } catch (e) {
+      if (e.status === 401) { setLogoutChoice(false); setUser(null); }
+      else setError(e.message);
+    } finally { setBusy(false); }
   }
   async function finishCheckout() {
     setBusy(true); setError('');
@@ -61,12 +74,12 @@ function Application() {
     finally { setBusy(false); }
   }
   if (loading) return <main className="auth-message"><span className="session-loader" aria-hidden="true"/><p role="status">Checking your session…</p></main>;
-  if (!user) return <><Login onAuthenticated={next => { setError(''); setUser(next); }}/>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
+  if (!user) return <><Login onAuthenticated={next => { setError(''); setLogoutChoice(false); setUser(next); }}/>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
   return <div ref={workspace}>{!checkout ? <EmployeeWorkspace key={user.id} user={user} busy={busy} error={error} onChangeRole={changeRole} onLogout={requestLogout} onSessionEnded={message => { setError(message || 'Your session has ended. Please sign in again.'); setCheckout(false); setUser(null); }}/>: <main className="role-page"><div className="role-container">
     <header className="workspace-header"><div className="workspace-brand"><img src={logo} alt="CIRIL"/><span>Internal operations</span></div><div className="workspace-actions"><span className="workspace-session"><span/>Session active</span><ThemeToggle inline/></div></header>
     <CheckoutFlow user={user} onComplete={finishCheckout} onCancel={() => { changeView(() => setCheckout(false)); requestAnimationFrame(() => workspace.current?.querySelector('.role-logout')?.focus()); }} onSessionEnded={() => { setCheckout(false); setUser(null); }}/>
     {error && <p role="alert" className="role-error">{error}</p>}
-  </div></main>}</div>;
+  </div></main>}{logoutChoice && <LogoutChoice busy={busy} error={error} onClose={() => { if (!busy) { setLogoutChoice(false); setError(''); } }} onLogoutOnly={logoutOnly} onPunchOut={() => { setLogoutChoice(false); changeView(() => setCheckout(true)); }}/>}</div>;
 }
 
 export default function App() { return <><ActionFeedback/><Application/></>; }

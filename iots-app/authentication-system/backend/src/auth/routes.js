@@ -1,4 +1,5 @@
-const { requireNotPunchedOut, requireOfficeLocation } = require('./workday');
+const { requireNotPunchedOut, requireSignInLocation } = require('./workday');
+const { openTodayPunch, requireSessionPunch, startRemote } = require('./attendance');
 const { withSession, requireStage, requireCheck, requireCaptureTime } = require('../auth/session-state');
 const { clientAddress, createLoginLimiter } = require('../auth/login-limiter');
 const { loginUsername } = require('../auth/login-identity');
@@ -55,7 +56,7 @@ router.use('/api/auth', async (req, res, next) => {
   if (session.stage === 'active') {
     try {
       await requireNotPunchedOut(pool, session.employee_id);
-      requireOfficeLocation(session.location_json);
+      await requireSignInLocation(pool, session.employee_id, session.location_json);
     } catch (error) {
       if (error.status !== 403) throw error;
       await withSession(pool, session.token_hash, async (connection, current) => {
@@ -76,16 +77,23 @@ router.post('/api/auth/location', async (req, res) => {
     const location = { ...assessLocation(p), checkId: randomUUID(), captureAfter: Date.now() };
     try {
       await requireNotPunchedOut(connection, session.employee_id);
-      requireOfficeLocation(location);
+      await requireSignInLocation(connection, session.employee_id, location);
     } catch (error) {
       if (error.status !== 403) throw error;
       await connection.execute('DELETE FROM sessions WHERE token_hash=?', [session.token_hash]);
       await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [session.employee_id, 'location_rejected']);
       return { blocked: true, message: error.message };
     }
-    await connection.execute("UPDATE session_locations SET stage='awaiting_photo',location_json=?,confirmed_at=NOW() WHERE token_hash=?", [JSON.stringify(location), session.token_hash]);
+    const existing = await openTodayPunch(connection, session.employee_id);
+    if (existing) location.punchInPhotoId = existing.id;
+    await connection.execute("UPDATE session_locations SET stage=?,location_json=?,confirmed_at=NOW() WHERE token_hash=?", [existing ? 'active' : 'awaiting_photo', JSON.stringify(location), session.token_hash]);
     await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [session.employee_id, 'location_checked', JSON.stringify(location)]);
     const employee = await userData(session.employee_id, session.active_role, connection);
+    if (existing) {
+      await startRemote(connection, session, location, existing.id);
+      await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [session.employee_id, 'session_resumed', JSON.stringify({ punchInPhotoId: existing.id, location })]);
+      return { user: { ...employee, location }, resumedPunchIn: true };
+    }
     return { requiresPhoto: true, employeeName: employee.name, employeeUsername: employee.username, employeeEmail: employee.email, location };
   });
   if (result.blocked) return res.clearCookie('iots_session', { path: '/api', httpOnly: true, sameSite: 'strict' }).status(403).json({ message: result.message });
@@ -103,7 +111,7 @@ router.post('/api/auth/location/confirm', async (req, res) => {
     }
     const location = { ...session.location_json, captureAfter: Date.now() };
     await requireNotPunchedOut(connection, session.employee_id);
-    requireOfficeLocation(location);
+    await requireSignInLocation(connection, session.employee_id, location);
     await connection.execute("UPDATE session_locations SET stage='awaiting_photo',location_json=?,confirmed_at=NOW() WHERE token_hash=?", [JSON.stringify(location), session.token_hash]);
     const employee = await userData(session.employee_id, session.active_role, connection);
     return { requiresPhoto: true, employeeName: employee.name, employeeUsername: employee.username, employeeEmail: employee.email, location };
@@ -128,7 +136,7 @@ router.post('/api/auth/photo', express.raw({ type: 'image/jpeg', limit: '2mb' })
     const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
       requireStage(session, 'awaiting_photo');
       await requireNotPunchedOut(connection, session.employee_id);
-      requireOfficeLocation(session.location_json);
+      await requireSignInLocation(connection, session.employee_id, session.location_json);
       requireCheck(session.location_json, req.headers['x-location-check']);
       const capturedAt = Number(req.headers['x-captured-at']);
       requireCaptureTime(capturedAt, session.location_json);
@@ -138,6 +146,7 @@ router.post('/api/auth/photo', express.raw({ type: 'image/jpeg', limit: '2mb' })
       await connection.execute("UPDATE session_locations SET stage='active' WHERE token_hash=?", [session.token_hash]);
       await connection.execute('INSERT INTO photo_evidence (id,employee_id,session_hash,storage_path,file_size,sha256,captured_at) VALUES (?,?,?,?,?,?,?)', [photo.id, employee.id, session.token_hash, photo.storagePath, photo.size, photo.sha256, new Date(capturedAt)]);
       await connection.execute('INSERT INTO photo_evidence_details (photo_id,details) VALUES (?,?)', [photo.id, JSON.stringify(details)]);
+      await startRemote(connection, session, session.location_json, photo.id);
       await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [employee.id, 'photo_evidence_accepted', JSON.stringify({ photoId: photo.id })]);
       return { user: { ...employee, location: session.location_json }, photoId: photo.id };
     });
@@ -152,8 +161,7 @@ router.use('/api/auth', (req, res, next) => {
   next();
 });
 router.use('/api/auth', async (req, res, next) => {
-  const [[photo]] = await pool.execute('SELECT id FROM photo_evidence WHERE session_hash=?', [req.session.token_hash]);
-  if (!photo) return res.status(403).json({ message: 'Please sign in again to capture your photo evidence.' });
+  await requireSessionPunch(pool, req.session);
   next();
 });
 router.get('/api/auth/photos/:id', async (req, res) => {

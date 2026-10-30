@@ -1,0 +1,34 @@
+{
+  "name": "ciril-designer-preview",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs",
+    "serve": "node ../serve-preview.cjs",
+    "test": "node test.cjs && node workflow.test.cjs && node role-policy.test.cjs && node typing-greetings.test.cjs",
+    "build:designer-workspace": "node build-designer-workspace.cjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@heroui/button": "^2.2.32",
+    "@heroui/dropdown": "^2.3.32",
+    "@heroui/scroll-shadow": "^2.3.19",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^0.468.0",
+    "radix-ui": "^1.8.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "esbuild": "^0.25.0",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^4.1.0",
+    "tw-animate-css": "^1.3.0"
+  }
+}

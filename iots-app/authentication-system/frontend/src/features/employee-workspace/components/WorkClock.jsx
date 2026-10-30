@@ -37,7 +37,8 @@ export default function WorkClock() {
   const now = snapshot
     ? new Date(new Date(snapshot.serverTime).getTime() + since)
     : null;
-  const shift = shiftPresentation(snapshot, now);
+  const runningSince = snapshot?.activeUntil ? Math.min(since, Math.max(0, new Date(snapshot.activeUntil) - new Date(snapshot.serverTime))) : 0;
+  const shift = shiftPresentation(snapshot?.mode === 'offsite' ? { ...snapshot, elapsedSeconds: snapshot.elapsedSeconds + runningSince / 1000 } : snapshot, now);
   const timezone = snapshot?.timezone || "Asia/Kolkata";
   const zoneLabel = timezone === "Asia/Kolkata" ? "IST" : now
     ? new Intl.DateTimeFormat("en", { timeZone: timezone, timeZoneName: "short" })
@@ -69,6 +70,7 @@ export default function WorkClock() {
           <span style={{ width: `${shift.progress}%` }} />
         </div>}
         {error && <small className="shift-sync">Time sync pending</small>}
+        {snapshot?.mode === 'onsite' && snapshot.reminder && <small className="shift-sync" role="status" title={snapshot.reminder}>Remember to punch out when you finish.</small>}
       </div>
   );
 }

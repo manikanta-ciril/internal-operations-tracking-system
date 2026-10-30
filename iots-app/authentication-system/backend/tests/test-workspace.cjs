@@ -151,7 +151,8 @@ async function call(route, cookie, body) {
       ),
     );
     await page.getByRole("button", { name: "Open profile menu" }).click();
-    await page.getByRole("button", { name: "Punch out & log out", exact: true }).click();
+    await page.getByRole("dialog", { name: "Profile menu" }).getByRole("button", { name: "Log out", exact: true }).click();
+    await page.getByRole("button", { name: "Punch out and log out", exact: false }).click();
     await page
       .locator(".checkout-flow")
       .waitFor({ timeout: 10000 })

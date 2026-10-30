@@ -4,21 +4,25 @@ const express = require('express');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { assessLocation } = require('../location/assess');
+const { requireOfficeLocation } = require('../auth/workday');
+const { requireSessionPunch } = require('../auth/attendance');
 const { preparePhoto, storePhoto, photoDetails, checkoutPhotoRoot } = require('../evidence/photos');
 
 // Registered after the active-session and sign-in-evidence guards.
 module.exports = function registerCheckout(app, { pool, userData }) {
-  app.use('/api/auth/checkout',async(req,res,next)=>{
-    const [[remote]]=await pool.execute('SELECT session_hash FROM remote_work_sessions WHERE session_hash=? AND ended_at IS NULL',[req.session.token_hash]);
-    if(remote) return res.status(409).json({message:'WFH sessions do not require punch-out evidence. Use Log out.'});
-    next();
-  });
+  async function requireCheckoutLocation(connection, session, location) {
+    const punch = await requireSessionPunch(connection, session);
+    if (punch.details.location?.status === 'onsite' && location?.status !== 'onsite')
+      throw httpError(403, 'You signed in at the office. Return within the office radius to punch out.');
+    if (!['onsite', 'offsite'].includes(location?.status)) requireOfficeLocation(location);
+  }
   app.post('/api/auth/checkout/location', async (req, res) => {
     const assessed = assessLocation(req.body?.position);
     if (!Number.isFinite(assessed.latitude)) return res.status(400).json({ message: 'Allow location and obtain a fresh reading before punching out.' });
     const result = await withSession(pool, req.session.token_hash, async (connection, session) => {
       requireStage(session, 'active');
       const location = { ...assessed, checkId: randomUUID(), captureAfter: Date.now() };
+      await requireCheckoutLocation(connection, session, location);
       const stage = location.status === 'onsite' ? 'awaiting_photo' : 'awaiting_confirmation';
       await connection.execute('INSERT INTO checkout_checks (session_hash,stage,location_json) VALUES (?,?,?) ON DUPLICATE KEY UPDATE stage=VALUES(stage),location_json=VALUES(location_json),checked_at=CURRENT_TIMESTAMP', [session.token_hash, stage, JSON.stringify(location)]);
       await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [session.employee_id, 'checkout_location_checked', JSON.stringify(location)]);
@@ -44,6 +48,7 @@ module.exports = function registerCheckout(app, { pool, userData }) {
         return { cancelled: true };
       }
       const location = { ...check.location_json, captureAfter: Date.now() };
+      await requireCheckoutLocation(connection, session, location);
       await connection.execute("UPDATE checkout_checks SET stage='awaiting_photo',location_json=? WHERE session_hash=?", [JSON.stringify(location), session.token_hash]);
       await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [session.employee_id, 'checkout_exception_accepted']);
       return { requiresPhoto: true, location };
@@ -69,14 +74,17 @@ module.exports = function registerCheckout(app, { pool, userData }) {
         requireStage(session, 'active');
         const check = await currentCheck(connection, session, req.headers['x-location-check']);
         requireStage(check, 'awaiting_photo');
+        await requireCheckoutLocation(connection, session, check.location_json);
         const capturedAt = Number(req.headers['x-captured-at']);
         requireCaptureTime(capturedAt, check.location_json);
         const employee = await userData(session.employee_id, session.active_role, connection);
-        const [[signIn]] = await connection.execute('SELECT id FROM photo_evidence WHERE session_hash=?', [session.token_hash]);
+        const signIn = await requireSessionPunch(connection, session);
         const details = { ...photoDetails(capturedAt, check.location_json), kind: 'checkout', signInPhotoId: signIn.id };
         photo = await storePhoto(buffer, employee, details);
         await connection.execute('INSERT INTO checkout_evidence (id,employee_id,session_hash,sign_in_photo_id,storage_path,file_size,sha256,captured_at,details) VALUES (?,?,?,?,?,?,?,?,?)', [photo.id, employee.id, session.token_hash, signIn.id, photo.storagePath, photo.size, photo.sha256, new Date(capturedAt), JSON.stringify(details)]);
         await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [employee.id, 'checkout_completed', JSON.stringify({ photoId: photo.id, signInPhotoId: signIn.id })]);
+        await require('../auth/remote-work').closeRemote(connection, employee.id);
+        if (session.location_json.status === 'offsite') await connection.execute('INSERT INTO login_events (employee_id,event) VALUES (?,?)', [employee.id, 'remote_session_ended']);
         await connection.execute('DELETE FROM sessions WHERE token_hash=?', [session.token_hash]);
       });
     } catch (error) {
@@ -91,5 +99,15 @@ module.exports = function registerCheckout(app, { pool, userData }) {
     res.set('Content-Disposition', 'inline'); res.set('X-Content-Type-Options', 'nosniff');
     res.sendFile(path.join(checkoutPhotoRoot, photo.storage_path), { dotfiles: 'allow' });
   });
-  app.post('/api/auth/logout', (req, res) => res.status(409).json({ message: 'Complete the punch-out location check and photo capture to log out.', requiresCheckout: true }));
+  app.post('/api/auth/logout', async (req, res) => {
+    if (req.body?.withoutPunchOut !== true) return res.status(409).json({ message: 'Choose Log out only, or complete punch-out.' });
+    await withSession(pool, req.session.token_hash, async (connection, session) => {
+      requireStage(session, 'active');
+      const punch = await requireSessionPunch(connection, session);
+      await require('../auth/remote-work').closeRemote(connection, session.employee_id);
+      await connection.execute('INSERT INTO login_events (employee_id,event,details) VALUES (?,?,?)', [session.employee_id, 'session_logged_out', JSON.stringify({ punchInPhotoId: punch.id, location: session.location_json, punchOutRecorded: false })]);
+      await connection.execute('DELETE FROM sessions WHERE token_hash=?', [session.token_hash]);
+    });
+    res.clearCookie('iots_session', { path: '/api', httpOnly: true, sameSite: 'strict' }).json({ loggedOut: true, punchOutRecorded: false });
+  });
 };

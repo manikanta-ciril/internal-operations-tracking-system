@@ -32,7 +32,7 @@ module.exports = async ({ base, cookie, call }) => {
     await page.getByRole("button", { name: "Open profile menu" }).waitFor();
     await page
       .getByLabel("Office clock")
-      .getByText(/left|Weekly off/)
+      .getByText(/left|Weekly off|Shift completed|Starts /).first()
       .waitFor();
     assert.equal(
       await page.locator(".employee-tools .employee-name").count(),
@@ -154,32 +154,17 @@ module.exports = async ({ base, cookie, call }) => {
       .getByRole("button", { name: "Sign in", exact: true })
       .waitFor();
     assert.equal((await call("me", cookie)).status, 200);
-    // A different account with no completed workday must still be blocked off-site.
+    // A fresh off-site account must reach mandatory photo capture, not a denial.
     await signIn.getByLabel("Username or email", { exact: true }).fill("admin");
     await signIn.getByLabel("Password", { exact: true }).fill("Iots@123");
     await signIn.getByRole("button", { name: "Sign in", exact: true }).click();
-    await signIn.getByText(/Off-site sign-in is not allowed/).waitFor();
-    await signIn
-      .getByRole("button", { name: "Sign in", exact: true })
-      .waitFor();
-    assert.equal(
-      await signIn
-        .getByRole("button", { name: "Continue sign-in", exact: true })
-        .count(),
-      0,
-    );
-    assert.equal(
-      await signIn.getByRole("button", { name: "Open profile menu" }).count(),
-      0,
-    );
-    assert.match(
-      await signIn.getByText(/Off-site sign-in is not allowed/).innerText(),
-      /KM/,
-    );
+    await signIn.getByRole("heading", { name: "One photo, then you are in." }).waitFor();
+    assert.equal(await signIn.getByRole("button", { name: "Open profile menu" }).count(), 0);
+    await signIn.getByRole("button", { name: "Cancel sign-in", exact: true }).click();
     assert.equal((await call("me", cookie)).status, 200);
     assert.deepEqual(errors, []);
     console.log(
-      "PASS: local popover/tooltip/calendar, fallback avatar, header placement, notification hover, password form, responsive themes, takeover cancellation, hours remaining, removed name and off-site login rejection.",
+      "PASS: local popover/tooltip/calendar, fallback avatar, header placement, notification hover, password form, responsive themes, takeover cancellation, schedule states, removed name and off-site photo requirement.",
     );
   } finally {
     await browser.close();

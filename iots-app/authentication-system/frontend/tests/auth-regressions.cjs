@@ -13,6 +13,7 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
     // Each browser scenario starts a separate simulated workday in the isolated database.
     await pool.execute('DELETE FROM sessions');
     await pool.execute('UPDATE checkout_evidence SET checked_out_at=NOW()-INTERVAL 1 DAY');
+    await pool.execute('UPDATE photo_evidence SET captured_at=NOW()-INTERVAL 1 DAY');
     const context = await browser.newContext({ viewport: { width: 1440, height: 800 }, reducedMotion: normalMotion ? 'no-preference' : 'reduce',
       permissions: ['geolocation', 'camera'], geolocation: { latitude: 17.430361111, longitude: 78.456638889, accuracy: 1 } });
     contexts.push(context);
@@ -63,7 +64,7 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
         const sharp=require('../../backend/node_modules/sharp');
         console.error('Test photo diagnostics:', body?.length, await sharp(body).metadata().catch(error=>({error:error.message})));
       }
-      if (url.pathname.endsWith('/checkout/confirm') && state.holdConfirm) { state.confirmSeen.resolve(); await state.releaseConfirm.promise; }
+      if (url.pathname.endsWith('/checkout/location') && state.holdConfirm) { state.confirmSeen.resolve(); await state.releaseConfirm.promise; }
       if (url.pathname.endsWith('/auth/photo') && state.dropAcknowledgement && response.ok()) { state.dropAcknowledgement = false; return route.abort(); }
       return route.fulfill({ response });
     });
@@ -135,10 +136,31 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
     await capture(onsite.page);
     await onsite.page.getByRole('button', { name: 'Use photo & continue', exact: true }).click();
     await onsite.page.getByRole('button', { name: 'Log out', exact: true }).waitFor();
+    await onsite.page.getByRole('button', { name: 'Log out', exact: true }).click();
+    const logoutDialog = onsite.page.getByRole('dialog', { name: 'Ready to log out?' });
+    await logoutDialog.waitFor();
+    await onsite.page.screenshot({ path: require('node:path').resolve(__dirname, '../../../../.local/logout-choice-desktop.png'), fullPage: true });
+    await onsite.page.setViewportSize({ width: 375, height: 812 });
+    assert.ok(await onsite.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await onsite.page.screenshot({ path: require('node:path').resolve(__dirname, '../../../../.local/logout-choice-mobile.png'), fullPage: true });
+    await onsite.page.evaluate(() => document.documentElement.classList.add('dark'));
+    await onsite.page.screenshot({ path: require('node:path').resolve(__dirname, '../../../../.local/logout-choice-mobile-dark.png'), fullPage: true });
+    await onsite.page.evaluate(() => document.documentElement.classList.remove('dark'));
+    await logoutDialog.getByRole('button', { name: 'Stay signed in' }).click();
+    await onsite.page.setViewportSize({ width: 1440, height: 800 });
+    await onsite.page.getByRole('button', { name: 'Log out', exact: true }).click();
+    await onsite.page.getByRole('dialog').getByRole('button', { name: 'Log out only' }).click();
+    await onsite.page.getByRole('button', { name: 'Sign in', exact: true }).waitFor();
+    await onsite.page.getByLabel('Username or email', { exact: true }).fill('vijay');
+    await onsite.page.getByLabel('Password', { exact: true }).fill('Iots@123');
+    await onsite.page.getByRole('button', { name: 'Sign in', exact: true }).click();
+    await onsite.page.getByRole('button', { name: 'Log out', exact: true }).waitFor();
+    assert.equal(await onsite.page.locator('video').count(), 0);
     // A second position about 25 metres north remains comfortably inside the radius.
     await onsite.context.setGeolocation({ latitude: 17.4305859415, longitude: 78.4566388889, accuracy: 1 });
     const punchOutResponse = onsite.page.waitForResponse(response => new URL(response.url()).pathname === '/api/auth/checkout/location');
     await onsite.page.getByRole('button', { name: 'Log out', exact: true }).click();
+    await onsite.page.getByRole('button', { name: 'Punch out and log out', exact: false }).click();
     await onsite.page.getByRole('heading', { name: 'Punch out', exact: true }).waitFor();
     await onsite.page.getByRole('button', { name: 'Allow camera', exact: true }).waitFor();
     const punchOutLocation = await (await punchOutResponse).json();
@@ -171,20 +193,19 @@ const deferred = () => { let resolve; const promise = new Promise(done => { reso
     await lost.page.getByRole('button', { name: 'Log out', exact: true }).waitFor({ timeout: 15000 });
     assert.deepEqual(lost.state.pageErrors, []);
     console.log('PASS: AUTH-06 lost successful photo response reconciles to the workspace.');
-    await lost.context.setGeolocation({ latitude: 17.431361111, longitude: 78.456638889, accuracy: 1 });
-    await lost.page.getByRole('button', { name: 'Log out', exact: true }).click();
-    await lost.page.getByRole('button', { name: 'Continue punch-out', exact: true }).waitFor();
     lost.state.holdConfirm = true; lost.state.confirmSeen = deferred(); lost.state.releaseConfirm = deferred();
-    await lost.page.getByRole('button', { name: 'Continue punch-out', exact: true }).click();
+    await lost.page.getByRole('button', { name: 'Log out', exact: true }).click();
+    await lost.page.getByRole('button', { name: 'Punch out and log out', exact: false }).click();
     await lost.state.confirmSeen.promise; await lost.page.evaluate(() => window.__authTest.revoke()); lost.state.releaseConfirm.resolve();
     await lost.page.getByRole('heading', { name: 'Allow location to continue.' }).waitFor();
     await lost.page.waitForTimeout(250);
     assert.equal(await lost.page.locator('video').count(), 0);
     assert.deepEqual(lost.state.pageErrors, []); await lost.context.close();
-    console.log('PASS: AUTH-03 delayed checkout confirmation cannot reopen capture after revocation.');
+    console.log('PASS: AUTH-03 delayed checkout location response cannot reopen capture after revocation.');
 
     const checkoutExpiry = await setup(); await signIn(checkoutExpiry.page);
     await checkoutExpiry.page.getByRole('button', { name: 'Log out', exact: true }).click();
+    await checkoutExpiry.page.getByRole('button', { name: 'Punch out and log out', exact: false }).click();
     await capture(checkoutExpiry.page); checkoutExpiry.state.expireLocation = true;
     await checkoutExpiry.page.getByRole('button', { name: 'Save punch-out & log out', exact: true }).click();
     await checkoutExpiry.page.getByRole('button', { name: 'Retry location check', exact: true }).waitFor();

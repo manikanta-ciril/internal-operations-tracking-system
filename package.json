@@ -2,5 +2,8 @@
   "dependencies": {
     "@heroui/react": "^3.2.6",
     "@heroui/styles": "^3.2.6"
+  },
+  "devDependencies": {
+    "shadcn": "^4.23.0"
   }
 }

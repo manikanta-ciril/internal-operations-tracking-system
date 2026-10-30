@@ -67,7 +67,7 @@ export default function ProfileMenu() {
               }}
             >
               <Icon name="logout" />
-              Punch out & log out
+              Log out
             </button>
           </div>
         </>

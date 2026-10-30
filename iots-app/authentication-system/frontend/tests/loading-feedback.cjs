@@ -261,6 +261,7 @@ const deferred = () => {
       pending = { seen: deferred(), release: deferred() };
       const logout = pending;
       await page.getByRole("button", { name: "Log out", exact: true }).click();
+      await page.getByRole("button", { name: "Punch out and log out", exact: false }).click();
       await page
         .getByRole("heading", { name: "Punch out", exact: true })
         .waitFor();

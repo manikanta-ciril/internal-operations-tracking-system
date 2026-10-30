@@ -18,7 +18,7 @@
     "dev": "node --watch src/server.js",
     "test:auth": "node tests/run-isolated.cjs",
     "seed": "node database/seed.js",
-    "test:unit": "node tests/test-identity.js && node tests/test-location.js && node tests/test-photos.js && node tests/test-encode.js && node tests/test-security.js && node tests/test-holidays.cjs"
+    "test:unit": "node tests/test-identity.js && node tests/test-location.js && node tests/test-photos.js && node tests/test-encode.js && node tests/test-security.js && node tests/test-holidays.cjs && node tests/test-workday-policy.js"
   },
   "dependencies": {
     "dotenv": "^18.0.4",

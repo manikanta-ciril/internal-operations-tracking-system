@@ -14,8 +14,8 @@ const hashPassword = async (password) => {
 };
 module.exports = (router, { pool }) => {
   const limiter = createLoginLimiter();
-  router.get("/api/auth/workspace/time", (req, res) =>
-    res.json(require("../auth/workday").workday()),
+  router.get("/api/auth/workspace/time", async (req, res) =>
+    res.json(await require("./work-time").workTime(pool, req.session)),
   );
   router.post("/api/auth/workspace/password", async (req, res) => {
     const { currentPassword, newPassword } = req.body || {};

@@ -2,6 +2,8 @@ import Empty from "../../shared/workspace/Empty";
 import { TIMEZONE } from "../employee-attendance/model";
 
 const labels = {
+  session_logged_out: "Logged out · attendance stays open",
+  session_resumed: "Signed in · existing punch-in reused",
   remote_session_started: "WFH session started",
   remote_session_ended: "WFH session ended",
   password_updated: "Password updated",

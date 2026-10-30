@@ -27,13 +27,13 @@ module.exports = function registerWorkspace(router, { pool }) {
       COALESCE(d.device_label,'Previously signed-in device') AS device, r.label AS role, (s.token_hash=?) AS current FROM sessions s LEFT JOIN session_devices d ON d.token_hash=s.token_hash
       JOIN roles r ON r.code=s.active_role JOIN session_locations sl ON sl.token_hash=s.token_hash
       WHERE s.employee_id=? AND s.expires_at>NOW() AND sl.stage='active'
-      AND (EXISTS (SELECT 1 FROM photo_evidence p WHERE p.session_hash=s.token_hash) OR EXISTS (SELECT 1 FROM remote_work_sessions rw WHERE rw.session_hash=s.token_hash AND rw.ended_at IS NULL))
+      AND EXISTS (SELECT 1 FROM photo_evidence p WHERE p.employee_id=s.employee_id AND (p.session_hash=s.token_hash OR p.id=JSON_UNQUOTE(JSON_EXTRACT(sl.location_json,'$.punchInPhotoId'))))
       ORDER BY s.created_at DESC`,
       [req.session.token_hash, employeeId],
     );
     const [activity] = await pool.execute(
       `SELECT id,event,created_at AS occurredAt FROM login_events
-      WHERE employee_id=? AND event IN ('remote_session_started','remote_session_ended','password_updated','session_taken_over','photo_evidence_accepted','checkout_completed','workspace_profile_updated','workspace_availability_updated','workspace_preferences_updated','workspace_avatar_updated')
+      WHERE employee_id=? AND event IN ('session_logged_out','session_resumed','remote_session_started','remote_session_ended','password_updated','session_taken_over','photo_evidence_accepted','checkout_completed','workspace_profile_updated','workspace_availability_updated','workspace_preferences_updated','workspace_avatar_updated')
       ORDER BY id DESC LIMIT 50`,
       [employeeId],
     );

@@ -22,7 +22,7 @@ function workday(now = new Date()) {
 async function requireNotPunchedOut(connection, employeeId, now = new Date()) {
   const day = workday(now);
   const [[record]] = await connection.execute(
-    "SELECT id FROM checkout_evidence WHERE employee_id=? AND checked_out_at>=? AND checked_out_at<? LIMIT 1",
+    "SELECT c.id FROM checkout_evidence c JOIN photo_evidence_details d ON d.photo_id=c.sign_in_photo_id WHERE c.employee_id=? AND c.checked_out_at>=? AND c.checked_out_at<? AND JSON_UNQUOTE(JSON_EXTRACT(d.details,'$.location.status'))='onsite' LIMIT 1",
     [employeeId, day.start, day.end],
   );
   if (record)
@@ -31,12 +31,22 @@ async function requireNotPunchedOut(connection, employeeId, now = new Date()) {
       "You have already punched out today. You cannot sign in again until tomorrow (IST), regardless of location.",
     );
 }
+async function requireSignInLocation(connection, employeeId, location, now = new Date()) {
+  if (location?.status === "onsite") return;
+  if (location?.status !== "offsite") return requireOfficeLocation(location);
+  const day = workday(now);
+  const [[officePunch]] = await connection.execute(
+    "SELECT p.id FROM photo_evidence p JOIN photo_evidence_details d ON d.photo_id=p.id WHERE p.employee_id=? AND p.captured_at>=? AND p.captured_at<? AND JSON_UNQUOTE(JSON_EXTRACT(d.details,'$.location.status'))='onsite' LIMIT 1",
+    [employeeId, day.start, day.end],
+  );
+  if (officePunch) throw httpError(403, "You started an office session today. Complete your punch-out at the office. Off-site sign-in is unavailable for the rest of today (IST).");
+}
 function requireOfficeLocation(location) {
   if (location?.status === "onsite") return;
   if (location?.status !== "offsite")
     throw httpError(
       403,
-      "Your office location could not be verified. Get a fresh location reading at the office and try again.",
+      "Your location could not be verified. Allow location access, get a fresh reading and try again.",
     );
   const distance = Number.isFinite(location.distanceMeters)
     ? location.distanceMeters > 500
@@ -78,5 +88,6 @@ module.exports = {
   workday,
   requireNotPunchedOut,
   requireOfficeLocation,
+  requireSignInLocation,
   deviceLabel,
 };

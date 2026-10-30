@@ -64,20 +64,17 @@ The backend calculates Haversine distance from the reported coordinates alone:
 within or exactly 75 metres is on-site; beyond 75 metres is off-site. Browser
 accuracy is not required, stored in new location assessments or used to classify
 attendance. Missing, invalid or stale coordinates are rejected and must be
-retried. Denied location permission keeps the login form locked. Off-site
-readings still require an explicit location exception decision. Historical
+retried. Denied location permission keeps the login form locked. Eligible off-site
+sign-ins still require camera evidence. Historical
 photo stamps and metadata retain their original assessment.
 
 
 The login first creates a pending session. `/api/auth/me` and role switching
-reject it until location checks and photo evidence are complete. On-site proceeds to the camera;
-off-site and unknown require an explicit Continue or Cancel decision. Continue
-preserves the classification on the session; Cancel deletes the pending session.
-The decision stays inside the authentication progress panel, matching the legacy
-flow. While paused, the account remains verified, the location step shows a
-warning, loading indicators stop, and workspace preparation is not displayed.
-No timer advances the paused flow; only an explicit decision resumes or cancels it.
-Pending decisions expire after five minutes. Login checks and location decisions
+reject it until location checks and photo evidence are complete. Verified on-site
+and eligible off-site readings proceed to the camera, preserving their location
+classification. Unknown readings cannot proceed. An office punch already recorded
+today prevents off-site sign-in. Cancelling deletes the pending session.
+Pending sign-ins expire after five minutes. Login checks and location decisions
 are stored in `login_events`; location details are in `session_locations`.
 The welcome page shows the session's actual location classification.
 
@@ -186,8 +183,11 @@ transitions are retained. The original login placement, form styling and recover
 
 ## Checkout on Log out
 
-The dashboard's Log out button opens checkout: fresh location (same 50 m office
-boundary), explicit off-site/unknown confirmation, and a new camera photo with
+The dashboard's Log out button first offers an attendance choice. Choosing
+**Punch out and log out** opens checkout: fresh location (same 75 m office
+boundary) and a new camera photo. Office sessions must punch out on-site;
+off-site sessions may confirm an off-site location before the photo. Unknown
+locations cannot proceed. The photo supports
 retake/confirm. Cancelling returns to the active workspace. Location denial or
 camera denial prevents completion; it does not invent a checkout record.
 
@@ -303,6 +303,12 @@ See [the complete file guide](../../FILE_STRUCTURE.md).
 
 ## Office-only access and account controls
 
-Off-site sign-in is disabled. Credentials must be followed by a fresh verified office location and camera evidence. After punch-out, the account cannot sign in again until the next IST day, regardless of location. Old WFH sessions cannot restore access. Rejected location attempts clear their pending session.
+Off-site sign-in is allowed at any hour when the employee has not started an office session that IST day. The first punch-in requires a fresh location reading and camera evidence. Later authenticated sign-ins with a fresh location reading reuse an open punch-in from the same IST day; they do not create duplicate attendance photos. An office session must punch out within the office radius; its completed punch-out blocks all further sign-ins until the next IST day. A same-day office punch also prevents switching to off-site access, including after a session takeover or expiry. An off-site punch-out does not impose the office daily lock. Unknown locations and legacy sessions without photo evidence cannot open the workspace. Working-hour schedules are informational and do not restrict access.
+
+Log out opens a choice: **Log out only**, **Punch out and log out**, or **Stay signed in**. Log out only revokes the access session and stops its off-site session timer, but keeps attendance open. It requires an explicit `withoutPunchOut: true` request and never inserts a punch-out record. Return sign-ins verify credentials, device conflicts, daily eligibility, fresh location, account ownership and the open punch-in. A different day or a closed attendance record requires a new punch-in photo. A resumed session's punch-out photo links to the original punch-in. Attendance evidence and access sessions remain separate records; no database migration is required for this linkage.
+
+Off-site time starts after the sign-in photo is accepted and stops at punch-out, session replacement, password-based session revocation or session expiry. The header accumulates these session intervals for the current IST day and displays hours/minutes worked, without an office-shift countdown. This is session duration, separate from task effort. Overnight intervals are clipped to each IST day.
+
+For office sessions, the time endpoint creates one dated in-app reminder from 30 minutes before scheduled closing (18:00 weekdays, 16:00 Saturday). The dashboard shows a reminder and the notification bell picks up the stored notification. A late opening after shift end gets a completed-shift reminder. Polling and page visibility govern delivery; there is no external push scheduler. Reminders never automatically punch out, end the session or prevent continued work.
 
 The header shows current IST time and hours/minutes left until office closing: Monday?Friday 09:30?18:00, Saturday 09:30?16:00. Sunday is the weekly off. Password changes remain under Profile > Security & sessions; takeover still requires explicit confirmation, and does not bypass office or same-day eligibility rules. See ../WORKSPACE_STRUCTURE.md for details.

@@ -34,12 +34,12 @@ async function call(route, cookie, body) {
   const [rows] = await pool.execute('SELECT id FROM photo_evidence WHERE id=?', [both.find(r => r.status === 200).data.photoId]); assert.equal(rows.length, 1);
   // Once cancellation commits, no delayed photo/location transition may survive it.
   const cancelled = await login();
-  const checked = await call('location', cancelled, { position: position() });
   assert.equal((await call('cancel', cancelled, {})).status, 200);
-  assert.equal((await photo(cancelled, checked.data.location.checkId)).status, 401);
+  assert.equal((await call('location', cancelled, { position: position() })).status, 401);
+  assert.equal((await photo(cancelled, 'cancelled')).status, 401);
   const uncertain = await login();
   const check = await call('location', uncertain, { position: { ...position(), latitude: office.latitude + .001 } });
-  assert.equal(check.status,403);assert.match(check.data.message,/Off-site sign-in is not allowed/);
+  assert.equal(check.status,403);assert.match(check.data.message,/started an office session today/);
   assert.equal((await call('me',uncertain)).status,401);
   assert.equal((await call('location/confirm',uncertain,{proceed:true,checkId:'forged'})).status,401);
   assert.equal((await photo(uncertain,'forged')).status,401);

@@ -154,6 +154,7 @@ export default function LoginPage({ onAuthenticated }) {
       if (!current(version)) return;
       const [checked] = await Promise.all([authApi('location', { position: captured }), pause(700, version)]);
       if (!current(version)) return;
+      if (checked.user) { await openWorkspace(checked.user); return; }
       setLocation(checked.location);
       if (checked.requiresConfirmation) setPhase('location');
       else { setEmployeeName(checked.employeeName); setEmployeeIdentity(checked); setProcessStep(3); await changePane('photo', version); }

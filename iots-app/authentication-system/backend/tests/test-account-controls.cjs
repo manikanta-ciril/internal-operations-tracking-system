@@ -65,8 +65,11 @@ async function call(route, cookie, body) {
       position: position(false),
     });
     assert.equal(result.status, 200);
-    assert.equal(result.data.requiresPhoto, true);
-    await capture(cookie, "photo", result.data.location);
+    if (result.data.resumedPunchIn) assert.ok(result.data.user.location.punchInPhotoId);
+    else {
+      assert.equal(result.data.requiresPhoto, true);
+      await capture(cookie, "photo", result.data.location);
+    }
   }
   async function checkout(cookie) {
     const result = await call("checkout/location", cookie, {
@@ -187,7 +190,7 @@ async function call(route, cookie, body) {
   });
   assert.equal(challengeResult.status, 403);
   assert.match(challengeResult.data.message, /regardless of location/);
-  // Next-day fixture: sign-in becomes eligible again, but off-site remains blocked.
+  // An older checkout does not lock login; today's office punch still prevents off-site access.
   await pool.execute(
     "UPDATE checkout_evidence SET checked_out_at=NOW()-INTERVAL 1 DAY WHERE employee_id=(SELECT id FROM employees WHERE username=?)",
     ["kanna"],
@@ -198,7 +201,7 @@ async function call(route, cookie, body) {
     position: position(true),
   });
   assert.equal(rejected.status, 403);
-  assert.match(rejected.data.message, /Off-site sign-in is not allowed/);
+  assert.match(rejected.data.message, /started an office session today/);
   assert.equal((await call("me", next.cookie)).status, 401);
   assert.equal(
     (
@@ -212,7 +215,7 @@ async function call(route, cookie, body) {
   const officeAgain = await login("Another long passphrase!");
   assert.equal(officeAgain.status, 200);
   await activate(officeAgain.cookie);
-  // Legacy WFH cookies are rejected even if they were activated under the old policy.
+  // Legacy WFH cookies still require sign-in photo evidence before workspace access.
   const { randomBytes, createHash } = require("node:crypto");
   const token = randomBytes(32).toString("hex"),
     sessionHash = createHash("sha256").update(token).digest("hex");
@@ -238,15 +241,15 @@ async function call(route, cookie, body) {
   );
   const legacy = await call("me", `iots_session=${token}`);
   assert.equal(legacy.status, 403);
-  assert.match(legacy.data.message, /Off-site sign-in is not allowed/);
-  assert.equal((await call("workspace", `iots_session=${token}`)).status, 401);
+  assert.match(legacy.data.message, /photo evidence/);
+  assert.equal((await call("workspace", `iots_session=${token}`)).status, 403);
   const [[remote]] = await pool.execute(
     "SELECT ended_at FROM remote_work_sessions WHERE session_hash=?",
     [sessionHash],
   );
-  assert.ok(remote.ended_at);
+  assert.equal(remote.ended_at, null);
   console.log(
-    "PASS: IST schedule, device detection, takeover cancel/replay/concurrency, password checks, notification reads, global same-day punch-out lock, next-day eligibility, off-site denial and legacy session revocation.",
+    "PASS: IST schedule, device detection, takeover cancel/replay/concurrency, password checks, notification reads, office punch-out lock, office-history location policy and mandatory legacy photo evidence.",
   );
 })()
   .catch((e) => {
