@@ -2,6 +2,7 @@ import { prepare, examples } from "../../creative-associate/workspace/api.js";
 import { initialState, startTask, submitTask } from "../model.js";
 import { recordActivity } from "../workflow.js";
 import { taskStorageKey } from "./TaskStorageAdapter.js";
+import { isPresentationEmployee, presentationSnapshot, presentationDemoVersion } from './presentation-demo.js';
 
 export class LocalStorageTaskAdapter {
   constructor(employee, storage) {
@@ -51,6 +52,13 @@ export class LocalStorageTaskAdapter {
         task.ownerId = this.employee.id;
     });
     snapshot.storageRevision ??= 0;
+    if (isPresentationEmployee(this.employee) && snapshot.presentationDemoVersion !== presentationDemoVersion) {
+      const backupKey = `${taskStorageKey}:presentation-backup:${this.employee.id}:${Date.now()}`;
+      this.storage.setItem(backupKey, JSON.stringify(snapshot));
+      const demo = presentationSnapshot(this.employee);
+      demo.storageRevision = snapshot.storageRevision;
+      return this.save(demo);
+    }
     return snapshot;
   }
   async save(snapshot) {

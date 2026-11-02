@@ -8,7 +8,7 @@
     "setup": "node scripts/setup.cjs",
     "build": "npm run build --prefix core-portal/frontend",
     "lint": "npm run lint --prefix core-portal/frontend",
-    "test:unit": "npm run test:unit --prefix core-portal/backend && node core-portal/frontend/src/shared/theme/useTheme.test.cjs && node core-portal/frontend/tests/ui-models.test.cjs && node core-portal/frontend/tests/chat-attachment-rules.test.mjs && node core-portal/frontend/tests/chat-drag-drop-ui.test.mjs",
+    "test:unit": "node scripts/check-ports.test.cjs && npm run test:unit --prefix core-portal/backend && node core-portal/frontend/src/shared/theme/useTheme.test.cjs && node core-portal/frontend/tests/ui-models.test.cjs && node core-portal/frontend/tests/chat-attachment-rules.test.mjs && node core-portal/frontend/tests/chat-drag-drop-ui.test.mjs",
     "test:auth": "npm run test:auth --prefix core-portal/backend",
     "test:dashboards": "node core-portal/frontend/tests/all-dashboards.cjs && node core-portal/frontend/tests/native-workspace.cjs"
   },

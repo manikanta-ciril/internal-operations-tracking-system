@@ -2,7 +2,7 @@
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
-const net = require('node:net');
+const { checkPorts } = require('./check-ports.cjs');
 const { createRequire } = require('node:module');
 const backend = path.resolve(__dirname, '../core-portal/backend');
 const frontend = path.resolve(__dirname, '../core-portal/frontend');
@@ -51,11 +51,7 @@ async function main() {
   backendRequire('dotenv').config({ path: path.join(backend, '.env') });
   if (!fs.existsSync(path.join(basedir, 'bin/mysqld.exe'))) throw new Error('Portable MySQL is missing. See core-portal/backend/AUTH_SETUP.md.');
   // Never take over another listener or stop an unrelated database.
-  for (const port of [3307, 3001, 5174]) await new Promise((resolve, reject) => {
-    const check = net.createServer();
-    check.once('error', () => reject(new Error(`Port ${port} is already in use. Stop the other IOTS dev command first.`)));
-    check.listen(port, '127.0.0.1', () => check.close(resolve));
-  });
+  await checkPorts([3307, 3001, 5174]);
   const args = [`--basedir=${basedir}`, `--datadir=${data}`];
   // MySQL 8 can keep its system dictionary in mysql.ibd without a mysql directory.
   if (!fs.existsSync(path.join(data, 'mysql')) && !fs.existsSync(path.join(data, 'mysql.ibd'))) {
@@ -87,6 +83,6 @@ async function main() {
   const api = launch(process.execPath, ['--watch', path.join(backend, 'src/server.js')]);
   api.on('exit', code => { if (!stopping) stop(code || 1); });
   const vite = launch(process.execPath, [path.join(frontend, 'node_modules/vite/bin/vite.js')], frontend);
-  vite.on('exit', code => { if (!stopping) stop(code || 0); });
+  vite.on('exit', code => { if (!stopping) stop(code || 1); });
 }
 main().catch(error => { console.error(error.message); stop(1); });
