@@ -4,8 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const net = require('node:net');
 const { createRequire } = require('node:module');
-const backend = path.resolve(__dirname, '../authentication-system/backend');
-const frontend = path.resolve(__dirname, '../authentication-system/frontend');
+const backend = path.resolve(__dirname, '../core-portal/backend');
+const frontend = path.resolve(__dirname, '../core-portal/frontend');
 const backendRequire = createRequire(path.join(backend, 'package.json'));
 const mysql = backendRequire('mysql2/promise');
 const root = path.resolve(__dirname, '../..');
@@ -49,7 +49,7 @@ process.on('SIGINT', () => stop());
 process.on('SIGTERM', () => stop());
 async function main() {
   backendRequire('dotenv').config({ path: path.join(backend, '.env') });
-  if (!fs.existsSync(path.join(basedir, 'bin/mysqld.exe'))) throw new Error('Portable MySQL is missing. See authentication-system/backend/AUTH_SETUP.md.');
+  if (!fs.existsSync(path.join(basedir, 'bin/mysqld.exe'))) throw new Error('Portable MySQL is missing. See core-portal/backend/AUTH_SETUP.md.');
   // Never take over another listener or stop an unrelated database.
   for (const port of [3307, 3001, 5174]) await new Promise((resolve, reject) => {
     const check = net.createServer();
@@ -57,7 +57,8 @@ async function main() {
     check.listen(port, '127.0.0.1', () => check.close(resolve));
   });
   const args = [`--basedir=${basedir}`, `--datadir=${data}`];
-  if (!fs.existsSync(path.join(data, 'mysql'))) {
+  // MySQL 8 can keep its system dictionary in mysql.ibd without a mysql directory.
+  if (!fs.existsSync(path.join(data, 'mysql')) && !fs.existsSync(path.join(data, 'mysql.ibd'))) {
     fs.mkdirSync(data, { recursive: true });
     await run(path.join(basedir, 'bin/mysqld.exe'), ['--no-defaults', ...args, '--initialize-insecure', '--console']);
   }

@@ -6,3 +6,9 @@ ignore/
 .gitignore~
 *~
 *.un~
+.vscode/
+input/
+legacy/
+reports/authentication-audit-2026-10-20/
+tools/
+codex-sessions/

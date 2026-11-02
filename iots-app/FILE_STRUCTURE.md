@@ -2,7 +2,7 @@
 
 ## Organization and ownership
 
-The application is organized by business subsystem. `authentication-system`
+The application is organized by business subsystem. `core-portal`
 contains today's implemented access and evidence workflow. Each future subsystem
 can have its own frontend and backend without adding unrelated logic to login.
 The root package is the development entry point and command dispatcher.
@@ -14,38 +14,38 @@ The root package is the development entry point and command dispatcher.
 | `package.json` | Public developer commands; private application package |
 | `scripts/dev.cjs` | MySQL initialization, non-destructive seeding, API/Vite startup and shutdown |
 | `scripts/setup.cjs` | Install each subsystem package from its lockfile |
-| `authentication-system/backend/src/server.js` | Bind the API listener; the only runtime entry point |
-| `authentication-system/backend/src/app.js` | Compose Express, request parsing, routes and error responses |
-| `authentication-system/backend/src/auth/routes.js` | Credential, location, confirmation, photo, session and role endpoints; mounts checkout |
-| `authentication-system/backend/src/auth/session-state.js` | Transaction locks and session/check/capture preconditions |
-| `authentication-system/backend/src/auth/login-limiter.js` | Independent account/client budgets and trusted proxy identity |
-| `authentication-system/backend/src/auth/login-identity.js` | Username and company email normalization |
-| `authentication-system/backend/src/auth/passwords.js` | Salted password hashes and bounded asynchronous verification |
-| `authentication-system/backend/src/auth/proxy-secret.js` | Development proxy trust secret; explicit production configuration |
-| `authentication-system/backend/src/checkout/routes.js` | Punch-out location, confirmation, capture and session termination |
-| `authentication-system/backend/src/location/` | Server distance/accuracy assessment and office coordinate configuration |
-| `authentication-system/backend/src/evidence/photos.js` | Validate captures, compose stamps, store private employee evidence |
-| `authentication-system/backend/src/evidence/encode.js` | Shared WebP compression for punch-in and punch-out |
-| `authentication-system/backend/src/database/connection.js` | MySQL pool and backend environment loading |
-| `authentication-system/backend/src/config/paths.js` | Stable repository, package and local-storage paths |
-| `authentication-system/backend/database/` | MySQL schema and idempotent seed script |
-| `authentication-system/backend/tests/` | Unit, API and isolated regression harnesses |
-| `authentication-system/frontend/src/main.jsx` | React bootstrap and global stylesheet |
-| `authentication-system/frontend/src/app/App.jsx` | Session restoration, role workspace composition and checkout |
-| `authentication-system/frontend/src/features/auth/LoginPage.jsx` | Login interaction and animation sequence |
-| `authentication-system/frontend/src/features/auth/api.js` | Browser authentication API client |
-| `authentication-system/frontend/src/features/auth/` | Location gates, decisions, progress and camera evidence UI |
-| `authentication-system/frontend/src/features/auth/checkout/` | Logout/punch-out state and UI |
-| `authentication-system/frontend/src/features/workspace/dashboards/` | Role-specific landing components, shared welcome card and styling |
-| `authentication-system/frontend/src/features/creative-associate/` | Standalone dashboard prototype; not a separate authenticated backend |
-| `authentication-system/frontend/src/shared/components/` | Reusable buttons, icons, title/background effects and dialogs |
-| `authentication-system/frontend/src/shared/theme/` | Shared light/dark store, toggle styles and store tests |
-| `authentication-system/frontend/src/shared/utils/` | Existing browser utility helpers retained during the move |
-| `authentication-system/frontend/src/styles/` | Global Tailwind/custom styles; legacy-app.css is retained starter CSS |
-| `authentication-system/frontend/src/assets/` | Imported image assets, including the evidence logo |
-| `authentication-system/frontend/public/` | Static files served without bundler imports |
-| `authentication-system/frontend/tests/` | Playwright authentication regression scenarios |
-| `authentication-system/frontend/vite.config.js` | Two HTML entries, port and API proxy; Node-only backend secret import |
+| `core-portal/backend/src/server.js` | Bind the API listener; the only runtime entry point |
+| `core-portal/backend/src/app.js` | Compose Express, request parsing, routes and error responses |
+| `core-portal/backend/src/auth/routes.js` | Credential, location, confirmation, photo, session and role endpoints; mounts checkout |
+| `core-portal/backend/src/auth/session-state.js` | Transaction locks and session/check/capture preconditions |
+| `core-portal/backend/src/auth/login-limiter.js` | Independent account/client budgets and trusted proxy identity |
+| `core-portal/backend/src/auth/login-identity.js` | Username and company email normalization |
+| `core-portal/backend/src/auth/passwords.js` | Salted password hashes and bounded asynchronous verification |
+| `core-portal/backend/src/auth/proxy-secret.js` | Development proxy trust secret; explicit production configuration |
+| `core-portal/backend/src/checkout/routes.js` | Punch-out location, confirmation, capture and session termination |
+| `core-portal/backend/src/location/` | Server distance/accuracy assessment and office coordinate configuration |
+| `core-portal/backend/src/evidence/photos.js` | Validate captures, compose stamps, store private employee evidence |
+| `core-portal/backend/src/evidence/encode.js` | Shared WebP compression for punch-in and punch-out |
+| `core-portal/backend/src/database/connection.js` | MySQL pool and backend environment loading |
+| `core-portal/backend/src/config/paths.js` | Stable repository, package and local-storage paths |
+| `core-portal/backend/database/` | MySQL schema and idempotent seed script |
+| `core-portal/backend/tests/` | Unit, API and isolated regression harnesses |
+| `core-portal/frontend/src/main.jsx` | React bootstrap and global stylesheet |
+| `core-portal/frontend/src/app/App.jsx` | Session restoration, role workspace composition and checkout |
+| `core-portal/frontend/src/features/auth/LoginPage.jsx` | Login interaction and animation sequence |
+| `core-portal/frontend/src/features/auth/api.js` | Browser authentication API client |
+| `core-portal/frontend/src/features/auth/` | Location gates, decisions, progress and camera evidence UI |
+| `core-portal/frontend/src/features/auth/checkout/` | Logout/punch-out state and UI |
+| `core-portal/frontend/src/features/workspace/dashboards/` | Role-specific landing components, shared welcome card and styling |
+| `core-portal/frontend/src/features/creative-associate/` | Standalone dashboard prototype; not a separate authenticated backend |
+| `core-portal/frontend/src/shared/components/` | Reusable buttons, icons, title/background effects and dialogs |
+| `core-portal/frontend/src/shared/theme/` | Shared light/dark store, toggle styles and store tests |
+| `core-portal/frontend/src/shared/utils/` | Existing browser utility helpers retained during the move |
+| `core-portal/frontend/src/styles/` | Global Tailwind/custom styles; legacy-app.css is retained starter CSS |
+| `core-portal/frontend/src/assets/` | Imported image assets, including the evidence logo |
+| `core-portal/frontend/public/` | Static files served without bundler imports |
+| `core-portal/frontend/tests/` | Playwright authentication regression scenarios |
+| `core-portal/frontend/vite.config.js` | Two HTML entries, port and API proxy; Node-only backend secret import |
 
 Review the entry points first, then the server transaction/state guards, then the
 matching browser flow and regression tests. Backend routes retain their existing
@@ -60,7 +60,7 @@ rendering lives in `WelcomeCard.jsx`. CSS stays next to its owning feature or UI
 
 ```text
 iots-app/
-|-- authentication-system/
+|-- core-portal/
 |   |-- backend/
 |   |   |-- database/
 |   |   |   |-- schema.sql
@@ -227,7 +227,7 @@ metadata continues to reference the existing relative evidence filenames.
 ## Adding the next subsystem
 
 1. Add `<business-name>-system/frontend` and/or `backend` next to
-   `authentication-system`. Only create packages needed by the implemented work.
+   `core-portal`. Only create packages needed by the implemented work.
 2. Give each package a unique name, a README, its own lockfile and tests.
 3. Add its install/start/build checks to root scripts when it becomes runnable;
    the current orchestrator launches authentication only because that is the
@@ -246,8 +246,8 @@ metadata continues to reference the existing relative evidence filenames.
 
 | Previous path | Current path |
 | --- | --- |
-| `iots-app/backend/` | `iots-app/authentication-system/backend/` |
-| `iots-app/frontend/` | `iots-app/authentication-system/frontend/` |
+| `iots-app/backend/` | `iots-app/core-portal/backend/` |
+| `iots-app/frontend/` | `iots-app/core-portal/frontend/` |
 | `backend/dev.js` | `iots-app/scripts/dev.cjs` |
 | `backend/index.js` | Backend `src/server.js`, `src/app.js` and `src/auth/routes.js` |
 | Backend root schema and seed | Backend `database/` |
@@ -265,10 +265,10 @@ Use this guide for current paths. `legacy/`, `input/`, `reports/` and session
 transcripts at repository level are reference material, not application runtime.
 
 Login background: `frontend/src/shared/components/SimplexNoiseBackground.jsx`
-(within authentication-system) renders the restored moving-sheet effect. It
+(within core-portal) renders the restored moving-sheet effect. It
 respects reduced motion and pauses while hidden. Login geometry and responsive
 title sizing live in `frontend/src/features/auth/login-layout.css`.
 
 ## Integrated employee workspace
 
-See [WORKSPACE_STRUCTURE.md](authentication-system/WORKSPACE_STRUCTURE.md) for the authenticated workspace component map, API ownership, storage, routing and extension points. The original role dashboards remain under `frontend/src/features/workspace/dashboards`; reusable profile, attendance, service and shell modules live in separate `employee-*` feature folders, with UI primitives under `shared/workspace`.
+See [WORKSPACE_STRUCTURE.md](core-portal/WORKSPACE_STRUCTURE.md) for the authenticated workspace component map, API ownership, storage, routing and extension points. The original role dashboards remain under `frontend/src/features/workspace/dashboards`; reusable profile, attendance, service and shell modules live in separate `employee-*` feature folders, with UI primitives under `shared/workspace`.

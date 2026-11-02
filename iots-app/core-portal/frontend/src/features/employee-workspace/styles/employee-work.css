@@ -1,0 +1,207 @@
+.employee-workspace.native-workspace {
+  display: block;
+  padding: 0;
+  background: var(--surface-soft);
+}
+.employee-workspace.native-workspace::before {
+  display: none;
+}
+.employee-workspace.native-workspace .role-container {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+.native-employee-layout {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.native-employee-layout.native-collapsed {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+.native-employee-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 14px;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+.native-sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 38px;
+}
+.native-sidebar-brand img {
+  width: 100px;
+  height: 38px;
+  object-fit: contain;
+}
+.native-sidebar-brand button,
+.native-mobile-toggle {
+  padding: 6px;
+  color: var(--muted);
+  border: 0;
+  background: transparent;
+}
+.native-navigation-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.native-navigation-scroll section {
+  margin-bottom: 24px;
+}
+.employee-workspace .native-navigation-scroll h2 {
+  margin: 0 10px 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.native-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 10px;
+  margin: 3px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.native-nav-link:hover {
+  background: var(--surface-soft);
+}
+.native-nav-link[aria-current="page"] {
+  background: var(--gold-soft);
+  color: var(--gold-ink);
+  font-weight: 600;
+}
+.native-nav-link svg {
+  flex: none;
+}
+.native-sidebar-footer p {
+  margin: 16px 10px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.native-collapsed .native-sidebar-brand {
+  flex-direction: column;
+}
+.native-collapsed .native-sidebar-brand img {
+  width: 30px;
+}
+.native-collapsed .native-nav-link span {
+  display: none;
+}
+.native-employee-canvas {
+  min-width: 0;
+}
+.native-employee-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.native-employee-toolbar .workspace-header {
+  flex: 1;
+  margin: 0;
+  justify-content: flex-end;
+}
+.native-employee-toolbar .role-switch {
+  margin: 0;
+}
+.native-mobile-toggle {
+  display: none;
+}
+.native-workspace #employee-main {
+  padding: 28px;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  margin: auto;
+}
+.local-work-notice {
+  margin-top: 28px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.native-workspace .welcome-stage {
+  min-height: 0;
+}
+.native-workspace .design-summary:not(:has(.summary-creative-artist)) {
+  padding-top: 0;
+  row-gap: 16px;
+}
+.native-workspace
+  .design-summary-card[data-kind="completed"]:not(
+    :has(.summary-creative-artist)
+  ) {
+  padding-right: 20px;
+}
+.revision-compare-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 20px;
+  align-items: start;
+}
+.revision-previous {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 900px) {
+  .native-employee-layout,
+  .native-employee-layout.native-collapsed {
+    grid-template-columns: 1fr;
+  }
+  .native-employee-sidebar {
+    display: none;
+  }
+  .native-mobile-open .native-employee-sidebar {
+    display: flex;
+    position: relative;
+    height: auto;
+    max-height: 65dvh;
+  }
+  .native-mobile-toggle {
+    display: block;
+  }
+  .native-employee-toolbar {
+    padding: 12px;
+  }
+  .native-workspace #employee-main {
+    padding: 20px 12px;
+  }
+  .native-employee-toolbar .workspace-header {
+    flex-basis: calc(100% - 40px);
+  }
+  .revision-compare-pane {
+    grid-template-columns: 1fr;
+  }
+}
+
+.native-workspace .greeting-hand {
+  opacity: 0;
+  transition: opacity 450ms ease-out;
+}
+.native-workspace .greeting-hand[data-ready="true"] {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .native-workspace .greeting-hand {
+    transition: none;
+  }
+}

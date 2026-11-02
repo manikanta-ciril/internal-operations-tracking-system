@@ -1,0 +1,76 @@
+.file-upload {
+  width: 100%;
+  min-width: 0;
+}
+.file-upload-zone {
+  display: flex;
+  width: 100%;
+  min-height: 154px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background 180ms,
+    border-color 180ms;
+}
+.file-upload-zone:hover,
+.file-upload-zone[data-dragging="true"] {
+  border-color: var(--gold-ink);
+  background: var(--gold-soft);
+}
+.file-upload-zone:focus-visible,
+.file-upload-list button:focus-visible {
+  outline: 2px solid var(--gold-ink);
+  outline-offset: 3px;
+}
+.file-upload-zone:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.file-upload-zone span,
+.file-upload-list small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.file-upload-list {
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+  max-height: 220px;
+  overflow: auto;
+}
+.file-upload-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.file-upload-list li > div {
+  flex: 1;
+  min-width: 0;
+}
+.file-upload-list strong,
+.file-upload-list div button {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  font-size: 13px;
+}
+.file-upload-list button {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}

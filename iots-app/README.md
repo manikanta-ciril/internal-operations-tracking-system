@@ -1,5 +1,14 @@
 # IOTS application
 
+The live application lives in `core-portal/` (formerly `authentication-system/`).
+Its `frontend/src/components/` and `frontend/src/lib/` own shared UI code.
+Design references stay in `previews/`; verification artifacts stay in the
+repository-level `reports/` directory. Duplicate root UI scaffolding is preserved
+in `previews/archived-ui-scaffold/` and is not imported by the application.
+
+With the development server running, `npm run test:dashboards` checks all role
+dashboards at desktop and mobile sizes, then checks tasks, reports and attendance.
+
 Run the complete application from this directory:
 
 ```cmd
@@ -17,7 +26,7 @@ PowerShell users can use `npm.cmd` if execution policy blocks `npm.ps1`.
 Use Node.js 22.12 or newer. Run `npm run setup` to install the frontend and backend
 with their independent lockfiles. The Windows portable MySQL installation must
 also exist under the repository's `.local` directory; follow
-[authentication setup](authentication-system/backend/AUTH_SETUP.md).
+[authentication setup](core-portal/backend/AUTH_SETUP.md).
 Dependency installation and MySQL installation are explicit setup steps.
 Dependencies, local database files and saved photos are excluded from Git.
 
