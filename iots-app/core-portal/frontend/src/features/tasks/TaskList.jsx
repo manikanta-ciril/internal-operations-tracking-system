@@ -18,15 +18,17 @@ import TaskCard from "./TaskCard.jsx";
 import { reportingState } from "./workflow.js";
 import { taskGroup } from "./task-groups.js";
 import { isInReview } from "../creative-associate/workspace/role-policy.js";
-function rank(t, now) {
-  return reportingState(t, now) === "Overdue"
+import { compareAssignedTasks } from "./task-order.js";
+function rank(task, now) {
+  return reportingState(task, now) === "Overdue"
     ? 0
-    : t.status === "Changes requested"
+    : task.status === "Changes requested"
       ? 1
-      : t.status === "Blocked" && t.blocker?.open !== false
+      : task.status === "Blocked" && task.blocker?.open !== false
         ? 2
         : 3;
 }
+
 export default function TaskList({
   tasks,
   employee,
@@ -87,10 +89,7 @@ export default function TaskList({
         .toLowerCase()
         .includes(query.toLowerCase()),
     )
-    .sort(
-      (a, b) =>
-        rank(a, now) - rank(b, now) || new Date(a.due) - new Date(b.due),
-    );
+    .sort(compareAssignedTasks);
   const copy = {
     work: "Your briefs, feedback and next steps, together.",
     reviews: "Follow submitted work and pick up requested changes.",

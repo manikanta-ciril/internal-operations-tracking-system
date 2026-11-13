@@ -13,6 +13,7 @@ import {
   reviewLabel,
 } from "../creative-associate/workspace/role-policy.js";
 import { useRolePolicy } from "../creative-associate/workspace/RoleContext.jsx";
+import { assignedTime } from "./task-order.js";
 import { cn } from "../../shared/work-ui/utils.js";
 export default function TaskCard({ task, now, onOpen }) {
   const policy = useRolePolicy(),
@@ -53,6 +54,9 @@ export default function TaskCard({ task, now, onOpen }) {
         <ArrowUpRight size={17} />
       </span>
       <strong className="task-card-title">{task.title}</strong>
+      {assignedTime(task) > 0 && (
+        <span className="task-card-assigned">Assigned on {format(new Date(assignedTime(task)).toISOString())}</span>
+      )}
       <span className="task-card-state">
         <StatusBadge task={task} />
         {task.priority === "High" && (
