@@ -1,0 +1,12 @@
+﻿.notice-dialog { position:fixed; inset:0; margin:auto; width:min(460px,calc(100vw - 32px)); max-height:85dvh; overflow:auto; padding:26px; border:1px solid var(--line,#dedbd5); border-radius:14px; color:var(--ink,#263238); background:var(--surface,#fff); box-shadow:0 16px 70px #0003; font-family:inherit; }
+.notice-dialog::backdrop { background:#141a20a6; }
+.notice-dialog h2 { font-size:21px; font-weight:650; margin:0 0 14px; }
+.notice-dialog-copy { font-size:15px; line-height:1.65; }
+.notice-dialog-copy p + p { margin-top:12px; }
+.notice-dialog footer { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; margin-top:24px; }
+.notice-dialog footer button { min-height:40px; border:1px solid var(--line,#dedbd5); border-radius:8px; padding:9px 16px; background:var(--surface,#fff); color:var(--ink,#263238); font:inherit; cursor:pointer; }
+.notice-dialog footer button:last-child { background:#805d2c; border-color:#805d2c; color:#fff; }
+.dark .notice-dialog { background:#242c33; color:#eef0f1; border-color:#4a4e50; }
+.dark .notice-dialog footer button { background:#30383f; color:#eef0f1; }
+.dark .notice-dialog footer button:last-child { background:#c5a059; color:#20272e; }
+.notice-dialog button:focus-visible { outline:2px solid #c5a059; outline-offset:3px; }

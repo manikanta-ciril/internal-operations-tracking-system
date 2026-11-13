@@ -1,3 +1,4 @@
+import DraftStorageConsent from "../features/messaging/DraftStorageConsent";
 import ActionFeedback from "../shared/feedback/ActionFeedback";
 import { changeView } from "../shared/feedback/change-view";
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -74,7 +75,7 @@ function Application() {
     finally { setBusy(false); }
   }
   if (loading) return <main className="auth-message"><span className="session-loader" aria-hidden="true"/><p role="status">Checking your session…</p></main>;
-  if (!user) return <><Login onAuthenticated={next => { setError(''); setLogoutChoice(false); setUser(next); }}/>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
+  if (!user) return <><DraftStorageConsent><Login onAuthenticated={next => { setError(''); setLogoutChoice(false); setUser(next); }}/></DraftStorageConsent>{error && <p className="auth-server-error" role="alert">{error}</p>}</>;
   return <div ref={workspace}>{!checkout ? <EmployeeWorkspace key={user.id} user={user} busy={busy} error={error} onChangeRole={changeRole} onLogout={requestLogout} onSessionEnded={message => { setError(message || 'Your session has ended. Please sign in again.'); setCheckout(false); setUser(null); }}/>: <main className="role-page"><div className="role-container">
     <header className="workspace-header"><div className="workspace-brand"><img src={logo} alt="CIRIL"/><span>Internal operations</span></div><div className="workspace-actions"><span className="workspace-session"><span/>Session active</span><ThemeToggle inline/></div></header>
     <CheckoutFlow user={user} onComplete={finishCheckout} onCancel={() => { changeView(() => setCheckout(false)); requestAnimationFrame(() => workspace.current?.querySelector('.role-logout')?.focus()); }} onSessionEnded={() => { setCheckout(false); setUser(null); }}/>

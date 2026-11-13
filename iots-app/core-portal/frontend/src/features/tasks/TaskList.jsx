@@ -159,7 +159,7 @@ export default function TaskList({
               </h2>
               <span>
                 {shown.length} {shown.length === 1 ? "task" : "tasks"} &middot;
-                Attention first
+                New assignments first
               </span>
             </div>
             <div className="view-switch" aria-label="Work layout">

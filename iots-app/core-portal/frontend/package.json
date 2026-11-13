@@ -7,6 +7,7 @@
     "dev": "node ../../scripts/dev.cjs",
     "build": "vite build",
     "lint": "oxlint",
+    "test:tasks:ui": "node tests/task-lifecycle.ui.mjs",
     "preview": "vite preview",
     "dev:frontend": "vite",
     "styles:work": "node scripts/build-employee-work.cjs",

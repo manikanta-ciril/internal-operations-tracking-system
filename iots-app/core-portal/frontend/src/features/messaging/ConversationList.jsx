@@ -48,6 +48,9 @@ function ConversationRow({ conversation, employees, onSelect }) {
 function NewConversation({ allowed, onCreate, disabled }) {
   return (
     <Dropdown
+      shouldBlockScroll={false}
+      shouldCloseOnBlur
+      shouldCloseOnScroll
       disableAnimation
       portalContainer={document.querySelector(".employee-workspace")}
       placement="bottom-end"

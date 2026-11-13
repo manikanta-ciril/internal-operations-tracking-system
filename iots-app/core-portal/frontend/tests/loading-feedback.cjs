@@ -67,6 +67,7 @@ const deferred = () => {
         const request = route.request(),
           p = new URL(request.url()).pathname;
         if (p.endsWith("/messaging")) return route.fulfill({ json: { employees: [], conversations: [], permissions: {} } });
+        if (p === "/api/auth/tasks") return route.fulfill({ json: { tasks: [], employees: [], reports: [], currentUser: user(), permissions: { execute: true, report: true, manage: false, oversight: false } } });
         if (request.method() === "POST" && pending) {
           pending.seen.resolve();
           await pending.release.promise;
@@ -241,18 +242,7 @@ const deferred = () => {
       await page
         .locator(".action-progress.is-pending")
         .waitFor({ state: "hidden" });
-      pending = { seen: deferred(), release: deferred() };
-      const switching = pending;
-      await page.getByLabel("Switch workspace").selectOption("admin");
-      await switching.seen.promise;
-      assert.ok(await page.getByLabel("Switch workspace").isDisabled());
-      await page.locator(".role-switch .feedback-spinner").waitFor();
-      switching.release.resolve();
-      await page.waitForURL("**/dashboard/admin");
-      await page.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
-      await page
-        .locator(".action-progress.is-pending")
-        .waitFor({ state: "hidden" });
+      assert.equal(await page.getByLabel("Switch workspace").count(), 0);
       await page.setViewportSize({ width: 375, height: 812 });
       assert.ok(
         await page.evaluate(
@@ -277,13 +267,13 @@ const deferred = () => {
       await page
         .getByRole("button", { name: "Cancel punch-out", exact: true })
         .click();
-      await page.getByRole("heading", { name: "Tasks", exact: true }).waitFor();
+      await page.getByRole("heading", { name: "Notifications", exact: true }).waitFor();
       await page
         .locator(".action-progress.is-pending")
         .waitFor({ state: "hidden" });
       await context.close();
       console.log(
-        `PASS: ${reduced} loading feedback, failed save recovery, retained form drafts, Back/Forward, inline notification/role/logout states and mobile width.`,
+        `PASS: ${reduced} loading feedback, failed save recovery, retained form drafts, Back/Forward, inline notification/logout states and combined navigation and mobile width.`,
       );
     }
     assert.deepEqual(errors, []);

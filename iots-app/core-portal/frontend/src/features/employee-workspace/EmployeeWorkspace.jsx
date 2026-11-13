@@ -1,4 +1,3 @@
-import Spinner from "../../shared/feedback/Spinner";
 import PageLoading from "../../shared/feedback/PageLoading";
 import Icon from "../../shared/workspace/Icon";
 import { lazy, Suspense, useEffect, useRef } from "react";
@@ -11,24 +10,23 @@ const EmployeeWorkLayout = lazy(
   () => import("./components/EmployeeWorkLayout"),
 );
 const ChatWidget = lazy(() => import("../messaging/ChatWidget"));
-import { hasEmployeeWork } from "../tasks/employee-policy";
+import { taskCapabilities } from "../tasks/employee-policy";
 import WorkspaceRoutes from "./WorkspaceRoutes";
 import "./styles/workspace.css";
 import "./styles/profile.css";
 import "./styles/menu.css";
 import "../../shared/ui/ui.css";
 
-function StandardLayout({ children, roleSwitcher }) {
+function StandardLayout({ children }) {
   return (
     <>
       <WorkspaceHeader />
-      {roleSwitcher}
       {children}
     </>
   );
 }
 
-function Shell({ busy, error, onChangeRole }) {
+function Shell({ busy, error }) {
   const {
     user,
     loading,
@@ -83,33 +81,16 @@ function Shell({ busy, error, onChangeRole }) {
       main.current?.querySelector("h1")?.focus({ preventScroll: true });
   }, [section, loading]);
   const home = path === "/";
-  const operational = hasEmployeeWork(user.activeRole);
+  const access = taskCapabilities(user);
+  const operational = access.employee || access.oversight;
   const Layout = operational ? EmployeeWorkLayout : StandardLayout;
-  const roleSwitcher = user.roles.length > 1 && (
-    <label className="role-switch">
-      <span className="role-switch-label">
-        {busy && <Spinner />}Switch workspace
-      </span>
-      <select
-        value={user.activeRole}
-        disabled={busy}
-        onChange={(event) => onChangeRole(event.target.value)}
-      >
-        {user.roles.map((role) => (
-          <option key={role.code} value={role.code}>
-            {role.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
   return (
     <div
       className={`employee-workspace role-page ${home ? "home-page" : "service-page"} ${operational ? "native-workspace" : ""}`}
     >
       <div className="role-container">
         <Suspense fallback={<PageLoading />}>
-          <Layout roleSwitcher={roleSwitcher}>
+          <Layout>
             <a
               href="#employee-main"
               className="skip-link"
@@ -170,7 +151,7 @@ function Shell({ busy, error, onChangeRole }) {
           </Layout>
         </Suspense>
         <Suspense fallback={null}>
-          <ChatWidget key={`${user.id}:${user.activeRole}`} />
+          <ChatWidget key={user.id} />
         </Suspense>
       </div>
     </div>
@@ -183,18 +164,26 @@ export default function EmployeeWorkspace({
   ...props
 }) {
   return (
+    <WorkspaceProvider
+      user={user}
+      busy={props.busy}
+      onLogout={onLogout}
+      onSessionEnded={onSessionEnded}
+    >
+      <CombinedWorkspace {...props} />
+    </WorkspaceProvider>
+  );
+}
+
+function CombinedWorkspace(props) {
+  const { user } = useEmployeeWorkspace();
+  const access = taskCapabilities(user);
+  return (
     <WorkspaceNavigation
       role={user.activeRole}
-      home={hasEmployeeWork(user.activeRole) ? "/tasks" : "/"}
+      home={access.oversight ? "/team-work" : access.employee ? "/tasks" : "/"}
     >
-      <WorkspaceProvider
-        user={user}
-        busy={props.busy}
-        onLogout={onLogout}
-        onSessionEnded={onSessionEnded}
-      >
-        <Shell {...props} />
-      </WorkspaceProvider>
+      <Shell {...props} />
     </WorkspaceNavigation>
   );
 }

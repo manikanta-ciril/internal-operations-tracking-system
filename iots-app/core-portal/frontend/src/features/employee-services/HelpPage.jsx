@@ -35,8 +35,9 @@ export default function HelpPage() {
         <details>
           <summary>Can I change my role?</summary>
           <p>
-            Use Switch workspace to choose another assigned role. New access
-            requires administrator approval.
+            Your assigned roles share one workspace. Common options appear once,
+            followed by the work options your roles allow. New access requires
+            administrator approval and refreshes automatically.
           </p>
         </details>
       </Panel>

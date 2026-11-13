@@ -12,12 +12,31 @@ import PageHeader from "../../shared/workspace/PageHeader";
 import { lazy, Suspense } from "react";
 import PageLoading from "../../shared/feedback/PageLoading";
 const TaskWorkspacePage = lazy(() => import("../tasks/TaskWorkspacePage"));
-import { hasEmployeeWork, workRoute } from "../tasks/employee-policy";
+import {
+  workRoute,
+  taskCapabilities,
+  managementRoute,
+} from "../tasks/employee-policy";
+const TaskManagementPage = lazy(
+  () => import("../tasks/management/TaskManagementPage"),
+);
 
 export default function WorkspaceRoutes() {
   const { user } = useEmployeeWorkspace();
   const { path } = useWorkspaceNavigation();
-  if (hasEmployeeWork(user.activeRole) && workRoute(path))
+  const capabilities = taskCapabilities(user);
+  if (
+    managementRoute(path) &&
+    (capabilities.manage ||
+      (capabilities.oversight &&
+        /^\/(team-work|team-reports)(\/|$)/.test(path)))
+  )
+    return (
+      <Suspense fallback={<PageLoading />}>
+        <TaskManagementPage key={user.id} />
+      </Suspense>
+    );
+  if (capabilities.employee && workRoute(path))
     return (
       <Suspense fallback={<PageLoading />}>
         <TaskWorkspacePage key={user.id} />

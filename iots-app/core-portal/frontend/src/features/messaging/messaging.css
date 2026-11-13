@@ -1182,3 +1182,7 @@
   }
 }
 
+
+.messaging-draft-settings {position:fixed;right:24px;bottom:8px;z-index:89;max-width:calc(100vw - 32px);font-size:11px;color:var(--muted);}
+.messaging-draft-settings button {padding:4px 8px;border-radius:6px;background:var(--surface);border:1px solid var(--line);cursor:pointer;}
+.messaging-draft-settings span {display:block;background:var(--surface);padding:6px;}
