@@ -1730,6 +1730,41 @@
   inherits: false;
   initial-value: 0;
 }
+:where(body.ciril-employee-work) .files-submit-action {
+  display: grid;
+  place-items: center;
+  min-height: 144px;
+  padding: 20px 12px;
+}
+:where(body.ciril-employee-work) .files-submit-action > button {
+  min-height: 44px;
+  padding: 12px 24px;
+  border: 1px solid #805d2c;
+  border-radius: 8px;
+  background: #805d2c;
+  color: #fff;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+:where(body.ciril-employee-work) .files-submit-action > button:hover {
+  background: #694b23;
+}
+:where(body.ciril-employee-work) .files-submit-action > button:active {
+  transform: translateY(1px);
+}
+:where(body.ciril-employee-work) .files-submit-action > button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(body.ciril-employee-work) .files-submit-action > button {
+    transition: none;
+    transform: none;
+  }
+}
 body.ciril-employee-work {
   --background: #faf9f6;
   --rail: #f3f2ed;

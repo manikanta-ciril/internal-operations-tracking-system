@@ -5,6 +5,41 @@
 @source "../../../../shared/work-ui";
 @source "../../../../shared/workspace";
 @import "tw-animate-css";
+.files-submit-action {
+  display: grid;
+  place-items: center;
+  min-height: 144px;
+  padding: 20px 12px;
+}
+.files-submit-action > button {
+  min-height: 44px;
+  padding: 12px 24px;
+  border: 1px solid #805d2c;
+  border-radius: 8px;
+  background: #805d2c;
+  color: #fff;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+.files-submit-action > button:hover {
+  background: #694b23;
+}
+.files-submit-action > button:active {
+  transform: translateY(1px);
+}
+.files-submit-action > button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .files-submit-action > button {
+    transition: none;
+    transform: none;
+  }
+}
 @custom-variant dark (&:is(.dark *));
 @theme inline {
   --color-background: var(--background);

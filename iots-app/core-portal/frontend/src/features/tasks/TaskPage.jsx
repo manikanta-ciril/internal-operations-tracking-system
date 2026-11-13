@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import {
   ArrowRight,
+  UploadCloud,
   Clock3,
   FileText,
   MessageSquare,
@@ -791,6 +792,11 @@ export default function TaskPage({
               <span>{classification.category}</span>
             </div>
           </PageHeading>
+          <section className="task-current-status" aria-label="Current status">
+            <h2>Current status</h2>
+            <strong>{task.status}</strong>
+            <p>{isInReview(task) ? "Waiting for the reviewer’s decision." : task.status === "Changes requested" ? "Review the feedback and submit an updated version." : task.status === "Blocked" ? "Check the blocker details before continuing." : closed ? "Work approved and closed." : task.status === "Assigned" ? "Read the brief, then start your work." : "Continue your work and submit it when ready."}</p>
+          </section>
           <div className="task-page-body">
             <div className="task-overview-heading">
               <h2>Task overview</h2>
@@ -1074,9 +1080,14 @@ export default function TaskPage({
                     !closed &&
                     active &&
                     hasCapability(policy, "task.submit.own") && (
-                      <Button onClick={() => setMode("submit")}>
-                        Upload & submit a revision
-                      </Button>
+                      <div className="files-submit-action">
+                        <Button onClick={() => setMode("submit")}>
+                          <UploadCloud size={20} aria-hidden="true" />
+                          {task.status === "Changes requested"
+                            ? "Resubmit for review"
+                            : "Submit for review"}
+                        </Button>
+                      </div>
                     )
                   )}
                   <AssetVersionVault
