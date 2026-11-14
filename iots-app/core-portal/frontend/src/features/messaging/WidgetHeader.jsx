@@ -1,6 +1,6 @@
 import {
   ArrowLeft,
-  ChevronDown,
+  ChevronUp,
   Maximize2,
   MessagesSquare,
   Minimize2,
@@ -69,7 +69,7 @@ export default function WidgetHeader({
         }
         onClick={controls.toggleMinimized}
       >
-        {controls.minimized ? <ChevronDown size={17} /> : <Minus size={17} />}
+        {controls.minimized ? <ChevronUp size={17} /> : <Minus size={17} />}
       </button>
       <button
         className="messaging-icon messaging-expand"

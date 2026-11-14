@@ -35,17 +35,23 @@ const empty = (date) => ({
   remarks: "",
   proofs: [],
 });
-function Proofs({ value = [], onChange, onError, disabled }) {
+function Proofs({ value = [], onChange, onError, disabled, uploadProof }) {
   return (
     <FileUpload
       files={value}
       label="Attach work evidence"
-      accept=".pdf,image/*,video/*,audio/*"
+      accept={
+        uploadProof
+          ? ".pdf,.png,.jpg,.jpeg,.webp,.gif,.mp4,.mov,.mp3,.wav,.txt,.docx,.xlsx,.pptx"
+          : ".pdf,image/*,video/*,audio/*"
+      }
+      maxBytes={uploadProof ? 30 * 1024 * 1024 : undefined}
       disabled={disabled}
       onError={onError}
       onFiles={async (files) => {
         const saved = [];
-        for (const file of files) saved.push(await storeProof(file));
+        for (const file of files)
+          saved.push(await (uploadProof || storeProof)(file));
         onChange([...value, ...saved]);
       }}
       onRemove={(index) => onChange(value.filter((_, i) => i !== index))}
@@ -62,6 +68,8 @@ export default function ReportPage({
   mutate,
   onBack,
   viewer = employee,
+  uploadProof,
+  saveReport,
 }) {
   const previous = Object.fromEntries(
     (state.deliveries || [])
@@ -98,6 +106,9 @@ export default function ReportPage({
       (!t.createdAt || istDate(new Date(t.createdAt)) <= date),
   );
   const selected = Object.entries(draft.entries);
+  const submitted = Boolean(
+    state.serverBacked && savedReports[date]?.state === "Submitted",
+  );
   const groups = reportGroups(draft);
   useEffect(() => {
     document.querySelector(".report-step h2")?.focus();
@@ -105,6 +116,7 @@ export default function ReportPage({
   if (!canAccessReport(employee, viewer))
     return <p>Outside your data scope.</p>;
   const patch = (change) => {
+    if (submitted) return;
     setDraft((d) => ({ ...d, ...change, submittedAt: undefined }));
     setDirty(true);
     setNotice("");
@@ -140,27 +152,35 @@ export default function ReportPage({
         ...draft,
         savedAt: new Date().toISOString(),
         ...(submit ? { submittedAt: new Date().toISOString() } : {}),
-        recipients: ["General Manager / Senior Manager / Executive"],
+        recipients: state.serverBacked
+          ? state.workspace.reportAudience
+          : ["General Manager / Senior Manager / Executive"],
       };
-      await mutate((s) => {
-        s.manualReports ??= {};
-        s.manualReports[date] = structuredClone(record);
-        if (submit) {
-          s.deliveries.push({
-            date,
-            at: record.submittedAt,
-            status: "Queued locally",
-            recipients: record.recipients,
-            report: structuredClone(record),
+      const saved = saveReport
+        ? await saveReport(record, submit)
+        : await mutate((s) => {
+            s.manualReports ??= {};
+            s.manualReports[date] = structuredClone(record);
+            if (submit) {
+              s.deliveries.push({
+                date,
+                at: record.submittedAt,
+                status: "Queued locally",
+                recipients: record.recipients,
+                report: structuredClone(record),
+              });
+            }
           });
-        }
-      });
-      setDraft(record);
+      setDraft(saved?.manualReports?.[date] || record);
       setDirty(false);
       setNotice(
-        submit
-          ? "Report queued on this device. Server delivery is not connected."
-          : "Draft saved on this device.",
+        state.serverBacked
+          ? submit
+            ? "Report submitted to the manager inbox."
+            : "Report draft saved."
+          : submit
+            ? "Report queued on this device. Server delivery is not connected."
+            : "Draft saved on this device.",
       );
       return true;
     } catch (e) {
@@ -279,7 +299,18 @@ export default function ReportPage({
               {notice}
             </p>
           )}
-          <div className="report-step" key={step}>
+          {submitted && (
+            <p className="report-save-notice">
+              Submitted report. Its work and evidence are preserved for manager
+              review.
+            </p>
+          )}
+          <fieldset
+            className="report-step"
+            key={step}
+            disabled={submitted && step !== 6}
+            style={{ border: 0, minWidth: 0 }}
+          >
             <p className="report-step-position">
               Step {step + 1} of {steps.length}
             </p>
@@ -510,6 +541,7 @@ export default function ReportPage({
                       />
                     </label>
                     <Proofs
+                      uploadProof={uploadProof}
                       value={e.proofs}
                       onChange={(proofs) => entry(id, { proofs })}
                       onError={setError}
@@ -559,6 +591,7 @@ export default function ReportPage({
                   />
                 </label>
                 <Proofs
+                  uploadProof={uploadProof}
                   value={draft.proofs}
                   onChange={(proofs) => patch({ proofs })}
                   onError={setError}
@@ -573,7 +606,7 @@ export default function ReportPage({
                 onError={setError}
               />
             )}
-          </div>
+          </fieldset>
           <div className="report-builder-actions">
             <Button
               variant="ghost"
@@ -583,7 +616,11 @@ export default function ReportPage({
               <ArrowLeft size={15} />
               Previous
             </Button>
-            <Button variant="outline" disabled={busy} onClick={() => save()}>
+            <Button
+              variant="outline"
+              disabled={busy || submitted}
+              onClick={() => save()}
+            >
               {busy ? "Saving..." : "Save draft"}
             </Button>
             {step < 6 ? (
@@ -596,7 +633,13 @@ export default function ReportPage({
                 disabled={busy || !!draft.submittedAt}
                 onClick={() => save(true)}
               >
-                {draft.submittedAt ? "Queued locally" : "Queue for manager"}
+                {state.serverBacked
+                  ? draft.submittedAt
+                    ? "Submitted"
+                    : "Submit to manager"
+                  : draft.submittedAt
+                    ? "Queued locally"
+                    : "Queue for manager"}
               </Button>
             )}
           </div>

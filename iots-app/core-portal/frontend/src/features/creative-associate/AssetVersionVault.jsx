@@ -1,23 +1,16 @@
-import { useState } from "react";
 import { FileText, Paperclip, ExternalLink } from "lucide-react";
 import { useRolePolicy } from "./workspace/RoleContext.jsx";
 import { isInReview, reviewLabel } from "./workspace/role-policy.js";
 import { stageOf } from "../tasks/workflow.js";
 import { format } from "../tasks/presentation.js";
-import { downloadProof } from "../daily-report/exportTools.js";
+import EvidenceFile from "../tasks/EvidenceFile";
 import { Button } from "../../shared/work-ui/button.jsx";
 import { Badge } from "../../shared/work-ui/badge.jsx";
 import { Blank } from "./workspace/WorkspaceUI.jsx";
 export default function AssetVersionVault({ task, onEdit }) {
-  const [fileError, setFileError] = useState("");
   const policy = useRolePolicy();
   return (
     <>
-      {fileError && (
-        <p role="alert" className="error-copy">
-          {fileError}
-        </p>
-      )}
       <div className="detail-section-title">
         <h3>Files & revisions</h3>
         <Badge variant="secondary">
@@ -34,18 +27,7 @@ export default function AssetVersionVault({ task, onEdit }) {
                 <p>{draft.note}</p>
                 <small>{format(draft.at)}</small>
                 {draft.attachments?.map((attachment) => (
-                  <Button
-                    key={attachment.id}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      downloadProof(attachment).catch((e) =>
-                        setFileError(e.message),
-                      )
-                    }
-                  >
-                    {attachment.name}
-                  </Button>
+                  <EvidenceFile key={attachment.id} file={attachment} />
                 ))}
               </div>
               <div>
@@ -99,19 +81,7 @@ export default function AssetVersionVault({ task, onEdit }) {
                   </Badge>
                   <p>{v.note}</p>
                   {v.attachments?.map((attachment) => (
-                    <Button
-                      key={attachment.id}
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        downloadProof(attachment).catch((e) =>
-                          setFileError(e.message),
-                        )
-                      }
-                    >
-                      <Paperclip size={14} />
-                      {attachment.name}
-                    </Button>
+                    <EvidenceFile key={attachment.id} file={attachment} />
                   ))}
                   <small>
                     Version {v.number} · {format(v.at)}

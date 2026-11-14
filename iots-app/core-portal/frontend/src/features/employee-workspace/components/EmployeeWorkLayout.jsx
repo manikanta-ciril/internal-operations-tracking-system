@@ -12,7 +12,11 @@ import {
   PanelLeftOpen,
   Menu,
   HelpCircle,
+  Users,
+  FilePlus2,
+  ClipboardCheck,
 } from "lucide-react";
+import { taskCapabilities } from "../../tasks/employee-policy";
 import logo from "../../../assets/logo.png";
 import WorkspaceHeader from "./WorkspaceHeader";
 import { useEmployeeWorkspace } from "../context";
@@ -26,7 +30,7 @@ import {
 } from "../../../shared/work-ui/tooltip";
 import "../styles/employee-work.css";
 import "../../creative-associate/workspace/styles/workspace.css";
-const compactLogo = '/img/icon.png';
+const compactLogo = "/img/icon.png";
 
 const personal = [
   ["/attendance", "Attendance", CalendarDays],
@@ -68,12 +72,12 @@ function SidebarLink({ entry, collapsed, close }) {
   );
 }
 
-export default function EmployeeWorkLayout({ children, roleSwitcher }) {
+export default function EmployeeWorkLayout({ children }) {
   const { user } = useEmployeeWorkspace();
+  const capabilities = taskCapabilities(user);
   const { path } = useWorkspaceNavigation();
-  const scrollDestination = path === "/profile" || path.startsWith("/attendance")
-    ? "/profile"
-    : path;
+  const scrollDestination =
+    path === "/profile" || path.startsWith("/attendance") ? "/profile" : path;
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [scrollDestination]);
@@ -122,16 +126,32 @@ export default function EmployeeWorkLayout({ children, roleSwitcher }) {
     window.addEventListener("keydown", shortcut);
     return () => window.removeEventListener("keydown", shortcut);
   }, []);
-  const groups = [
-    [
-      user.activeRole === "creative-communication-associate"
-        ? "Creative operations"
-        : "My work",
-      work,
-    ],
-    ["Personal services", personal],
-    ["Reports", [["/report", "Daily work report", FileText]]],
-  ];
+  const groups = capabilities.employee
+    ? [
+        ["My work", work],
+        ["Personal services", personal],
+        ["Reports", [["/report", "Daily work report", FileText]]],
+      ]
+    : [["Personal services", [["/attendance", "Attendance", CalendarDays]]]];
+  if (capabilities.manage)
+    groups.push([
+      "Work management",
+      [
+        ["/team-work", "Team work", Users],
+        ["/assign-work", "Assign work", FilePlus2],
+        ["/review-queue", "Review queue", ClipboardCheck],
+        ["/work-requests", "Work requests", ClipboardList],
+        ["/team-reports", "Team reports", FileText],
+      ],
+    ]);
+  else if (capabilities.oversight)
+    groups.push([
+      "Operational oversight",
+      [
+        ["/team-work", "Team work", Users],
+        ["/team-reports", "Team reports", FileText],
+      ],
+    ]);
   return (
     <TooltipProvider>
       <div
@@ -196,7 +216,6 @@ export default function EmployeeWorkLayout({ children, roleSwitcher }) {
               <Menu size={20} />
             </button>
             <WorkspaceHeader showBrand={false} />
-            {roleSwitcher}
           </div>
           {children}
         </div>

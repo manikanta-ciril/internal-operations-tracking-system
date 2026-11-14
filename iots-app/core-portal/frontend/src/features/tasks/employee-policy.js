@@ -10,6 +10,28 @@ export const employeeRoles = new Set([
 ]);
 export const hasEmployeeWork = (role) => employeeRoles.has(role);
 
+export function taskCapabilities(user) {
+  const roles = new Set(
+    Array.isArray(user?.roles)
+      ? user.roles.map((role) => (typeof role === "string" ? role : role.code))
+      : [user?.activeRole],
+  );
+  const oversight = roles.has("chairman");
+  const manage =
+    !oversight && (roles.has("general-manager") || roles.has("senior-manager"));
+  return {
+    manage,
+    oversight,
+    employee: !oversight && [...roles].some((role) => employeeRoles.has(role)),
+  };
+}
+
+export function managementRoute(path) {
+  return /^\/(team-work|assign-work|review-queue|work-requests|team-reports)(\/[^/]+)?$/.test(
+    path,
+  );
+}
+
 export function workRoute(path) {
   const [section = "", encodedId] = path.slice(1).split("/");
   const view = {

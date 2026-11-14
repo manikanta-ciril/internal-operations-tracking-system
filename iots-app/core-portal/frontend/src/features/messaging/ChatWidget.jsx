@@ -1,3 +1,5 @@
+import DraftStorageConsent from "./DraftStorageConsent";
+import { readChatDrafts, saveChatDrafts, draftConsent } from "./draft-storage";
 import { useEffect, useRef, useState } from "react";
 import { MessagesSquare, RotateCw, X } from "lucide-react";
 import { useEmployeeWorkspace } from "../employee-workspace/context";
@@ -22,7 +24,10 @@ function ConnectedChatWidget({ initialOpen }) {
   const [wide, setWide] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const [reply, setReply] = useState(null);
-  const [drafts, setDrafts] = useState({});
+  const [drafts, setDrafts] = useState(()=>readChatDrafts(user.id));
+  const draftState=useRef(drafts);
+  const [storageSettings,setStorageSettings]=useState(false);
+  const [draftStorageError,setDraftStorageError]=useState("");
   const [dragActive, setDragActive] = useState(false);
   const [dragEnabled, setDragEnabled] = useState(() => isDragDropEnabled());
   const dragDepth = useRef(0);
@@ -46,7 +51,7 @@ function ConnectedChatWidget({ initialOpen }) {
   );
   const lastMessage = chat.messages.at(-1)?.id;
   useEffect(() => {
-    if (open) heading.current?.focus();
+    if (open) heading.current?.focus({preventScroll:true});
   }, [open]);
   useEffect(() => {
     const reveal = (event) => {
@@ -97,7 +102,7 @@ function ConnectedChatWidget({ initialOpen }) {
   function close() {
     dismissDrag();
     setOpen(false);
-    launcher.current?.focus();
+    launcher.current?.focus({preventScroll:true});
   }
   function select(id) {
     dismissDrag();
@@ -155,13 +160,16 @@ function ConnectedChatWidget({ initialOpen }) {
       chat.setError(failure.message);
     }
   }
-  function updateDraft(text) {
-    setDrafts((previous) => ({ ...previous, [activeId]: text }));
+  function updateDraft(text, conversationId=activeId) {
+    const next={...draftState.current,[conversationId]:text};
+    draftState.current=next;setDrafts(next);
+    if(draftConsent()==="allowed" && !saveChatDrafts(user.id,next))setDraftStorageError("Browser storage is unavailable. This draft will only last in the current tab.");
   }
   async function send() {
+    const conversationId=activeId;
     await chat.send(draft, { replyTo: reply?.id });
     setReply(null);
-    updateDraft("");
+    updateDraft("",conversationId);
   }
   async function sendContent(content) {
     await chat.send("", { content, replyTo: reply?.id });
@@ -337,6 +345,8 @@ function ConnectedChatWidget({ initialOpen }) {
           )}
         </section>
       )}
+      {storageSettings && <DraftStorageConsent force onDone={()=>setStorageSettings(false)}/>}
+      {open && !minimized && <div className="messaging-draft-settings"><button type="button" onClick={()=>setStorageSettings(true)}>Draft storage settings</button>{draftStorageError && <span role="status">{draftStorageError}</span>}</div>}
       {create && (
         <ConversationDialog
           kind={create}

@@ -1,3 +1,4 @@
+import NoticeDialog from "../../shared/components/NoticeDialog";
 import FileUpload from "../../components/ui/file-upload.tsx";
 import RevisionComparePane from "../creative-associate/RevisionComparePane";
 import AssetVersionVault from "../creative-associate/AssetVersionVault.jsx";
@@ -5,6 +6,9 @@ import { dailyEffort } from "./effort.js";
 import { Dialog } from "radix-ui";
 import TaskActivity from "./TaskActivity.jsx";
 import TaskWorkingNote from "./TaskWorkingNote.jsx";
+import EvidenceFile from "./EvidenceFile";
+import TaskRating from "./TaskRating";
+import PublicationEvidence from "./PublicationEvidence.jsx";
 import TaskAttention from "./TaskAttention.jsx";
 import { storeProof } from "../daily-report/exportTools.js";
 import TaskJourney from "./TaskJourney.jsx";
@@ -93,9 +97,19 @@ const mediaTypes = [
     icon: Film,
   },
 ];
-function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
+function ActionForm({
+  task,
+  mutate,
+  now,
+  mode,
+  onDone,
+  initialDraft,
+  command,
+  uploadProof,
+}) {
   const policy = useRolePolicy(),
     reviewer = policy.reviewStages[0].label;
+  const creative = policy.id === "creative-communication-associate";
   const [kind, setKind] = useState("Progress"),
     [note, setNote] = useState(initialDraft?.note || ""),
     [progress, setProgress] = useState(task.progress || 0),
@@ -158,7 +172,42 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
         : [...(initialDraft?.attachments || [])];
       if (actual === "Submission")
         for (const attachment of attachments)
-          savedFiles.push(await storeProof(attachment));
+          savedFiles.push(await (uploadProof || storeProof)(attachment));
+      if (command) {
+        if (actual === "Submission" && !savedFiles.length)
+          throw new Error(
+            "Attach at least one evidence file before saving or submitting.",
+          );
+        const action =
+          actual === "Submission"
+            ? saveDraft
+              ? "save-draft"
+              : "submit"
+            : {
+                Progress: "progress",
+                "Work note": "note",
+                "Time logged": "effort",
+                "Blocker reported": "block",
+                "Deadline request": "request-deadline",
+              }[actual];
+        await command(action, {
+          note: note || (saveDraft ? `Saved working draft: ${file}` : ""),
+          file,
+          fileIds: savedFiles.map((proof) => proof.id),
+          draftId: initialDraft?.id || (saveDraft ? undefined : draft?.id),
+          draftResolution: resolution || "discard",
+          remark,
+          vertical,
+          scopeCategory: category,
+          progress: Number(progress),
+          minutes: Number(minutes),
+          severity,
+          blockType,
+          requestedDue: due ? `${due}:00+05:30` : undefined,
+        });
+        onDone();
+        return;
+      }
       await mutate(
         (s) => {
           if (saveDraft) {
@@ -363,35 +412,39 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
           )}
           {actual === "Submission" && (
             <>
-              <Field>
-                <FieldLabel htmlFor="deliverable-vertical">
-                  Work vertical
-                </FieldLabel>
-                <Choice
-                  id="deliverable-vertical"
-                  label="Work vertical"
-                  value={vertical}
-                  onChange={(v) => {
-                    setVertical(v);
-                    setCategory(creativeCategories[v][0]);
-                  }}
-                  options={[
-                    { value: "social", label: "Social media" },
-                    {
-                      value: "internal",
-                      label: "Non-social / internal communication",
-                    },
-                  ]}
-                />
-                <FieldLabel htmlFor="deliverable-category">Category</FieldLabel>
-                <Choice
-                  id="deliverable-category"
-                  label="Deliverable category"
-                  value={category}
-                  onChange={setCategory}
-                  options={creativeCategories[vertical]}
-                />
-              </Field>
+              {creative && (
+                <Field>
+                  <FieldLabel htmlFor="deliverable-vertical">
+                    Work vertical
+                  </FieldLabel>
+                  <Choice
+                    id="deliverable-vertical"
+                    label="Work vertical"
+                    value={vertical}
+                    onChange={(v) => {
+                      setVertical(v);
+                      setCategory(creativeCategories[v][0]);
+                    }}
+                    options={[
+                      { value: "social", label: "Social media" },
+                      {
+                        value: "internal",
+                        label: "Non-social / internal communication",
+                      },
+                    ]}
+                  />
+                  <FieldLabel htmlFor="deliverable-category">
+                    Category
+                  </FieldLabel>
+                  <Choice
+                    id="deliverable-category"
+                    label="Deliverable category"
+                    value={category}
+                    onChange={setCategory}
+                    options={creativeCategories[vertical]}
+                  />
+                </Field>
+              )}
               {initialDraft?.attachments?.length > 0 && !attachments.length && (
                 <p className="muted-copy">
                   Retained files:{" "}
@@ -399,24 +452,26 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
                   Choosing new files replaces this selection.
                 </p>
               )}
-              <div className="media-type-grid" aria-label="Deliverable types">
-                {mediaTypes.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.label}
-                      type="button"
-                      className="media-type-option"
-                      aria-pressed={media === index}
-                      onClick={() => setMedia(media === index ? null : index)}
-                    >
-                      <Icon size={17} />
-                      <strong>{item.label}</strong>
-                      <small>{item.hint}</small>
-                    </button>
-                  );
-                })}
-              </div>
+              {creative && (
+                <div className="media-type-grid" aria-label="Deliverable types">
+                  {mediaTypes.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.label}
+                        type="button"
+                        className="media-type-option"
+                        aria-pressed={media === index}
+                        onClick={() => setMedia(media === index ? null : index)}
+                      >
+                        <Icon size={17} />
+                        <strong>{item.label}</strong>
+                        <small>{item.hint}</small>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
               <Field>
                 <FieldLabel htmlFor="submission-file">
                   Attach deliverable
@@ -426,10 +481,13 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
                   files={attachments}
                   label="Attach deliverable"
                   disabled={busy}
+                  maxBytes={command ? 30 * 1024 * 1024 : undefined}
                   accept={
-                    media == null
-                      ? "image/*,video/*,audio/*,.pdf,.ai,.psd,.eps,.indd,.fig,.pptx,.zip"
-                      : mediaTypes[media].extensions
+                    !creative
+                      ? ".txt,.pdf,.csv,.md,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.webp,.zip"
+                      : media == null
+                        ? "image/*,video/*,audio/*,.pdf,.ai,.psd,.eps,.indd,.fig,.pptx,.zip"
+                        : mediaTypes[media].extensions
                   }
                   onError={setError}
                   onFiles={(selected) => {
@@ -446,7 +504,7 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
               </Field>
               <Field>
                 <FieldLabel htmlFor="source-link">
-                  File name or source link
+                  {command ? "File label" : "File name or source link"}
                 </FieldLabel>
                 <Input
                   id="source-link"
@@ -454,11 +512,16 @@ function ActionForm({ task, mutate, now, mode, onDone, initialDraft }) {
                   onChange={(e) => setFile(e.target.value)}
                   required
                   disabled={busy}
-                  placeholder="Choose a file above or paste a shared link"
+                  placeholder={
+                    command
+                      ? "Choose files above and name this version"
+                      : "Choose a file above or paste a shared link"
+                  }
                 />
                 <FieldDescription>
-                  Selected files are saved on this device for this preview.
-                  Shared links remain external.
+                  {command
+                    ? "Evidence is saved privately on the IOTS server. Submitted versions remain attached to this task."
+                    : "Selected files are saved on this device for this preview. Shared links remain external."}
                 </FieldDescription>
               </Field>
             </>
@@ -688,7 +751,11 @@ export default function TaskPage({
   mutate,
   onBack,
   backLabel,
+  command,
+  uploadProof,
 }) {
+  const [startNotice,setStartNotice] = useState(false);
+  function requestSubmission(){if(task.status === "Assigned"){setStartNotice(true);return;}setMode("submit");}
   const classification = classifyCreative(task);
   const policy = useRolePolicy(),
     reviewer = policy.reviewStages[0].label;
@@ -700,7 +767,7 @@ export default function TaskPage({
   const editable =
       (!task.ownerId || task.ownerId === employee.id) &&
       hasCapability(policy, "task.update.own"),
-    closed = task.status === "Completed",
+    closed = ["Completed", "Cancelled"].includes(task.status),
     active = ["Assigned", "In progress", "Changes requested"].includes(
       task.status,
     ),
@@ -709,6 +776,10 @@ export default function TaskPage({
     setBusy(true);
     setError("");
     try {
+      if (command) {
+        await command(task.status === "Assigned" ? "start" : "resume", {});
+        return;
+      }
       await mutate(
         (s) =>
           task.status === "Assigned"
@@ -732,6 +803,10 @@ export default function TaskPage({
     setError("");
     setBusy(true);
     try {
+      if (command) {
+        await command("checklist", { itemId: item.id, checked });
+        return;
+      }
       await mutate((s) =>
         setBriefChecklistItem(s, task.id, item.id, checked, now),
       );
@@ -795,8 +870,24 @@ export default function TaskPage({
           <section className="task-current-status" aria-label="Current status">
             <h2>Current status</h2>
             <strong>{task.status}</strong>
-            <p>{isInReview(task) ? "Waiting for the reviewer’s decision." : task.status === "Changes requested" ? "Review the feedback and submit an updated version." : task.status === "Blocked" ? "Check the blocker details before continuing." : closed ? "Work approved and closed." : task.status === "Assigned" ? "Read the brief, then start your work." : "Continue your work and submit it when ready."}</p>
+            <p>
+              {isInReview(task)
+                ? "Waiting for the reviewer’s decision."
+                : task.status === "Changes requested"
+                  ? "Review the feedback and submit an updated version."
+                  : task.status === "Blocked"
+                    ? "Check the blocker details before continuing."
+                    : task.status === "Cancelled"
+                      ? "This task was cancelled. Its history is retained."
+                      : closed
+                        ? "Work approved and closed."
+                        : task.status === "Assigned"
+                          ? "Read the brief, then start your work."
+                          : "Continue your work and submit it when ready."}
+            </p>
           </section>
+          {startNotice && <NoticeDialog title="Start the task first" onClose={()=>setStartNotice(false)}><p>Start the task from Details before submitting work for review.</p></NoticeDialog>}
+          <TaskRating task={task} />
           <div className="task-page-body">
             <div className="task-overview-heading">
               <h2>Task overview</h2>
@@ -853,6 +944,8 @@ export default function TaskPage({
                           task={task}
                           now={now}
                           mutate={mutate}
+                          command={command}
+                          uploadProof={uploadProof}
                           mode={mode}
                           onDone={() => setMode(null)}
                         />
@@ -867,6 +960,9 @@ export default function TaskPage({
                       <div className="task-input-output">
                         <section>
                           <h3>Inputs & references</h3>
+                          {task.referenceFiles?.map((proof) => (
+                            <EvidenceFile key={proof.id} file={proof} />
+                          ))}
                           {task.references?.length ? (
                             <ul>
                               {task.references.map((ref, i) => (
@@ -984,7 +1080,7 @@ export default function TaskPage({
                               <Button
                                 onClick={() => {
                                   setTab("files");
-                                  setMode("submit");
+                                  requestSubmission();
                                 }}
                               >
                                 <Send data-icon="inline-start" />
@@ -995,7 +1091,7 @@ export default function TaskPage({
                             )}
                           <Button
                             variant="outline"
-                            onClick={() => setMode("update")}
+                            onClick={() => {if(task.status === "Assigned")setStartNotice(true);else setMode("update");}}
                           >
                             Add update
                           </Button>
@@ -1027,6 +1123,7 @@ export default function TaskPage({
                           task={task}
                           now={now}
                           mutate={mutate}
+                          command={command}
                         />
                       )}
                       <details className="deadline-history">
@@ -1067,6 +1164,8 @@ export default function TaskPage({
                         task={task}
                         now={now}
                         mutate={mutate}
+                        command={command}
+                        uploadProof={uploadProof}
                         mode="submit"
                         initialDraft={editingDraft}
                         onDone={() => {
@@ -1081,7 +1180,7 @@ export default function TaskPage({
                     active &&
                     hasCapability(policy, "task.submit.own") && (
                       <div className="files-submit-action">
-                        <Button onClick={() => setMode("submit")}>
+                        <Button onClick={requestSubmission}>
                           <UploadCloud size={20} aria-hidden="true" />
                           {task.status === "Changes requested"
                             ? "Resubmit for review"
@@ -1096,11 +1195,19 @@ export default function TaskPage({
                       editable && !closed && active
                         ? (draft) => {
                             setEditingDraft(draft);
-                            setMode("submit");
+                            requestSubmission();
                           }
                         : null
                     }
                   />
+                  {command && (
+                    <PublicationEvidence
+                      task={task}
+                      command={command}
+                      uploadProof={uploadProof}
+                      editable={editable && !closed}
+                    />
+                  )}
                   <ReviewCycle
                     task={task}
                     policy={policy}
@@ -1118,6 +1225,8 @@ export default function TaskPage({
                       task={task}
                       now={now}
                       mutate={mutate}
+                      command={command}
+                      uploadProof={uploadProof}
                       mode={mode}
                       onDone={() => setMode(null)}
                     />
@@ -1157,10 +1266,10 @@ export default function TaskPage({
                     hasCapability(policy, "deadline.request.own") && (
                       <Button
                         variant="outline"
-                        disabled={
-                          task.deadlineRequest?.status ===
-                          "Awaiting manager decision"
-                        }
+                        disabled={[
+                          "Pending",
+                          "Awaiting manager decision",
+                        ].includes(task.deadlineRequest?.status)}
                         onClick={() => setMode("deadline")}
                       >
                         Request more time
@@ -1189,7 +1298,12 @@ export default function TaskPage({
           </div>
         </div>
         <div className="task-right-rail">
-          <TaskJourney task={task} />
+          <TaskJourney
+            task={task}
+            creative={
+              employee.activeRole === "creative-communication-associate"
+            }
+          />
           <TaskAttention task={task} overdue={overdue} reviewer={reviewer} />
         </div>
       </div>
