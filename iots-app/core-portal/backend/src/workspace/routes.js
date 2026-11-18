@@ -6,6 +6,7 @@ const { withSession, requireStage } = require("../auth/session-state");
 // Mount only after the existing active-session AND photo-evidence guards.
 module.exports = function registerWorkspace(router, { pool }) {
   require("./account-routes")(router, { pool });
+  require("../crm/routes")(router, { pool });
   require("../calendar/routes")(router, { pool });
   router.get("/api/auth/workspace", async (req, res) => {
     const employeeId = req.session.employee_id;

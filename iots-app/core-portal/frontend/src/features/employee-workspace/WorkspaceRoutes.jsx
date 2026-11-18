@@ -21,10 +21,14 @@ const TaskManagementPage = lazy(
   () => import("../tasks/management/TaskManagementPage"),
 );
 
+const CrmPage = lazy(() => import("../crm/CrmPage"));
+
 export default function WorkspaceRoutes() {
   const { user } = useEmployeeWorkspace();
   const { path } = useWorkspaceNavigation();
   const capabilities = taskCapabilities(user);
+  if (path === "/crm" && (capabilities.manage || capabilities.oversight || user.roles?.some(role => (typeof role === "string" ? role : role.code) === "lead-manager")))
+    return <Suspense fallback={<PageLoading />}><CrmPage /></Suspense>;
   if (
     managementRoute(path) &&
     (capabilities.manage ||

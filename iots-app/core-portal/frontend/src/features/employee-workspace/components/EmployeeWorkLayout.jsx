@@ -152,6 +152,8 @@ export default function EmployeeWorkLayout({ children }) {
         ["/team-reports", "Team reports", FileText],
       ],
     ]);
+  if (capabilities.manage || capabilities.oversight || user.roles?.some(role => (typeof role === "string" ? role : role.code) === "lead-manager"))
+    groups.push(["CRM", [["/crm", "CRM leads", BriefcaseBusiness]]]);
   return (
     <TooltipProvider>
       <div
