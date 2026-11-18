@@ -68,3 +68,23 @@ A configured live token and manual GoDaddy deployment are required for a real CR
 ## GitHub change scope
 
 Commit the API client, role-protected routes, leads page, sample configuration, tests and this guide. Existing unrelated local dashboard and workflow edits must be reviewed independently before their own commit. Commit counts should reflect meaningful deliverables.
+
+## Local expanded API (18 November)
+
+Local runtime is CRM/latest_code/local-runtime, extracted from the supplied ZIP and using the installed vendor dependencies through a junction. It connects to the existing local cirilcrm_ciril database. PHP serves on loopback port 8080.
+
+The copied ZIP front controller contained an early return that prevented requests from reaching Laravel. The local runtime removes that return and explicitly maps the App namespace to the extracted source. These bootstrap changes are local-runtime adaptations.
+
+Lead lists now resolve leadStatus through lead_status_types.statu_type, negotiation_status_id through negotiation_statuses.negotiation_status, assigned_user_id through users.id, and assigned_orgid through company.id. Missing dictionary rows remain explicitly unmapped.
+
+Lead detail returns nine separate related collections: clients, requirements, financial details, brokerage, payments, assignments, remarks, proposals and status history. Separate collections preserve one-to-many records without multiplying lead rows.
+
+GET /resources lists 33 business resources. GET /resources/{name} paginates an explicit schema-derived column allowlist. Archive, configuration and notification categories and settings/custom_fields are excluded. Password, token, secret and DOB columns are excluded. This is business-data coverage, not unrestricted database administration or a consistent full-database snapshot.
+
+Expanded local access uses a newly issued 30-day iots-crm-readonly token with crm:read. The previous leads token cannot call the expanded API. The local token is stored only in the ignored Core Portal backend .env.
+
+Core Portal displays named status, assigned user name and organisation, with a View details action opening related records. Raw secondary reference fields in detail collections still need resource-specific human-readable mappings. Payment and royalty values are source records; collection verification and amount interpretation remain future work.
+
+crm-api-upload contains the changed PHP controller, middleware, resource configuration and route file for review. Do not replace production routes blindly. TokenController and browser token management still issue leads-only tokens and require a coordinated upgrade before production release. Deploy expanded files and issue crm:read together. Local testing does not validate GoDaddy deployment.
+
+The existing 30-request/minute limiter remains enabled and rejected excess requests during the resource smoke test as expected.
