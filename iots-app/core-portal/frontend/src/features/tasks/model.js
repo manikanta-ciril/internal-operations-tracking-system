@@ -258,7 +258,7 @@ export function submitTask(state, id, file, note, now = new Date()) {
   const t = state.tasks.find((t) => t.id === id);
   if (
     !t ||
-    !["Assigned", "In progress", "Changes requested"].includes(t.status)
+    !["In progress", "Changes requested"].includes(t.status)
   )
     throw Error("This task is already in review.");
   if (t.ownerId && t.ownerId !== employeeProfile(state).id)

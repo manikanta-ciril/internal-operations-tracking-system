@@ -73,8 +73,11 @@ export default function TaskAttention({ task, overdue, reviewer }) {
             <AlertTitle>Extension requested</AlertTitle>
             <AlertDescription>
               {task.deadlineRequest.status} · Requested{" "}
-              {format(task.deadlineRequest.requestedDue)}. Current deadline
-              remains {format(task.due)}.
+              {format(task.deadlineRequest.requestedDue)}.{" "}
+              {task.deadlineRequest.status === "Approved"
+                ? "Approved deadline:"
+                : "Current deadline:"}{" "}
+              {format(task.due)}.
             </AlertDescription>
           </Alert>
         )}

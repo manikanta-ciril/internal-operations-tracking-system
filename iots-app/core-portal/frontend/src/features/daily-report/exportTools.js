@@ -1,4 +1,12 @@
 import companyLogo from "../../assets/logo.png";
+import { downloadTaskFile, readTaskFile } from "../tasks/task-api.js";
+export const reportRecipients = (report) =>
+  report.recipients
+    ?.map((recipient) =>
+      typeof recipient === "string" ? recipient : recipient.name,
+    )
+    .filter(Boolean)
+    .join(" / ") || "General Manager / Senior Manager";
 export const reportSections = [
   "Tasks to be done",
   "Tasks completed",
@@ -140,7 +148,7 @@ export async function exportManualReport(format, report, employee) {
         employee.email || "Not provided",
       ],
       ["Report date", report.date],
-      ["Recipient", "General Manager / Senior Manager / Executive"],
+      ["Recipient", reportRecipients(report)],
       [],
       reportColumns,
       ...rows,
@@ -189,8 +197,7 @@ export async function exportManualReport(format, report, employee) {
     sheet.mergeCells("A3:H3");
     sheet.getCell("A3").value = "Report date: " + report.date;
     sheet.mergeCells("A4:H4");
-    sheet.getCell("A4").value =
-      "Recipient: General Manager / Senior Manager / Executive";
+    sheet.getCell("A4").value = "Recipient: " + reportRecipients(report);
     const image = book.addImage({ base64: logo, extension: "png" });
     sheet.mergeCells("I1:J4");
     sheet.addImage(image, {
@@ -294,7 +301,8 @@ export async function exportManualReport(format, report, employee) {
       pdf.text(
         "Report date: " +
           report.date +
-          " | Recipient: General Manager / Senior Manager / Executive",
+          " | Recipient: " +
+          reportRecipients(report),
         130,
         24 + info.length * 4,
         { align: "center" },
@@ -393,7 +401,14 @@ export async function storeProof(file) {
   return { id, name: file.name, type: file.type, size: file.size };
 }
 export async function downloadProof(proof) {
+  if (proof.server) return downloadTaskFile(proof);
   const blob = await proofStore("readonly", (s) => s.get(proof.id));
   if (!blob) throw Error("This proof is not available on this device.");
   saveBlob(blob, proof.name);
+}
+export async function previewProof(proof) {
+  if (proof.server) return readTaskFile(proof, true);
+  const blob = await proofStore("readonly", store => store.get(proof.id));
+  if (!blob) throw new Error("This browser file is not available on this device.");
+  return blob;
 }

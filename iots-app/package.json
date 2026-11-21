@@ -4,6 +4,7 @@
   "private": true,
   "description": "Entry point for IOTS subsystems and local development",
   "scripts": {
+    "reset:tasks": "node scripts/reset-tasks.cjs",
     "dev": "node scripts/dev.cjs",
     "setup": "node scripts/setup.cjs",
     "build": "npm run build --prefix core-portal/frontend",

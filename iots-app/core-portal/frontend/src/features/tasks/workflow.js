@@ -26,6 +26,7 @@ export function stageOf(task) {
   return task.status;
 }
 export function reportingState(task, now = new Date()) {
+  if (task.status === "Cancelled") return "Cancelled";
   if (task.status === "Completed") return "Completed";
   if (new Date(task.due) < now) return "Overdue";
   return task.status === "Assigned" ? "Assigned" : "Pending";
@@ -55,7 +56,7 @@ export function recordActivity(state, id, kind, values, now = new Date()) {
   const before = { status: task.status, progress: task.progress || 0 };
   let detail = values.note.trim();
   if (kind === "Progress") {
-    if (!["Assigned", "In progress", "Changes requested"].includes(task.status))
+    if (!["In progress", "Changes requested"].includes(task.status))
       throw Error("Progress can be updated while you are working on a task.");
     if (
       !Number.isFinite(Number(values.progress)) ||

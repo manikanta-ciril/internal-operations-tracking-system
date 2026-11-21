@@ -2,7 +2,18 @@ import { journeyDates } from "./journey.js";
 import { Check, ClipboardList, Palette, Eye, BadgeCheck } from "lucide-react";
 import { format } from "./presentation.js";
 import { isInReview } from "../creative-associate/workspace/role-policy.js";
-export default function TaskJourney({ task }) {
+export default function TaskJourney({ task, creative = true }) {
+  if (task.status === "Cancelled")
+    return (
+      <aside className="task-journey" aria-label="Task progress and status">
+        <h2>Task cancelled</h2>
+        <p>
+          {task.events.findLast((event) => event.action === "Cancelled")
+            ?.detail ||
+            "The task was cancelled. Its files and activity remain available."}
+        </p>
+      </aside>
+    );
   const progress = Math.min(100, Math.max(0, Number(task.progress) || 0));
   const closed = task.status === "Completed";
   const step = closed
@@ -27,7 +38,9 @@ export default function TaskJourney({ task }) {
     "Brief and ownership confirmed",
     task.status === "Blocked"
       ? "Blocked: waiting for input"
-      : "Design execution and updates",
+      : creative
+        ? "Design execution and updates"
+        : "Work execution and updates",
     task.status === "Changes requested"
       ? "Changes requested. Revise and resubmit."
       : "Review decisions and revision cycles",

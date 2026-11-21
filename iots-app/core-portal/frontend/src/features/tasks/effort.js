@@ -31,6 +31,8 @@ export function saveWorkUpdate(
   const task = state.tasks.find((t) => t.id === id),
     minutes = effortMinutes(amount, unit),
     changed = Number(progress) !== Number(task.progress || 0);
+  if (task.status === "Assigned") throw Error("Start the task first.");
+  if (changed && note.trim().length < 3) throw Error("Describe the work you completed before changing progress.");
   if (!note.trim() && !changed && !minutes)
     throw Error("Add a note, change progress or log time.");
   if (dailyEffort(task, now) + minutes > 1440)

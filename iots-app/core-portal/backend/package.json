@@ -17,6 +17,8 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test:auth": "node tests/run-isolated.cjs",
+    "test:tasks": "node --test tests/test-tasks.cjs",
+    "migrate:tasks": "node database/migrate-tasks.js",
     "seed": "node database/seed.js",
     "test:unit": "node tests/test-identity.js && node tests/test-location.js && node tests/test-photos.js && node tests/test-encode.js && node tests/test-security.js && node tests/test-holidays.cjs && node tests/test-workday-policy.js && node tests/test-messaging-policy.cjs && node tests/test-rich-messages.cjs",
     "test:messaging": "node tests/test-messaging.cjs"

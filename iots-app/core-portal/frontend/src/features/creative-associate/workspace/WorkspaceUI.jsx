@@ -72,8 +72,9 @@ export function Choice({
   );
   return (
     <Dropdown
-      shouldCloseOnScroll={false}
-      shouldCloseOnBlur={false}
+      shouldBlockScroll={false}
+      shouldCloseOnScroll
+      shouldCloseOnBlur
       disableAnimation
       placement="bottom-start"
       classNames={{ content: "hero-choice-menu" }}

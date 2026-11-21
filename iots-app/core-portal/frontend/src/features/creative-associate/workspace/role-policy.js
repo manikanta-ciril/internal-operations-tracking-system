@@ -42,6 +42,7 @@ export function firstReviewer(state) {
 }
 export function reviewLabel(task, policy = designerRole) {
   return (
+    task.reviewerName ||
     policy.reviewStages.find((s) => s.id === task.reviewStageId)?.label ||
     policy.reviewStages[0].label
   );

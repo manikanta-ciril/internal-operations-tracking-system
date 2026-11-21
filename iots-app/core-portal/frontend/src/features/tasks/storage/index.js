@@ -1,3 +1,6 @@
 import { LocalStorageTaskAdapter } from "./LocalStorageTaskAdapter.js";
-export const createTaskStorage = (employee) =>
-  new LocalStorageTaskAdapter(employee);
+import { ServerTaskAdapter } from "./ServerTaskAdapter.js";
+export const createTaskStorage = (employee, browserOnly = false) =>
+  browserOnly
+    ? new LocalStorageTaskAdapter(employee)
+    : new ServerTaskAdapter(employee);

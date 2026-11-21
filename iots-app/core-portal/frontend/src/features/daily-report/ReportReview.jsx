@@ -5,9 +5,14 @@ import {
   employeeIdentity,
   reportSummary,
   downloadProof,
+  reportRecipients,
 } from "./exportTools.js";
 export default function ReportReview({ report, employee, onError }) {
   const rows = reportRows(report);
+  const proofsFor = (row) =>
+    row[0] === "--"
+      ? report.proofs || []
+      : report.entries[row[0]]?.proofs || [];
   return (
     <article className="report-review-sheet">
       <header className="report-sheet-heading">
@@ -15,7 +20,7 @@ export default function ReportReview({ report, employee, onError }) {
           <h3>CIRIL Daily Task Report</h3>
           <p>{employeeIdentity(employee)}</p>
           <p>Report date: {report.date}</p>
-          <p>Recipient: General Manager / Senior Manager / Executive</p>
+          <p>Recipient: {reportRecipients(report)}</p>
         </div>
         <img src={companyLogo} alt="CIRIL" />
       </header>
@@ -48,9 +53,8 @@ export default function ReportReview({ report, employee, onError }) {
                   <td key={column}>
                     {column === 0 ? (
                       <strong>{value}</strong>
-                    ) : column === 9 &&
-                      report.entries[row[0]]?.proofs?.length ? (
-                      report.entries[row[0]].proofs.map((p) => (
+                    ) : column === 9 && proofsFor(row).length ? (
+                      proofsFor(row).map((p) => (
                         <button
                           key={p.id}
                           className="report-proof-link"

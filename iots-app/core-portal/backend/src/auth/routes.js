@@ -191,6 +191,7 @@ router.post('/api/auth/role', async (req, res) => {
   res.json({ user: { ...user, activeRole: role, location: req.session.location_json } });
 });
 require('../workspace/routes')(router, { pool });
+require('../tasks/routes')(router, { pool });
 require('../messaging/routes')(router, { pool });
 require('../checkout/routes')(router, { pool, userData });
 module.exports = router;

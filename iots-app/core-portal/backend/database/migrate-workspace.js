@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 module.exports = async function migrateWorkspace(connection) {
+  await require('./migrate-tasks')(connection);
   const [columns] = await connection.execute(
     "SHOW COLUMNS FROM employees LIKE 'gender'",
   );

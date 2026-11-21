@@ -1,29 +1,42 @@
 import { useState } from "react";
+import NoticeDialog from "../../shared/components/NoticeDialog";
+import { Save } from "lucide-react";
 import { Textarea } from "../../shared/work-ui/textarea.jsx";
 import { Input } from "../../shared/work-ui/input.jsx";
 import {
   Choice,
   SaveButton,
 } from "../creative-associate/workspace/WorkspaceUI.jsx";
-import { saveWorkUpdate } from "./effort.js";
-import { downloadProof } from "../daily-report/exportTools.js";
-import { Button } from "../../shared/work-ui/button.jsx";
+import { saveWorkUpdate, effortMinutes } from "./effort.js";
+import EvidenceFile from "./EvidenceFile";
 import { format } from "./presentation.js";
-export default function TaskWorkingNote({ task, mutate }) {
+export default function TaskWorkingNote({ task, mutate, command }) {
   const [note, setNote] = useState(""),
     [progress, setProgress] = useState(task.progress || 0),
     [amount, setAmount] = useState(""),
     [unit, setUnit] = useState("minutes"),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const [startNotice,setStartNotice] = useState(false);
   const active = ["Assigned", "In progress", "Changes requested"].includes(
     task.status,
   );
   async function save(event) {
     event.preventDefault();
+    if (task.status === "Assigned") { setStartNotice(true); return; }
     setBusy(true);
     setError("");
     try {
+      if (command) {
+        await command("work-update", {
+          note,
+          progress: Number(progress),
+          minutes: effortMinutes(amount, unit),
+        });
+        setNote("");
+        setAmount("");
+        return;
+      }
       await mutate(
         (state) =>
           saveWorkUpdate(
@@ -44,9 +57,10 @@ export default function TaskWorkingNote({ task, mutate }) {
   }
   return (
     <section className="work-log-section">
+      {startNotice && <NoticeDialog title="Start the task first" onClose={()=>setStartNotice(false)}><p>Start this task from Details before updating progress or submitting work for review.</p></NoticeDialog>}
       <h3>Log your work</h3>
       <p className="muted-copy">
-        Add a note, update progress or record time spent today.
+        Describe your work or upload evidence before changing progress.
       </p>
       <form onSubmit={save} className="work-log-form">
         <label htmlFor="working-note">What did you do?</label>
@@ -70,7 +84,7 @@ export default function TaskWorkingNote({ task, mutate }) {
               max="100"
               step="10"
               value={progress}
-              onChange={(e) => setProgress(Number(e.target.value))}
+              onChange={(e) => { if(task.status === "Assigned") {setStartNotice(true);return;} setProgress(Number(e.target.value)); }}
               disabled={busy || !active}
               style={{ "--progress": `${progress}%` }}
             />
@@ -110,7 +124,10 @@ export default function TaskWorkingNote({ task, mutate }) {
             {error}
           </p>
         )}
-        <SaveButton busy={busy}>Save work update</SaveButton>
+        <SaveButton busy={busy}>
+          <Save size={16} />
+          Save work update
+        </SaveButton>
       </form>
       <h3>Recent notes</h3>
       {task.notes?.length ? (
@@ -123,17 +140,7 @@ export default function TaskWorkingNote({ task, mutate }) {
                 <p>{n.text}</p>
                 <time dateTime={n.at}>{format(n.at)}</time>
                 {n.attachments?.map((a) => (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    key={a.id}
-                    onClick={() =>
-                      downloadProof(a).catch((e) => setError(e.message))
-                    }
-                  >
-                    {a.name}
-                  </Button>
+                  <EvidenceFile key={a.id} file={a} />
                 ))}
               </li>
             ))}
